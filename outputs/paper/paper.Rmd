@@ -67,6 +67,8 @@ Equation \@ref(eq:bayes) seems useful, eh?
 
 Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
 
+We can use maths by including latex between dollar signs, for instance $\theta$.
+
 
 # Results
 
@@ -86,7 +88,13 @@ Weaknesses and next steps should also be included.
 
 \newpage
 
+\appendix
+
 # Appendix {-}
+
+
+# Additional details
+
 
 \newpage
 
