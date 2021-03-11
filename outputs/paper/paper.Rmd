@@ -1,12 +1,14 @@
 ---
-title: "TBD"
-subtitle: "TBD"
-author: "TBD"
+title: "My title"
+subtitle: "My subtitle if needed"
+author: 
+  - First author
+  - Another author
 thanks: "Code and data are available at: LINK."
 date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 output:
-  bookdown::pdf_document2:
+  bookdown::pdf_document2
 toc: FALSE
 bibliography: references.bib
 ---
@@ -20,6 +22,7 @@ library(palmerpenguins)
 
 # Introduction
 
+You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). R Markdown automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
 
 
 
