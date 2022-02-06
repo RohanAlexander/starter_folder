@@ -1,0 +1,215 @@
+---
+title: "**Classification Of Toronto Neighbourhoods Safety Based On Crime Volume**"
+author: "**Matthew Ma**"
+date: "**2022/2/2**"
+output: pdf_document
+---
+
+\begin{center}
+Abstract
+\end{center}
+
+```{r, include=FALSE}
+library(opendatatoronto)
+library(dplyr)
+
+# get package
+package <- show_package("fc4d95a6-591f-411f-af17-327e6c5d03c7")
+package
+
+# get all resources for this package
+resources <- list_package_resources("fc4d95a6-591f-411f-af17-327e6c5d03c7")
+
+# identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
+
+# load the first datastore resource as a sample
+data <- filter(datastore_resources, row_number()==1) %>% get_resource()
+data
+```
+
+Crime rate and crime quantity are essential data to measure the security level and livable degree of a particular region and an important indicator to mark the security degree of a city. For Toronto, crime data is an indicator that the police, the government and the general public care about and look at. In this report, I will use Open Data Toronto and Environics Analytics data to analyze robbery, assault, and armed crime in approximately 140 comparable communities in metropolitan Toronto, Felony data such as auto theft and average crime rate per 100,000 population(Toronto Police Service, 2021). Researchers can intuitively compare the crime rate and the total number of crimes in communities with different geographical locations and people in Toronto based on this data set.
+
+
+# **Introduction**
+
+Based on people's impressions and relevant information, Toronto is regarded as a developed, friendly, livable and multicultural city. It is also one of the most popular and comfortable city in Canada. According to the report, Toronto has one of the lowest crime rates in Canada, compared with other big cities such as Montreal, Calgary, Castlestone and Vancouver(Macleans, 2019). Due to the impact of globalization, local laws and regulations and legalization of drugs, the crime rate in Toronto has constantly been fluctuating. Generally speaking, the crime rate in Toronto has remained in a stable state(Macleans, 2019).
+In the past few years, the news has frequently revealed various types of crimes such as armed robbery, car theft and shooting in Toronto (Roccam,2022). These crimes are usually related to the division of regions. Even within The Toronto area, there are significant differences in the crime rate of the different areas. As a result, people in Toronto have various concerns about the safety of living in other areas. As people generally prefer to live in a safer area, housing prices in different areas have also started to change. In addition, the distribution of limited police resources by the government and the police also needs to be allocated and calculated based on the crime data in different areas.
+Nowadays, crime data has become a fundamental reference index for real estate developers, police, government and ordinary residents.
+In this report, we used community crime data provided by the Toronto government and related data companies to find serious crime data for 140 different Toronto neighbourhoods from 2014 to 2020, including eight felonies including armed crime, assault, theft, and murder(Toronto Police Service, 2021). For the summary of the data, people in different industries can use these data to study the future development moving ideas, but also to police deployment, resource allocation provides a meaningful reference.
+The website provides accurate data on eight crimes per year from 2014 to 2020, which is very complex(Toronto Police Service, 2021). Because of this, data is challenging to study and categorize intuitively. We had to refine each piece of data to complete the study.
+In general, we have an idea for this study. We firstly find the total number of crimes of different types every year in the unit of year to intuitively obtain the data of the total number of crimes in each region from 2014 to 2020 so that we can compare the security of each community.
+After that, we classsify the security level of each reigion and we use the crime number within different community to make compares.
+
+# **Data**
+
+## **Source**:
+
+The data used in this report are published as summary data published in Open Data Toronto by Toronto Police Services. The content includes the statistics of 8 serious crime rates and crime quantity in 140 different areas of Toronto during the seven years from 2014 to 2020(Toronto Police Service, 2021). This information was last updated in May 2021. The information has been updated on an annual basis since its release, with data for the past 12 months republished every May and accessible to all users through the web. Under this page, the publisher also uploaded the set of data CSV files to provide relevant research for the data developer(Toronto Police Service, 2021). I downloaded the CSV file of this group of data under the relevant link of this web page and used R for further analysis.
+
+## **Method**:
+The website provides accurate data on eight types of crimes per year from 2014 to 2020, which is very complex(Toronto Police Service, 2021). Because of this, data is challenging to study and categorize intuitively. We had to refine each piece of data to complete the study.
+In general, we an ideas for this study, which is to study the total number of crimes of different types every year in the unit of year to intuitively obtain the data of the total number of crimes in each region from 2014 to 2020 so that we can compare the security of each region.
+The original data contains the detailed records of 8 different crimes in 140 blocks. Due to the enormous data and the significant difference in the number of crimes in other communities, it is difficult to analyze the crimes in different regions directly. We must first simplify this set of data.
+Based on the core purpose of our study is to tell people the safety degree of different communities, we first extracted the sum of crime in other areas of the 140 neighbourhoods in Toronto from 2014 to 2020 to get the sum of corruption in each room and the total crime in each region each year.
+So to make the data more meaningful as well as the representative, we find out each the average of the crime in different regions, the maximum and the minimum, with the mean value of the community to do a benchmark for the unit and arranged from big to small, fundamental value more than can be interpreted as the relative risk of communities, the following primary value of community can be understood as the relative safety of the community.
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tibble)
+library(dplyr)
+crime <- read.csv('neighbourhood-crime-rates.csv')
+crime <- mutate(crime, Total_2014 = Assault_2014 + AutoTheft_2014 + 
+         BreakAndEnter_2014 + Robbery_2014 + TheftOver_2014 + Homicide_2014 + 
+         Shootings_2014)
+crime <- mutate(crime, Total_2015 = Assault_2015 + AutoTheft_2015 + 
+         BreakAndEnter_2015 + Robbery_2015 + TheftOver_2015 + Homicide_2015 + 
+         Shootings_2015)
+crime <- mutate(crime, Total_2016 = Assault_2016 + AutoTheft_2016 + 
+         BreakAndEnter_2016 + Robbery_2016 + TheftOver_2016 + Homicide_2016 + 
+         Shootings_2016)
+crime <- mutate(crime, Total_2017 = Assault_2017 + AutoTheft_2017 + 
+         BreakAndEnter_2017 + Robbery_2017 + TheftOver_2017 + Homicide_2017 + 
+         Shootings_2017)
+crime <- mutate(crime, Total_2018 = Assault_2018 + AutoTheft_2018 + 
+         BreakAndEnter_2018 + Robbery_2018 + TheftOver_2018 + Homicide_2018 + 
+         Shootings_2018)
+crime <- mutate(crime, Total_2019 = Assault_2019 + AutoTheft_2019 + 
+         BreakAndEnter_2019 + Robbery_2019 + TheftOver_2019 + Homicide_2019 + 
+         Shootings_2019)
+crime <- mutate(crime, Total_2020 = Assault_2020 + AutoTheft_2020 + 
+         BreakAndEnter_2020 + Robbery_2020 + TheftOver_2020 + Homicide_2020 + 
+         Shootings_2020)
+HoodAndYear <- select(crime, OBJECTID, Neighbourhood, Total_2014, Total_2015, Total_2016,
+                      Total_2017, Total_2018, Total_2019, Total_2020)
+HoodAndYear <- mutate(HoodAndYear, Total = Total_2014 + Total_2015 + Total_2016 +
+                      Total_2017 + Total_2018 + Total_2019 + Total_2020)
+mmm <- summarise(HoodAndYear, totalMax = max(Total), totalMin = min(Total),
+          totalMean = mean(Total))
+totalCrime <- select(HoodAndYear, Neighbourhood, Total)
+boxplot(totalCrime$Total)
+summary(totalCrime)
+
+```
+# **Data Characteristics**
+```{r}
+summary(totalCrime)
+```
+
+Through the above induction and calculation, we got a data table and some key data as shown in the above image.
+
+
+  -The minimum value of this set of data is 382
+  
+  -The value of Q1 is 873.2
+  
+  -The median value of this set of data is 1334
+  
+  -The mean of this group of data is mean=1750
+  
+  -Q3 of this set of data =2088.5
+  
+  -The maximum value of this set of data =8997
+  
+  At the same time, we also divided the safety degree of different areas because the baseline value (the average value) corresponding to the community is medium. Forty-four communities above it are relatively dangerous areas. The three Communities with the highest crime rate are Waterfront Communities, Church-Young Corridor, and Bay Street Corridor
+. The 96 neighbourhoods below the average are relatively safe, with Lambton Baby Point, Young-St. Clair and Maple Leaf have the lowest crime rates.
+
+In addition, for further analysis, we also made a box plot for this group of data.
+We can observe the visual ratio of safe and dangerous communities in more detail through this figure.
+As we gained more information, we were able to further generalize the safety rating of the community, statistically, from the maximum to Q3 of the community.
+
+```{r}
+boxplot(totalCrime$Total)
+```
+
+Communities were classified as high risk, communities between Q3 and average were classified as relatively dangerous, communities between average and Q1 were classified as relatively safe, and communities between Q1 and minimum were classified as safest.
+
+Through this induction, we can see that there are 35 most dangerous areas, including Waterfront Communities, Church-Young Corridor and the other regions.
+
+There are 10 communities at risk, including Humber Summit, Parkwoods-Donalda, and Newtonbrook West.
+
+There are 60 relatively safe communities, including Don Valley Village, Hummvermede and Triniti-Bellwoods.
+
+35 very safe neighbourhoods, including Young-St.Clair, Guildwood, and Forest Hill South.
+Moreover, in order to observe these values, we also made a bar graph for this group of data, and we can see that a higher bar represents a higher crime rate.
+
+
+```{r}
+barplot(totalCrime$Total)
+```
+
+
+# **Discussion**
+
+According to our study of this group of data, summary and observation of images, of the 140 communities in Toronto, nearly 67.9% are relatively safe, and 32.1% are fairly dangerous.
+However, whether by observing Boxplot or directly comparing the difference between Q3 and Max, we can see that the difference between Q3 and Max is enormous, which, combined with the above information, represents a very uneven distribution of the number of crimes in the 35 more dangerous neighbourhoods from Q3 to Max. Even though all were classified as very dangerous, the number of crimes concentrated in some group regions was significantly higher than in other groups. Communities that are more at risk have a much smaller total, about 7 percent.
+In addition, we can see that the vast majority of the Toronto area is relatively safe, 35 communities are classified as very safe communities, and the gap between Q1 and the minimum value is relatively small. It can be inferred from this information that these communities as a whole still maintain a relatively safe atmosphere. The difference between mean and Q1 in the 60 safer communities is also relatively small, proving that most communities' crime rate is fairly average with slight fluctuation.
+
+
+# **The Increasing Trend Of Crime Rate**
+
+First, let's reclassify the data. Instead, this time we summed up the crime levels of all neighbourhood in years to get the total crime levels of each neighbourhood for each year of the period and then arranged the method identified the 95 neighbourhoods with the lowest crime levels as safer neighbourhoods.
+So to figure out how much crime there was per year in all of these neighbourhoods, we sum up all the data and get the total number of crimes per year in all of these 140 neighbourhoods.
+To find the sum of crime per year for the 95 safer neighbourhoods, we summed up the total crime per year for the relative safe neighbourhoods.
+
+
+
+
+```{r}
+HoodAndYear <- arrange(HoodAndYear, Total)
+bb <- filter(HoodAndYear)
+bbbb <- summarise(bb, t2014 = sum(Total_2014), t2015 = sum(Total_2015), t2016 = sum(Total_2016), t2017 = sum(Total_2017), t2018 = sum(Total_2018), t2019 = sum(Total_2019), t2020 = sum(Total_2020))
+bbbb <- data.frame(Value = unlist(bbbb), Year = factor(2014:2020))
+plot(Value ~ Year, bbbb)
+```
+
+As shown in the figure above, in general, the total crime rate of all different types in Toronto increased with a relatively small increase from 2014 to 2019, especially from 2014 to 2017, with no more than 3% of the previous year each time. However, the data entered a relatively rapid growth from 2017 to 2019, and the year with the highest increase was 2018-2019, when the crime increased by 6.65%, more than twice as much as before. From 2019 to 2020, the crime rate fell sharply to roughly the same level as in 2017, decreasing 4,915 crimes, the most significant fluctuation since the data was compiled in 2014 and 2020.
+We set the range of the vertical axis to 32,000 to 40,000. In this range, we can see that the increase from 2017 to 2019 was remarkably rapid and then declined in 2019-2020.
+
+
+
+```{r}
+HoodAndYear <- arrange(HoodAndYear, Total)
+hh <- filter(HoodAndYear, row_number() <= 95)
+ssss <- summarise(hh, t2014 = sum(Total_2014), t2015 = sum(Total_2015), t2016 = sum(Total_2016), t2017 = sum(Total_2017), t2018 = sum(Total_2018), t2019 = sum(Total_2019), t2020 = sum(Total_2020))
+ssss_l <- data.frame(Value = unlist(ssss), Year = factor(2014:2020))
+plot(Value ~ Year, ssss_l)
+```
+
+As shown in the chart above, for the 95 safer neighbourhoods, we can see very little change from 2014 to 2016, and the values within that range peaked in 2015. In addition, the data changed very little from 2016 to 2017. It can be said that the data hardly changed in the four years, and the most representative decrease was only 11 cases from 2015 to 2016. However, from 2017 to 2019, there was a very clear increase in crime, especially from 2018 to 2019, when the increase reached 1,251 cases, 113 times that of 2015 to 16. There was another significant drop in crime between 2019 and 2020.
+
+By comparing the two groups of data, it is not difficult to find that from 2014 to 2017, the growth rate of 95 safer communities is significantly lower than that of the overall 140 communities. The former fluctuates at a relatively stable value while the latter grows. However, from 2017 to 2019, both data groups showed a rapid growth trend and then began to decline in a relatively fast direction from 2019 to 2020.
+
+# Conclusion
+
+To conclude, by looking at the data provided by open-data-toronto, we found that of the 140 Toronto neighbourhoods, 35 had high crime rates, 10 had high crime rates, and 95 had relatively safe areas, and there has been a clear upward trend in total crime in any community in every year except 2019-20 (Toronto Police Service, 2021). Through this report, people can have a clearer understanding of the safety level of each community so that they can further understand the safety of residents in Toronto. In addition, people of different majors can also use this data set to do other meaningful things.
+
+In addition, based on this set of data, and data generated on the second page, we also observed that the amount of crime in 140 communities in Toronto and the maximum and average or Q3 the value of the difference is tremendous, it can confirm the whole community in Toronto crime quantity gap is very big, the majority of crime are concentrated in specific neighbourhoods, This can provide straightforward and effective information for people looking at this data set.
+On the other hand, even though some areas in Toronto have a high crime rate, 67% of the communities are classified as relatively safe communities. The average crime level is far from that of a small number of dangerous communities. For the 95 safer neighbourhoods, crime increased significantly in only two of the seven years of data and remained stable or declining in the rest of the year.
+So far, we can conclude that the vast majority of citizens can rest assured in most communities in Toronto, and the overall safety risks are relatively good.
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Reference
+
+Toronto Police Services. (2021, May 6). Open data dataset. City of Toronto Open Data Portal. Retrieved February 2, 2022, from https://open.toronto.ca/dataset/neighbourhood-crime-rates/ 
+
+
+
+Macleans. (2019, November 19). Open data dataset. Canada’s Most Dangerous Places 2020. Retrieved February 3, 2022, from https://www.macleans.ca/canadas-most-dangerous-places-2020/ 
+
+
+Rocca, R. (2022, February 4). Man charged in connection with fatal hit-and-run in Toronto: Police - toronto. Global News. Retrieved February 5, 2022, from https://globalnews.ca/news/8596710/weston-road-hit-and-run-suspect-id-charge/ 
