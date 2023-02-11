@@ -9,13 +9,14 @@ date: "`r Sys.time()`"
 date-format: "D MMMM YYYY"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
+number-sections: true
 bibliography: references.bib
 ---
 
 ```{r}
-#| include: FALSE
-
-knitr::opts_chunk$set(echo = TRUE)
+#| include: false
+#| warning: false
+#| message: false
 
 library(tidyverse)
 library(palmerpenguins)
@@ -24,11 +25,11 @@ library(palmerpenguins)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). Quarto automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
+You can and should cross-reference sections and sub-sections. For instance, @sec-data and @sec-first-point. 
 
 
 
-# Data
+# Data {#sec-data}
 
 Our data is of penguins (@fig-bills).
 
@@ -60,7 +61,7 @@ Also bills and their average (@fig-billssssss). (You can change the height and w
 ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(alpha = 0.8) +
   scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
+                    guide = "none") +
   theme_minimal() +
   facet_wrap(~species, ncol = 1) +
   coord_flip()
@@ -87,7 +88,7 @@ We can use maths by including latex between dollar signs, for instance $\theta$.
 
 # Discussion
 
-## First discussion point
+## First discussion point {#sec-first-point}
 
 If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
 

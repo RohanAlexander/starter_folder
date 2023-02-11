@@ -1,23 +1,19 @@
 ---
-title: "My title"
+title: "Datasheet for 'A dataset'"
 subtitle: "My subtitle if needed"
 author: 
   - First author
   - Another author
 thanks: "Code and data are available at: LINK."
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "`r Sys.time()`"
+date-format: "D MMMM YYYY"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
-output:
-  bookdown::pdf_document2
-toc: FALSE
-bibliography: references_datasheet.bib
+format: pdf
+number-sections: true
+bibliography: references.bib
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-Extract of the questions from @gebru2021datasheets
+Extract of the questions from @gebru2021datasheets.
 
 
 **Motivation**
