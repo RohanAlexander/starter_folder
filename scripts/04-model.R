@@ -31,7 +31,7 @@ first_model <-
 #### Save model ####
 saveRDS(
   first_model,
-  file = "outputs/models/first_model.rds"
+  file = "models/first_model.rds"
 )
 
 

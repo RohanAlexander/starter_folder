@@ -116,7 +116,7 @@ Our results are summarized in @tbl-modelresults.
 library(rstanarm)
 
 first_model <-
-  readRDS(file = here::here("outputs/models/first_model.rds"))
+  readRDS(file = here::here("models/first_model.rds"))
 ```
 
 ```{r}
