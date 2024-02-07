@@ -25,7 +25,7 @@ library(palmerpenguins)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. 
+You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
 The remainder of this paper is structured as follows. @sec-data....
 
@@ -60,7 +60,7 @@ And also planes (@fig-planes). (You can change the height and width, but don't w
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("outputs/data/analysis_data.csv"))
+analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
 
 analysis_data |> 
   ggplot(aes(x = width, y = length)) +
