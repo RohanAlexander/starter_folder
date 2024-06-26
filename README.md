@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo  contains the materials and work for a working paper studying the relationship between the usage of LLM tools like ChatGPT and educational achievement, using data from undergraduate performance in an upper-level Statistics course.
+This repo contains the materials and work for a working paper studying the relationship between the usage of LLM tools like ChatGPT and student educational achievement, using data from undergraduate performance in an upper-level Statistics course as a key example.
 
 
 ## File Structure
