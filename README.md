@@ -1,8 +1,8 @@
-# Starter folder
+# Working Paper on Usage of LLM Tools and Educational Achievement
 
 ## Overview
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
+This repo  contains the materials and work for a working paper studying the relationship between the usage of LLM tools like ChatGPT and educational achievement, using data from undergraduate performance in an upper-level Statistics course.
 
 
 ## File Structure
@@ -19,12 +19,10 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt.
+Aspects of the code were written with the help of models like GitHub Copilot and GPT-4o. The [parts of the paper] were written with the help of Claude-3.5 Sonnet. The entire chat history with each particular model is available in inputs/llms/usage.txt.
 
 ## Some checks
 
-- [ ] Change the rproj file name so that it's not starter_folder.Rproj
-- [ ] Change the README title so that it's not Starter folder
 - [ ] Remove files that you're not using
 - [ ] Update comments in R scripts
 - [ ] Remove this checklist
