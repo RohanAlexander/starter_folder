@@ -24,9 +24,18 @@ library(tidyverse)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+The rapid advancement of Large Language Models (LLMs) like ChatGPT has had massive effects in all areas of society, with some increases in productivity within some knowledge-based industries. Recent papers have demonstrated evidence of some productivity increases, in industries ranging from consulting to computer programming.  
 
-The remainder of this paper is structured as follows. @sec-data....
+On the lower end of productivity increases, Ben-Michael et al. (2024) conducted a randomized control trial with judges in Wisconsin to assess the impact of AI recommendations on bail hearing decisions. The study found that providing AI recommendations did not significantly improve judges' decision-making accuracy. 
+On the other hand, Peng et al. (2023) investigated the significantly positive impact of GitHub Copilot, an LLM-powered coding assistant, on programmer productivity. They conducted an experiment with 95 professional programmers recruited through Upwork. The study found that programmers with access to Copilot completed a standardized programming task 55.8% faster than the control group. In particular, less experienced programmers appeared to benefit more from the tool. 
+
+A study by Dell'Acqua et al. (2023) examined the impact of AI on management consulting tasks through a field experiment with 758 Boston Consulting Group consultants. They found that AI significantly increased performance across various business tasks, with speed increasing by over 25% and quality by more than 40%. However, the study revealed a "jagged technological frontier" where AI excelled in some tasks but struggled with others. Notably, AI usage appeared to level performance differences across ability levels, with lower-performing consultants benefiting the most, similar to that of Peng et al. 
+
+We can see in the current literature that LLMs have had varying levels of impact across different knowledge-intensive industries, with more computer-intensive tasks like programming receiving the highest performance boosts. One area sorely lacking quantitative evidence of performance increases is within higher education, an area where scrutiny of the impact of LLMs and other AI tools has been common. Cahill and McCabe (2023) conducted a survey of undergraduate political science students, revealing widespread use of AI tools like ChatGPT. However, their study also uncovered a significant gap in students' perceived competence in using these tools effectively for academic work, though it remains to be seen if this gap is smaller in numerical-based fields like statistics and data science. 
+
+Given the rapid integration of AI tools in educational and professional settings, there is an urgent need to understand how these technologies affect student learning and performance, particularly in fields like data science and statistics. This paper aims to investigate the relationship between LLM usage and academic performance, using evidence from an exit survey of a third-year undergraduate statistics course at the University of Toronto. By examining [how students interact with AI tools and how this usage correlates with their grades, we seek to understand the potential benefits and pitfalls of AI integration in data science education].
+
+The remainder of this paper is structured as follows: @sec-data analyzes our survey data; @sec-model models our unstructured data to find fun and cool things; @sec-results lists the results; @sec-discussion discusses the implications of these findings for data science education and for future research and practice in this rapidly evolving field.
 
 
 
@@ -34,7 +43,7 @@ The remainder of this paper is structured as follows. @sec-data....
 
 
 
-# Model
+# Model {#sec-model}
 
 The goal of our modelling strategy is twofold. Firstly,...
 
@@ -63,42 +72,17 @@ We expect a positive relationship between the size of the wings and time spent a
 We can use maths by including latex between dollar signs, for instance $\theta$.
 
 
-# Results
+# Results {#sec-results}
 
 Our results are summarized in @tbl-modelresults.
 
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
-```
-
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
-
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
-```
 
 
 
 
-# Discussion
+
+
+# Discussion {#sec-discussion}
 
 ## First discussion point {#sec-first-point}
 
@@ -125,51 +109,16 @@ Weaknesses and next steps should also be included.
 
 ## Posterior predictive check
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
+In ... we implement a posterior predictive check. This shows...
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+In ... we compare the posterior with the prior. This shows... 
 
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+... is a trace plot. It shows... This suggests...
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
+... is a Rhat plot. It shows... This suggests...
 
 
 
