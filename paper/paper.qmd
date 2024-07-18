@@ -21,6 +21,10 @@ bibliography: references.bib
 library(tidyverse)
 ```
 
+```{r}
+# Import data (CHANGE WHEN FULLY CLEAN!)
+raw_data <- read_csv("data/raw_data/raw_STA302_postcourse_survey_w24.csv")
+```
 
 # Introduction
 
@@ -42,6 +46,19 @@ The remainder of this paper is structured as follows: @sec-data analyzes our sur
 
 
 # Data {#sec-data}
+
+```{r}
+#Histogram of GPA
+
+raw_data |>
+  ggplot(aes(x = gpa)) +
+  geom_histogram(binwidth = 0.1, fill = "skyblue", color = "black") +
+  labs(title = "Distribution of GPAs in the Survey Data",
+       x = "GPA",
+       y = "Frequency") +
+  theme_minimal()
+
+```
 
 
 
