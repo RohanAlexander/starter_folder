@@ -16,7 +16,7 @@ raw_data <- read_csv("data/raw_data/raw_STA302_postcourse_survey_w24.csv")
 
 raw_data <- as_tibble(raw_data)
 
-# Clean up names of columns
+# CLEAN UP COLUMN NAMES
 
 raw_data <- raw_data |> 
   clean_names()
@@ -47,11 +47,14 @@ raw_data <- raw_data |>
     other_comments = optional_any_other_comments
   )
 
-# Drop rows for students who did not consent
+# DROP ROWS FOR UNCONSENTING STUDENT OR TA
 raw_data <- raw_data |>
-  filter(consent == "Yes, I authorize the use of the data collected about me for the STA302 course survey to be used. I will be compensated 1% of my course grade for completing the survey.")
+  filter(
+    consent == "Yes, I authorize the use of the data collected about me for the STA302 course survey to be used. I will be compensated 1% of my course grade for completing the survey.", 
+    year != "TA"
+    )
 
-# Drop unnecessary columns
+# DROP UNECESSARY OR UNSPECIFIED COLUMNS
 raw_data <- raw_data |>
   select(-c(email,
             name, 
@@ -63,6 +66,13 @@ raw_data <- raw_data |>
             minor, #none submitted
             ))
 
+
+# CLEAN YEARS
+raw_data <- raw_data |>
+  mutate(
+    year = str_sub(year, 1, 3)
+  )
+  
 
 # Standardize program names 
 
@@ -83,7 +93,7 @@ standard_programs <- list(
   "Cognitive Science" = c("Cognitive Science", "Cog Sci", "Cogsci", "cognitive science", "COGNITIVE SCIENCE", "COG SCI", "cogsci", "Cogsci", "cog sci"),
   "Engineering" = c("Engineering Science", "engineering science", "ENGINEERING SCIENCE", "Engineering", "engineering", "ENGINEERING"),
   "Life Sciences" = c("Life Sciences", "Life science", "Life Science", "Physiology", "life sciences", "life science", "LIFE SCIENCES", "LIFE SCIENCE", "physiology", "PHYSIOLOGY"),
-  "Physics" = c("Chemical Physics", "chemical physics", "CHEMICAL PHYSICS", "Physics", "physics", "PHYSICS"),
+  "Physics" = c("Chemical Physics Specialist", "chemical physics", "CHEMICAL PHYSICS", "Physics", "physics", "PHYSICS"),
   "Data Science" = c("Data science", "data science", "DATA SCIENCE", "Data Science", "Data sci", "data sci")
 )
 
@@ -110,16 +120,13 @@ standardize_program <- function(input_string, mapping) {
 raw_data <- raw_data |>
   mutate(program_of_study = sapply(program_of_study, function(x) standardize_program(x, standard_programs)))
 
-print(raw_data)
-
-# Clean GPA column
-
+# CLEAN GPA COLUMN
 raw_data <- raw_data |>
   mutate(
     gpa = ifelse(str_detect(gpa, "[0-9]"), as.numeric(gpa), NA)
   )
 
-# Fix text errors in self-perception questions
+# FIX ERRORS IN SELF PERCEPTION QUESTIONS
 assign_likert_value <- function(x) {
   case_when(
     x == "\"This is very different to me\"" ~ "This is very different to me",
@@ -148,7 +155,7 @@ raw_data <- raw_data |>
     i_am_confident_in_my_overall_coding_ability = assign_likert_value(i_am_confident_in_my_overall_coding_ability),
   )
 
-# Clean up AI Helpfulness
+# CLEAN UP AI HELPFULNESS
 
 remove_quotes <- function(x){
   str_remove_all(x, "\"")
@@ -165,7 +172,36 @@ raw_data <- raw_data |>
   )
 
 
-# TODO: Expand out AI use cases from list into cols with binaries.  
+# EXPAND OUT AI USE CASES FROM ai_use_case.
+
+#If they put "never used it" then all other columns should be 0
+check_use_case <- function(use_case, use_cases) {
+  if (str_detect(use_cases, use_case)) {
+    return(1)
+  } else {
+    return(0)
+  }
+}
+
+raw_data <- raw_data |>
+  mutate(
+    not_used = sapply(ai_use_cases, function(x) check_use_case("Never used it", x))
+  ) |>
+  mutate(
+    used_technical_q = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Asking technical questions", x))),
+    used_conversation = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Carrying on a conversation out of curiosity", x))),
+    used_general_knowledge = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Asking general knowledge questions", x))),
+    used_solving_hmk = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Solving homework", x))),
+    used_check_soln = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Checking solutions", x))),
+    used_quick_q = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Asking quick questions when stuck", x))),
+    used_expl_concepts = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Explaining concepts", x))),
+    used_writing_content = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Writing essays or paragraphs", x))),
+    used_writing_code = ifelse(not_used == 1, 0, sapply(ai_use_cases, function(x) check_use_case("Writing code", x)))
+  )
+
+#drop ai_use_cases
+raw_data <- raw_data |>
+  select(-ai_use_cases)
 
 
 #### Save data ####
