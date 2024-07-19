@@ -11,19 +11,23 @@ abstract: "Blah Blah Blah Blah"
 format: pdf
 number-sections: true
 bibliography: references.bib
+nocite: |
+  @*
 ---
 
-```{r}
+```{r setup}
+## Workspace Setup ##
 #| include: false
 #| warning: false
 #| message: false
 
 library(tidyverse)
-```
+library(knitr)
+library(kableExtra)
+library(lintr)
 
-```{r}
-# Import data (CHANGE WHEN FULLY CLEAN!)
-raw_data <- read_csv("data/raw_data/raw_STA302_postcourse_survey_w24.csv")
+# Import data
+survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w24.csv")
 ```
 
 # Introduction
@@ -47,40 +51,125 @@ The remainder of this paper is structured as follows: @sec-data analyzes our sur
 
 # Data {#sec-data}
 
+```{r fig-boilerplate}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-align: center
+
+# survey_data |>
+#   ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
+#   #put geom type here (put before compilation) +
+#   labs(title = "Title!",
+#        x = "X label",
+#        y = "Y label") +
+#   theme_minimal() +
+#   scale_fill_discrete(name="Legend Title") +
+#   theme(plot.title.position = "plot",
+#         plot.title = element_text(hjust = 0.5)
+#         )
+
+```
+
+```{r tbl-boilerplate}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: (CHANGE) Boilerplate table caption 
+#| fig-align: center
+
+#Put code below this line
+
+```
+
 ```{r fig-gpa-hist}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Distribution of Student GPA
+#| fig-align: center
+
 #Histogram of GPA
 
-raw_data |>
-  ggplot(aes(x = gpa)) +
-  geom_histogram(binwidth = 0.1, fill = "skyblue", color = "black") +
-  labs(title = "Distribution of GPAs in the Survey Data",
-       x = "GPA",
-       y = "Frequency") +
-  theme_minimal()
+survey_data |>
+    ggplot(aes(x = gpa)) +
+    geom_histogram(binwidth = 0.1, fill = "skyblue", color = "black") +
+    labs(title = "Distribution of Student GPA",
+         x = "GPA",
+         y = "Frequency") +
+    theme_minimal() +
+    theme(plot.title.position = "plot",
+          plot.title = element_text(hjust = 0.5))
 
 ```
 
 ```{r fig-year-bar}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Distribution of Students by Year
+#| fig-align: center
+
 #Bar plot of year
-raw_data |> ggplot(aes(x = year)) +
-  geom_bar(fill = "skyblue", color = "black") +
-  labs(title = "Distribution of Students by Year",
-       x = "Year",
-       y = "Frequency") +
-  theme_minimal()
+survey_data |> ggplot(aes(x = year)) +
+    geom_bar(fill = "skyblue", color = "black") +
+    labs(title = "Distribution of Students by Year",
+         x = "Year",
+         y = "Frequency") +
+    theme_minimal() +
+    theme(plot.title.position = "plot",
+          plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r fig-programs-pie}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Student Self-Perception of Writing Ease
+#| fig-align: center
+
+#Pie chart of program of study
+
+program_counts <- survey_data |> 
+  count(program_of_study)
+
+ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = "Distribution of Unique Programs",
+       x = NULL,
+       y = NULL) +
+  theme_minimal() +
+  scale_fill_discrete(name="Program") +
+  theme(axis.text.x = element_blank(),  # Remove x-axis text
+        axis.title.x = element_blank(), # Remove x-axis title
+        plot.title = element_text(hjust = 1.35)
+        )
+
 
 ```
 
 ```{r fig-writingease-bar}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Student Self-Perception of Writing Ease
+#| fig-align: center
+
 #Bar plot of writing ease
-raw_data |> ggplot(aes(x = writing_is_easy_for_me)) +
+survey_data |> ggplot(aes(x = writing_is_easy_for_me)) +
   geom_bar(fill = "skyblue", color = "black") +
-  labs(title = "Distribution of Responses to AI Schoolwork Appropriateness",
+  labs(title = "Agreement to the Statement: \"Writing is Easy for Me\"",
        x = "Response",
        y = "Frequency") +
-  theme_minimal()  # <- fix the labels as they encroach. NO it broke.
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5))
 
 ```
+
 
 
 

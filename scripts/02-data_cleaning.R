@@ -68,6 +68,7 @@ raw_data <- raw_data |>
 
 
 # CLEAN YEARS
+
 raw_data <- raw_data |>
   mutate(
     year = str_sub(year, 1, 3)
@@ -205,4 +206,5 @@ raw_data <- raw_data |>
 
 
 #### Save data ####
+cleaned_data <- raw_data
 write_csv(cleaned_data, "data/analysis_data/clean_STA302_postcourse_survey_w24.csv")
