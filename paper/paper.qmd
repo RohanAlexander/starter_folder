@@ -47,7 +47,7 @@ The remainder of this paper is structured as follows: @sec-data analyzes our sur
 
 # Data {#sec-data}
 
-```{r}
+```{r fig-gpa-hist}
 #Histogram of GPA
 
 raw_data |>
@@ -57,6 +57,28 @@ raw_data |>
        x = "GPA",
        y = "Frequency") +
   theme_minimal()
+
+```
+
+```{r fig-year-bar}
+#Bar plot of year
+raw_data |> ggplot(aes(x = year)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Students by Year",
+       x = "Year",
+       y = "Frequency") +
+  theme_minimal()
+
+```
+
+```{r fig-writingease-bar}
+#Bar plot of writing ease
+raw_data |> ggplot(aes(x = writing_is_easy_for_me)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Responses to AI Schoolwork Appropriateness",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal()  # <- fix the labels as they encroach. NO it broke.
 
 ```
 
