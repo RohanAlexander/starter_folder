@@ -1,4 +1,4 @@
-# Working Paper on Usage of LLM Tools and Educational Achievement
+# *Working Paper*: Usage of LLM Tools and Student Performance
 
 ## Overview
 
