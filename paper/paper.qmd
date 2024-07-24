@@ -11,8 +11,8 @@ abstract: "Blah Blah Blah Blah"
 format: pdf
 number-sections: true
 bibliography: references.bib
-nocite: |
-  @*
+nocite: | #references.bib entries at end, regardless of intext citation
+  @* 
 ---
 
 ```{r setup}
@@ -25,6 +25,7 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(lintr)
+library(tidyr)
 
 # Import data
 survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w24.csv")
@@ -111,6 +112,18 @@ survey_data |>
 #| tbl-cap: Distribution of Students by Year
 #| fig-align: center
 
+# Change PEY to 4th year
+survey_data <- survey_data |>
+    mutate(
+      year = case_when(
+        year == "PEY" ~ "4th",
+        year == "5th" ~ "5th+",
+        year == "6th" ~ "5th+",
+        TRUE ~ year
+      )
+    )
+
+
 #Bar plot of year
 survey_data |> ggplot(aes(x = year)) +
     geom_bar(fill = "skyblue", color = "black") +
@@ -151,27 +164,284 @@ ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
 
 ```
 
-```{r fig-writingease-bar}
+```{r fig-response-time-hist}
 #| message: false
 #| echo: false
 #| warning: false
-#| tbl-cap: Student Self-Perception of Writing Ease
+#| fig-cap: Distribution of Survey Response Times
 #| fig-align: center
 
-#Bar plot of writing ease
-survey_data |> ggplot(aes(x = writing_is_easy_for_me)) +
-  geom_bar(fill = "skyblue", color = "black") +
-  labs(title = "Agreement to the Statement: \"Writing is Easy for Me\"",
-       x = "Response",
-       y = "Frequency") +
-  theme_minimal() +
-  theme(plot.title.position = "plot",
-        plot.title = element_text(hjust = 0.5))
+#Trim values to histogram
+
+plot_data <- survey_data |>
+    filter(mins_complete < 1000)
+
+plot_data |>
+    ggplot(aes(x = mins_complete)) +
+    geom_histogram(binwidth = 0.1, fill = "skyblue", color = "black") +
+    labs(title = "Distribution of Survey Response Times",
+         x = "Time (Mins)",
+         y = "Frequency") +
+    theme_minimal() +
+    theme(plot.title.position = "plot",
+          plot.title = element_text(hjust = 0.5))
 
 ```
 
 
+```{r fig-writing-multibar-1}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Student Self-Perceptions on Writing, Part 1
+#| fig-align: center
 
+# Create a multi-bar plot for writing perceptions grouped by response 
+
+#Select first three statements
+writing_perceptions <- survey_data |>
+  select(
+    writing_is_easy_for_me, 
+    i_like_to_write, 
+    i_believe_it_is_important_to_be_a_good_writer
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+    Statements = case_when(
+      Statements == "writing_is_easy_for_me" ~ "\"Writing is easy for me\"",
+      Statements == "i_like_to_write" ~ "\"I like to write\"",
+      Statements == "i_believe_it_is_important_to_be_a_good_writer" ~ "\"I believe it is important\n to be a good writer\"",
+      TRUE ~ Statements
+    ), 
+    Response = case_when(
+      Response == "This is a lot like me" ~ "A lot like me",
+      Response == "This is very different to me" ~ "Very different from me",
+      Response == "This somewhat describes me" ~ "Somewhat describes me",
+    )
+  ) |>
+  filter(!is.na(Response))
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions on Writing",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+        legend.position= "bottom", 
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+
+multi_bar
+
+# TODO: Fix label, Fix Legend title, Fix legibility of Response 
+
+```
+
+```{r fig-writing-multibar-2}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Student Self-Perceptions on Writing, Part 2
+#| fig-align: center
+
+# Create a multi-bar plot for writing perceptions grouped by response 
+
+# Select last three statements
+writing_perceptions <- survey_data |>
+  select(
+    when_i_edit_it_is_easy_for_me_to_catch_my_mistakes, 
+    i_feel_confident_sharing_my_writing, 
+    i_am_confident_in_my_overall_writing_ability
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+      Statements = case_when(
+      Statements == "when_i_edit_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I edit, it is easy to\n catch my own mistakes\"",
+      Statements == "i_feel_confident_sharing_my_writing" ~ "\"I feel confident\n sharing my writing\"",
+      Statements == "i_am_confident_in_my_overall_writing_ability" ~ "\"I am confident in\n my own writing ability\"",
+      TRUE ~ Statements
+    ), 
+    Response = case_when(
+      Response == "This is a lot like me" ~ "A lot like me",
+      Response == "This is very different to me" ~ "Very different from me",
+      Response == "This somewhat describes me" ~ "Somewhat describes me",
+    )
+  ) |>
+  filter(!is.na(Response))
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions on Writing",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+        legend.position= "bottom", 
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+
+multi_bar
+```
+
+
+```{r fig-coding-multibar-1}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Student Self-Perceptions on Coding, Part 1
+#| fig-align: center
+
+# Create a multi-bar plot for writing perceptions grouped by response 
+
+#Select first three statements
+writing_perceptions <- survey_data |>
+  select(
+    coding_is_easy_for_me,
+    i_like_to_code,
+    i_believe_it_is_important_to_be_a_good_coder
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+    Statements = case_when(
+      Statements == "coding_is_easy_for_me" ~ "\"Coding is easy for me\"",
+      Statements == "i_like_to_code" ~ "\"I like to code\"",
+      Statements == "i_believe_it_is_important_to_be_a_good_coder" ~ "\"I believe it is important\n to be a good coder\"",
+      TRUE ~ Statements
+    ), 
+    Response = case_when(
+      Response == "This is a lot like me" ~ "A lot like me",
+      Response == "This is very different to me" ~ "Very different from me",
+      Response == "This somewhat describes me" ~ "Somewhat describes me",
+    )
+  ) |>
+  filter(!is.na(Response))
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions of Coding",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+        legend.position= "bottom", 
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+
+multi_bar
+
+```
+
+```{r fig-coding-multibar-2}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Student Self-Perceptions on Coding, Part 2
+#| fig-align: center
+
+# Create a multi-bar plot for writing perceptions grouped by response 
+
+#Select first three statements
+writing_perceptions <- survey_data |>
+  select(
+    when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes, 
+    i_feel_confident_sharing_my_code,
+    i_am_confident_in_my_overall_coding_ability
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+    Statements = case_when(
+      Statements == "when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I check my code, it is\n easy for me to catch my mistakes\"",
+      Statements == "i_feel_confident_sharing_my_code" ~ "\"I feel confident sharing my code\"",
+      Statements == "i_am_confident_in_my_overall_coding_ability" ~ "\"I am confident in\n my overall coding ability\"",
+      TRUE ~ Statements
+    ), 
+    Response = case_when(
+      Response == "This is a lot like me" ~ "A lot like me",
+      Response == "This is very different to me" ~ "Very different from me",
+      Response == "This somewhat describes me" ~ "Somewhat describes me",
+    )
+  ) |>
+  filter(!is.na(Response))
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions of Coding",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+        legend.position= "bottom", 
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.4, textSize = 8.5, spaceLegend = 0.8)
+
+multi_bar
+
+```
 
 # Model {#sec-model}
 

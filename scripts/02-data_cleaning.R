@@ -54,6 +54,8 @@ raw_data <- raw_data |>
     year != "TA"
     )
 
+
+
 # DROP UNECESSARY OR UNSPECIFIED COLUMNS
 raw_data <- raw_data |>
   select(-c(email,
@@ -62,10 +64,14 @@ raw_data <- raw_data |>
             consent, 
             student_name, 
             student_id, 
-            major, #none submitted
-            minor, #none submitted
             ))
 
+# CALCULATE TIME TO COMPLETE SURVEY
+
+raw_data <- raw_data |>
+  mutate(
+    mins_complete = round(as.numeric(difftime(as.POSIXct(completion_time), as.POSIXct(start_time), units = "mins")), 2)
+  )
 
 # CLEAN YEARS
 
