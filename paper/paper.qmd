@@ -49,7 +49,6 @@ Given the rapid integration of AI tools in educational and professional settings
 The remainder of this paper is structured as follows: @sec-data analyzes our survey data; @sec-model models our unstructured data to find fun and cool things; @sec-results lists the results; @sec-discussion discusses the implications of these findings for data science education and for future research and practice in this rapidly evolving field.
 
 
-
 # Data {#sec-data}
 
 ```{r fig-boilerplate}
@@ -105,6 +104,8 @@ survey_data |>
 
 ```
 
+#Maybe a table for the years instead? 
+
 ```{r fig-year-bar}
 #| message: false
 #| echo: false
@@ -140,7 +141,7 @@ survey_data |> ggplot(aes(x = year)) +
 #| message: false
 #| echo: false
 #| warning: false
-#| tbl-cap: Student Self-Perception of Writing Ease
+#| tbl-cap: Student Distribution by Program of Study
 #| fig-align: center
 
 #Pie chart of program of study
@@ -151,7 +152,7 @@ program_counts <- survey_data |>
 ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
   geom_bar(stat = "identity", width = 1) +
   coord_polar("y") +
-  labs(title = "Distribution of Unique Programs",
+  labs(title = "Student Distribution by Program of Study",
        x = NULL,
        y = NULL) +
   theme_minimal() +
@@ -159,7 +160,9 @@ ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
   theme(axis.text.x = element_blank(),  # Remove x-axis text
         axis.title.x = element_blank(), # Remove x-axis title
         plot.title = element_text(hjust = 1.35)
-        )
+        ) +
+  geom_text(aes(label = n), 
+            position = position_stack(vjust = 0.5))
 
 
 ```
@@ -324,7 +327,7 @@ multi_bar
 #| tbl-cap: Student Self-Perceptions on Coding, Part 1
 #| fig-align: center
 
-# Create a multi-bar plot for writing perceptions grouped by response 
+# Create a multi-bar plot for coding self-perceptions grouped by response 
 
 #Select first three statements
 writing_perceptions <- survey_data |>
@@ -387,7 +390,7 @@ multi_bar
 #| tbl-cap: Student Self-Perceptions on Coding, Part 2
 #| fig-align: center
 
-# Create a multi-bar plot for writing perceptions grouped by response 
+# Create a multi-bar plot for coding self-perceptions grouped by response 
 
 #Select first three statements
 writing_perceptions <- survey_data |>
@@ -440,6 +443,189 @@ multi_bar <- writing_perceptions_long |>
 multi_bar <- addSmallLegend(multi_bar, pointSize = 0.4, textSize = 8.5, spaceLegend = 0.8)
 
 multi_bar
+
+```
+
+```{r tbl-ai-familiarity}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Familiarity with AI of students
+#| fig-align: center
+
+table_data <- survey_data |>
+    select(ai_familiarity)|>
+    mutate(
+      ai_familiarity = case_when(
+        ai_familiarity == "Limited to some liberal arts, such as history courses" ~ "Somewhat familiar",
+        TRUE ~ ai_familiarity
+      )
+    ) |>
+    count(ai_familiarity) |>
+    pivot_wider(
+      names_from = "ai_familiarity",
+      values_from = "n"
+    )
+  
+   
+
+kable(table_data) |>
+  kable_styling(bootstrap_options = "striped", full_width = F) |>
+  column_spec(1, bold = T)
+
+
+
+```
+
+```{r fig-ai_use-multibar}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: AI Use
+#| fig-align: center
+
+# Create a multi-bar plot for AI use/perceptions grouped by response 
+
+#Select first three statements
+writing_perceptions <- survey_data |>
+  select(
+    used_ai_any_reason, 
+    used_ai_in_sta302
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+    Statements = case_when(
+      Statements == "used_ai_any_reason" ~ "Used AI for any reason",
+      Statements == "used_ai_in_sta302" ~ "Used AI in Class",
+      TRUE ~ Statements
+    ), 
+  ) |>
+  filter(!is.na(Response)) |>
+  filter(Response == "No" | Response == "Yes")
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions of Coding",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+
+multi_bar
+
+```
+
+```{r fig-ai-appropriate-pie}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Comparison of Whether AI Use is Appropriate in School
+#| fig-align: center
+
+#Pie chart of program of study
+
+appropriate <- survey_data |> 
+  select(ai_schoolwork_appropriate) |>
+  mutate(
+    ai_schoolwork_appropriate = case_when(
+      ai_schoolwork_appropriate == "Appropriate" ~ "Appropriate",
+      ai_schoolwork_appropriate == "Inappropriate" ~ "Inappropriate",
+      TRUE ~ "It depends"
+    )
+  ) |>
+  count(ai_schoolwork_appropriate)
+
+appropriate
+  
+
+ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  labs(title = "Do students think AI use is appropriate in class?",
+       x = NULL,
+       y = NULL) +
+  theme_minimal() +
+  scale_fill_discrete(name="Response") +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_blank(),  # Remove x-axis text
+        axis.title.x = element_blank(),
+      ) +
+  geom_text(aes(label = n), 
+            position = position_stack(vjust = 0.5)) 
+
+
+```
+
+```{r fig-AI-usage-type-comp}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-align: center
+
+survey_data |>
+    select(
+      not_used,
+      used_technical_q,
+      used_conversation,
+      used_general_knowledge,
+      used_solving_hmk,
+      used_check_soln,
+      used_quick_q,
+      used_expl_concepts,
+      used_writing_content,
+      used_writing_code
+    )|>
+    pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+    filter(Response == 1) |>
+    count(Statements) |>
+    mutate(Statements = case_when(
+      Statements == "not_used" ~ "Not Used",
+      Statements == "used_technical_q" ~ "Technical Questions",
+      Statements == "used_conversation" ~ "Fun Conversation",
+      Statements == "used_general_knowledge" ~ "General Knowledge",
+      Statements == "used_solving_hmk" ~ "Entirely Solving Homework",
+      Statements == "used_check_soln" ~ "Checking my Solutions",
+      Statements == "used_quick_q" ~ "Quick Questions",
+      Statements == "used_expl_concepts" ~ "Explaining Concepts",
+      Statements == "used_writing_content" ~ "Writing Paper Content",
+      Statements == "used_writing_code" ~ "Writing Paper Code",
+      TRUE ~ Statements
+    ))|>
+    ggplot(aes(x = Statements, y = reorder(Statements, n))) +
+    geom_bar(fill="grey50") +
+    labs(title="How Students Used ChatGPT", x="Count", y="Use Type") +
+    theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5),
+          panel.background = element_blank(),
+          axis.line.y=element_line(color="black"),
+          axis.ticks.y=element_blank(),
+          panel.grid.major.x=element_line(color="grey80"),
+          panel.grid.minor=element_blank(),
+          plot.title.position = "plot",
+          plot.title = element_text(hjust = 0.5))
+    
+
+bbb
+
 
 ```
 
