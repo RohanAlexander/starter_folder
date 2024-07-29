@@ -7,7 +7,7 @@ author:
 thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement."
 date: today
 date-format: long
-abstract: "Blah Blah Blah Blah"
+abstract: "An abstract should eventually go here!!"
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -15,11 +15,9 @@ nocite: | #references.bib entries at end, regardless of intext citation
   @* 
 ---
 
-```{r setup}
+```{r setup, include=FALSE}
+
 ## Workspace Setup ##
-#| include: false
-#| warning: false
-#| message: false
 
 library(tidyverse)
 library(knitr)
@@ -28,28 +26,41 @@ library(lintr)
 library(tidyr)
 
 # Import data
-survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w24.csv")
+survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w24.csv", show_col_types = FALSE)
 ```
 
 # Introduction
 
-The rapid advancement of Large Language Models (LLMs) like ChatGPT has had massive effects in all areas of society, with notable increases in productivity within some knowledge-based industries. Recent papers have demonstrated evidence of some productivity increases, in industries ranging from consulting to computer programming.  
+The wide release of ChatGPT and other Large Language Models (LLMs) has rapidly transformed various parts of society, in particular the field of education. As these tools are increasingly accessible, their adoption and use in academic settings has created excitement and apprehension among educators and students alike. LLMs offer unprecedented support for students in tasks ranging from writing assistance to support in complex problem-solving, with the potential to enhance academic performance and student outcomes. At the same time, their use raises questions about academic integrity, the development of critical thinking skills (particular in undergraduates), as well as questions about their implications for effective learning overall. 
 
-On the lower end of productivity increases, @Ben_2024 conducted a randomized control trial with judges in Wisconsin to assess the impact of AI recommendations on bail hearing decisions. The study found that providing AI recommendations did not significantly improve judges' decision-making accuracy. 
-On the other hand, @Peng_2023 investigated the significantly positive impact of GitHub Copilot, an LLM-powered coding assistant, on programmer productivity. They conducted an experiment with 95 professional programmers recruited through Upwork. The study found that programmers with access to Copilot completed a standardized programming task 55.8% faster than the control group. In particular, less experienced programmers appeared to benefit more from the tool. 
+The potential for LLMs to positively affect students' academic performance in data science can be clearly inferred from already-demonstrated effects on adjacent professional fields. The tasks involved in a data science workflow can be generally broken down into two key competencies. The first is programming, which is done when cleaning, analyzing, visualizing data using languages like R or Python. The second is writing, which is primarily done when communicating results. There is experimental evidence from adjacent professional fields that LLMs can improve productivity in both of these competencies. 
 
-Examining the middle-ground, a study by @DellAcqua_2023 examined the impact of AI on management consulting tasks through a field experiment with 758 Boston Consulting Group consultants. They found that AI significantly increased performance across various business tasks, with speed increasing by over 25% and quality by more than 40%. However, the study revealed a "jagged technological frontier" where AI excelled in some tasks but struggled with others. Notably, AI usage appeared to level performance differences across ability levels, with lower-performing consultants benefiting the most, similar to that of Peng et al. 
+@Peng_2023 shows the potential impact of LLMs on students' computer programming skills, through their uncovering of the significantly positive impacts of GitHub Copilot (an LLM-powered programming assistant) on the productivity of computer programmers. In an experiment involving 95 freelance programmers, they found that that programmers with access to Copilot completed a standardized programming task 55.8% faster than the control group. Crucially, it was found that programmers with less experience saw the greatest improvements in productivity. Given that programming is a core component of data science practice, this suggests that these benefits would carry over to students in data science courses as well. 
 
-We can see in the current literature that LLMs have had varying levels of impact across different knowledge-intensive industries, with more computer-intensive tasks like programming receiving the highest performance boosts. One area sorely lacking quantitative evidence of performance increases is within higher education, an area where scrutiny of the impact of LLMs and other AI tools has been common. A survey of undergraduate political science students was conducted by @Cahill_2024, revealing widespread use of AI tools like ChatGPT. However, their study also uncovered a significant gap in students' self-perceived competence in using these tools effectively for academic work. 
+@DellAcqua_2023, while primarily about management consulting tasks, provides evidence that LLMs can significantly improve writing productivity. In a field experiment involving Consultants recruited from the Boston Consulting Group (BCG), they found that the use of GPT-4 in the experimental group led to a 25% increase in delivery speed of business tasks (most involving some writing), as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%. The authors expressed particular optimism for LLMs' potential to generally expedite  knowledge-work-related tasks, such as generating new ideas and persuasive and informative writing, which has direct application to data science education through the writing of more engaging reports and documentation. That said, not all AI tasks yielded the same quality of results.
 
-Student challenges while learning Data Science in particular were explored by @kross2019. By polling instructor-practitioners of Data Science in academia and industry, they found several key challenges that data science students face. The largest challenges they faced were diverse computing backgrounds, integrating various technical workflows, software setup, finding relevant datasets, as well as dealing with the inherent uncertainty of the data analysis process. 
+The implications of this evidence appear promising. However, literature in domains both adjacent to and distant from statistics and data science suggest much more varied opinions on how LLMs can impact student performance, much less specifically in data science and statistics coursework.
 
-Given the rapid integration of AI tools in educational and professional settings, there is a need to understand how these technologies and students' attitudes toward LLMs affect their  learning and performance. This paper aims to investigate the relationship between academic performance, LLM usage, and students' perceptions of LLMs, using evidence from an exit survey of a third-year undergraduate statistics course at the University of Toronto. By examining how students interact with and perceive LLM tools and how this usage correlates with their grades, we seek to understand the potential benefits and pitfalls of AI integration in data science education.
+Among other consequences of LLM use, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity (which leads to less original work) and de-skilling (primarily with respect to programming ability). These particular outcomes could negatively affect students' effective learning of data science. On the other hand, @Ellis_Slade_2023 take a more optimistic perspective, taking the popular stance of comparing ChatGPT to previously controversial learning technologies like calculators. They argue that LLMs are just another technology that will impact Statistics and Data Science education like the calculator did. However, they take a broader perspective on the issue and more specific inquiry could be done in how effective LLMs are at improving student outcomes within data science education in particular. 
 
-The remainder of this paper is structured as follows: @sec-data analyzes our survey data; @sec-model models our unstructured data to find fun and cool things; @sec-results lists the results; @sec-discussion discusses the implications of these findings for data science education and for future research and practice in this rapidly evolving field.
+Speaking generally about data science education, @Tu_2024 acknowledge that for students, LLMs can streamline many parts of a data science workflow - with that in mind, they suggest that budding data scientists should shift their self-perspectives from being an analyst to being a manager responsible for strategic oversight. They emphasize that in both education and practice, LLMs and human intelligence should play complementary roles. 
+
+The simultaneous excitement and caution the literature expressed toward using LLMs in educational settings was further corroborated by empirical studies on K-12 and university students as well. 
+
+At the high school level, @Lazar_2023 conducted a informal survey of secondary school teachers and students on their opinions of ChatGPT, they found that while LLMs could help spark creativity, provide academic support when teachers were unavailable, and model certain types of writing well, teachers were also cognizant of LLMs potential to limit students' learning in certain ways through overreliance. Beyond academic integrity concerns, teachers had similar concerns about de-skilling and an overall loss of agency in writing and critical thinking.
+
+@Cahill_2024 surveyed undergraduate Political Science students on their attitudes and self-perceived usage of AI tools (which included LLMs like ChatGPT). They found that the use of ChatGPT (among other machine-learning-powered software) was widespread. However, they also found that many students lacked the confidence in using AI for academic purposes - in particular, only 11% 'strongly agreed' that they know how to use AI to improve their writing. Like educators,  students have nuanced views on appropriate AI use. In particular, respondents found that using it to writing whole papers as inappropriate, while using it for basic tasks like general assistance, writing feedback and basic data visualization was perceived more appropriately. Interestingly, first-generation college students were found to be more likely to use AI in their work, particularly in writing papers and helping with assignments. Their findings suggest that LLMs and other AI tools could be an equalizer for disadvantaged students. Moreover, though only political science students were surveyed, statistics and data science students would reasonably have  general attitudes that are similar. 
+
+As we have seen, the existing inquiry by educators has explored the general qualitative usage and student perceptions on these tools. Though informative, there is still a key lack of evidence of how students' academic performance can be affected through allowing them to use LLMs in classwork. This paper aims to fill this gap by quantitatively investigating the relationship between students' grades and measures of student LLM usage and their attitudes toward LLMs in general, using evidence from a third-year undergraduate statistics course at the University of Toronto. Through examining how students interact with and perceive LLM tools and how these variables translate into student outcomes, the effects of LLM integration in data science education can be more precisely determined.
+
+The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data collected from students at the end of the course; @sec-model models our unstructured data to approximate a relationship between grades and usage and attitudes; @sec-results lists the results; @sec-discussion discusses the implications of these findings for data science education and future research and practice in this rapidly evolving field.
 
 
 # Data {#sec-data}
+
+## Background, etc. 
+
+Put the context of the data here (look at the)
 
 ```{r fig-boilerplate}
 #| message: false
@@ -100,11 +111,13 @@ survey_data |>
          y = "Frequency") +
     theme_minimal() +
     theme(plot.title.position = "plot",
-          plot.title = element_text(hjust = 0.5))
+          plot.title = element_text(hjust = 0.6))
 
 ```
 
-#Maybe a table for the years instead? 
+Maybe a table for the years instead? 
+
+Get inspired by Cahill and McCabe's paper for visualizations etc. 
 
 ```{r fig-year-bar}
 #| message: false
@@ -190,7 +203,6 @@ plot_data |>
           plot.title = element_text(hjust = 0.5))
 
 ```
-
 
 ```{r fig-writing-multibar-1}
 #| message: false
@@ -319,6 +331,63 @@ multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLege
 multi_bar
 ```
 
+```{r fig-ai-use-multibar}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Hello
+#| fig-align: center
+
+# Create a multi-bar plot for AI use/perceptions grouped by response 
+
+# THROWS ERROR: FIX
+
+#Select first three statements
+writing_perceptions <- survey_data |>
+  select(
+    used_ai_any_reason, 
+    used_ai_in_sta302
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+    Statements = case_when(
+      Statements == "used_ai_any_reason" ~ "Used AI for any reason",
+      Statements == "used_ai_in_sta302" ~ "Used AI in Class",
+      TRUE ~ Statements
+    ), 
+  ) |>
+  filter(!is.na(Response)) |>
+  filter(Response == "No" | Response == "Yes")
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions of Coding",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+
+multi_bar
+
+```
 
 ```{r fig-coding-multibar-1}
 #| message: false
@@ -477,61 +546,7 @@ kable(table_data) |>
 
 ```
 
-```{r fig-ai_use-multibar}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: AI Use
-#| fig-align: center
 
-# Create a multi-bar plot for AI use/perceptions grouped by response 
-
-#Select first three statements
-writing_perceptions <- survey_data |>
-  select(
-    used_ai_any_reason, 
-    used_ai_in_sta302
-  )
-
-writing_perceptions_long <- writing_perceptions |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-  mutate(
-    Statements = case_when(
-      Statements == "used_ai_any_reason" ~ "Used AI for any reason",
-      Statements == "used_ai_in_sta302" ~ "Used AI in Class",
-      TRUE ~ Statements
-    ), 
-  ) |>
-  filter(!is.na(Response)) |>
-  filter(Response == "No" | Response == "Yes")
-
-#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-    myPlot +
-        guides(shape = guide_legend(override.aes = list(size = pointSize)),
-               color = guide_legend(override.aes = list(size = pointSize))) +
-        theme(legend.title = element_text(size = textSize), 
-              legend.text  = element_text(size = textSize),
-              legend.key.size = unit(spaceLegend, "lines"))
-}
-
-# Make the plot
-multi_bar <- writing_perceptions_long |>
-  ggplot(aes(x = Response, fill = Statements)) +
-  geom_bar(position = "dodge", stat = "count") +
-  labs(title = "Student Self-Perceptions of Coding",
-       x = "Response",
-       y = "Frequency") +
-  theme_minimal() +
-  theme(plot.title.position = "plot",
-        plot.title = element_text(hjust = 0.5),
-      )
-
-multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
-
-multi_bar
-
-```
 
 ```{r fig-ai-appropriate-pie}
 #| message: false
@@ -552,9 +567,6 @@ appropriate <- survey_data |>
     )
   ) |>
   count(ai_schoolwork_appropriate)
-
-appropriate
-  
 
 ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
   geom_bar(stat = "identity", width = 1) +
@@ -579,40 +591,45 @@ ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-cap: How Students Use ChatGPT
 #| fig-align: center
 
-survey_data |>
-    select(
-      not_used,
-      used_technical_q,
-      used_conversation,
-      used_general_knowledge,
-      used_solving_hmk,
-      used_check_soln,
-      used_quick_q,
-      used_expl_concepts,
-      used_writing_content,
-      used_writing_code
-    )|>
-    pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-    filter(Response == 1) |>
-    count(Statements) |>
-    mutate(Statements = case_when(
-      Statements == "not_used" ~ "Not Used",
-      Statements == "used_technical_q" ~ "Technical Questions",
-      Statements == "used_conversation" ~ "Fun Conversation",
-      Statements == "used_general_knowledge" ~ "General Knowledge",
-      Statements == "used_solving_hmk" ~ "Entirely Solving Homework",
-      Statements == "used_check_soln" ~ "Checking my Solutions",
-      Statements == "used_quick_q" ~ "Quick Questions",
-      Statements == "used_expl_concepts" ~ "Explaining Concepts",
-      Statements == "used_writing_content" ~ "Writing Paper Content",
-      Statements == "used_writing_code" ~ "Writing Paper Code",
-      TRUE ~ Statements
-    ))|>
-    ggplot(aes(x = Statements, y = reorder(Statements, n))) +
-    geom_bar(fill="grey50") +
+# Create a bar plot of how students used ChatGPT - FIX: sort from largest to smallest
+
+type_data <- survey_data |>
+              select(
+                not_used,
+                used_technical_q,
+                used_conversation,
+                used_general_knowledge,
+                used_solving_hmk,
+                used_check_soln,
+                used_quick_q,
+                used_expl_concepts,
+                used_writing_content,
+                used_writing_code
+              )|>
+              pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+              filter(Response == 1) |>
+              count(Statements) |>
+              mutate(Statements = case_when(
+                Statements == "not_used" ~ "Not Used",
+                Statements == "used_technical_q" ~ "Technical Questions",
+                Statements == "used_conversation" ~ "Fun Conversation",
+                Statements == "used_general_knowledge" ~ "General Knowledge",
+                Statements == "used_solving_hmk" ~ "Entirely Solving Homework",
+                Statements == "used_check_soln" ~ "Checking my Solutions",
+                Statements == "used_quick_q" ~ "Quick Questions",
+                Statements == "used_expl_concepts" ~ "Explaining Concepts",
+                Statements == "used_writing_content" ~ "Writing Paper Content",
+                Statements == "used_writing_code" ~ "Writing Paper Code",
+                TRUE ~ Statements
+              )) |>
+              arrange(desc(n))
+
+type_data |>
+    ggplot(aes(x = n, y = Statements)) +
+    geom_bar(stat="identity", fill="grey50") +
     labs(title="How Students Used ChatGPT", x="Count", y="Use Type") +
     theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5),
           panel.background = element_blank(),
@@ -622,9 +639,6 @@ survey_data |>
           panel.grid.minor=element_blank(),
           plot.title.position = "plot",
           plot.title = element_text(hjust = 0.5))
-    
-
-bbb
 
 
 ```
@@ -637,9 +651,9 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
 
-\begin{align} 
+\begin{align}
 y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
 \mu_i &= \alpha + \beta_i + \gamma_i\\
 \alpha &\sim \mbox{Normal}(0, 2.5) \\
@@ -672,7 +686,7 @@ Our results are summarized in @tbl-modelresults.
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
 
 ## Second discussion point
 
@@ -697,7 +711,7 @@ Weaknesses and next steps should also be included.
 
 In ... we implement a posterior predictive check. This shows...
 
-In ... we compare the posterior with the prior. This shows... 
+In ... we compare the posterior with the prior. This shows...
 
 
 ## Diagnostics
