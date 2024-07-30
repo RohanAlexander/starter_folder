@@ -35,32 +35,45 @@ The wide release of ChatGPT and other Large Language Models (LLMs) has rapidly t
 
 The potential for LLMs to positively affect students' academic performance in data science can be clearly inferred from already-demonstrated effects on adjacent professional fields. The tasks involved in a data science workflow can be generally broken down into two key competencies. The first is programming, which is done when cleaning, analyzing, visualizing data using languages like R or Python. The second is writing, which is primarily done when communicating results. There is experimental evidence from adjacent professional fields that LLMs can improve productivity in both of these competencies. 
 
-@Peng_2023 shows the potential impact of LLMs on students' computer programming skills, through their uncovering of the significantly positive impacts of GitHub Copilot (an LLM-powered programming assistant) on the productivity of computer programmers. In an experiment involving 95 freelance programmers, they found that that programmers with access to Copilot completed a standardized programming task 55.8% faster than the control group. Crucially, it was found that programmers with less experience saw the greatest improvements in productivity. Given that programming is a core component of data science practice, this suggests that these benefits would carry over to students in data science courses as well. 
+@Peng_2023 show the potential impact of LLMs on students' computer programming skills, through their uncovering of the significantly positive impacts of GitHub Copilot (an LLM-powered programming assistant) on the productivity of computer programmers. In an experiment involving 95 freelance programmers, they found that that programmers with access to Copilot completed a standardized programming task 55.8% faster than the control group. Crucially, it was found that programmers with less experience saw the greatest improvements in productivity. Given that programming is a core component of data science practice, this suggests that these benefits could reasonably carry over to students in data science courses as well. 
 
-@DellAcqua_2023, while primarily about management consulting tasks, provides evidence that LLMs can significantly improve writing productivity. In a field experiment involving Consultants recruited from the Boston Consulting Group (BCG), they found that the use of GPT-4 in the experimental group led to a 25% increase in delivery speed of business tasks (most involving some writing), as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%. The authors expressed particular optimism for LLMs' potential to generally expedite  knowledge-work-related tasks, such as generating new ideas and persuasive and informative writing, which has direct application to data science education through the writing of more engaging reports and documentation. That said, not all AI tasks yielded the same quality of results.
+@DellAcqua_2023, while primarily about management consulting tasks, provides evidence that LLMs can significantly improve writing productivity. In a field experiment involving Consultants recruited from the Boston Consulting Group (BCG), they found that the use of GPT-4 in the experimental group led to a 25% increase in delivery speed of business tasks (most involving some writing), as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%. Though not all tasks done using AI saw the same productivity improvements, the authors expressed particular optimism for LLMs' potential to generally expedite menial knowledge-work tasks. These included tasks such as generating new ideas and creating persuasive and informative writing - both examples directly apply to data science education through their analogues of coming up with project ideas and writing more engaging reports. As a whole, they show that LLMs could equally augment the quality of student writing and course projects in data science as well. 
 
-The implications of this evidence appear promising. However, literature in domains both adjacent to and distant from statistics and data science suggest much more varied opinions on how LLMs can impact student performance, much less specifically in data science and statistics coursework.
+Clearly, the implications of these case studies appear promising. However, literature from educators both adjacent to and distant from statistics and data science suggest much more varied perspectives on how LLMs can impact student performance.
 
-Among other consequences of LLM use, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity (which leads to less original work) and de-skilling (primarily with respect to programming ability). These particular outcomes could negatively affect students' effective learning of data science. On the other hand, @Ellis_Slade_2023 take a more optimistic perspective, taking the popular stance of comparing ChatGPT to previously controversial learning technologies like calculators. They argue that LLMs are just another technology that will impact Statistics and Data Science education like the calculator did. However, they take a broader perspective on the issue and more specific inquiry could be done in how effective LLMs are at improving student outcomes within data science education in particular. 
+@Valenzuela_2024 argue that LLMs lead to a loss of serendipity (which leads to less original work) and de-skilling (primarily with respect to programming ability), among other consequences. These particular outcomes could negatively affect students' effective learning of data science. On the other hand, @Ellis_Slade_2023 take a more optimistic perspective, taking the popular stance of comparing ChatGPT to previously controversial learning technologies like calculators. They argue that LLMs are just another technology that will impact Statistics and Data Science education like the calculator did. However, they take a broader perspective on the issue and more specific inquiry could be done in how effective LLMs are at improving student outcomes within data science education in particular. 
 
-Speaking generally about data science education, @Tu_2024 acknowledge that for students, LLMs can streamline many parts of a data science workflow - with that in mind, they suggest that budding data scientists should shift their self-perspectives from being an analyst to being a manager responsible for strategic oversight. They emphasize that in both education and practice, LLMs and human intelligence should play complementary roles. 
+In a similar attitude, @Tu_2024 acknowledge that for students, LLMs can streamline many parts of a data science workflow - with that in mind, they suggest that data scientists in training should shift their self-perspectives from primarily being an analyst to primarily being a manager responsible for strategic oversight of the analysis. Crucially they emphasize that in both education and practice, LLMs and human intelligence should play complementary roles. 
 
-The simultaneous excitement and caution the literature expressed toward using LLMs in educational settings was further corroborated by empirical studies on K-12 and university students as well. 
+The simultaneous caution and interest the literature expressed toward using LLMs in educational settings was further corroborated by empirical studies on K-12 and university students as well. 
 
-At the high school level, @Lazar_2023 conducted a informal survey of secondary school teachers and students on their opinions of ChatGPT, they found that while LLMs could help spark creativity, provide academic support when teachers were unavailable, and model certain types of writing well, teachers were also cognizant of LLMs potential to limit students' learning in certain ways through overreliance. Beyond academic integrity concerns, teachers had similar concerns about de-skilling and an overall loss of agency in writing and critical thinking.
+At the high school level, @Lazar_2023 conducted a informal survey of secondary school teachers and students on their opinions of ChatGPT, they found that while LLMs could help spark creativity, provide academic support when teachers were unavailable, and model certain types of writing well, teachers were also cognizant of LLMs potential to limit students' learning in certain ways through overreliance. Beyond academic integrity concerns, teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
 
-@Cahill_2024 surveyed undergraduate Political Science students on their attitudes and self-perceived usage of AI tools (which included LLMs like ChatGPT). They found that the use of ChatGPT (among other machine-learning-powered software) was widespread. However, they also found that many students lacked the confidence in using AI for academic purposes - in particular, only 11% 'strongly agreed' that they know how to use AI to improve their writing. Like educators,  students have nuanced views on appropriate AI use. In particular, respondents found that using it to writing whole papers as inappropriate, while using it for basic tasks like general assistance, writing feedback and basic data visualization was perceived more appropriately. Interestingly, first-generation college students were found to be more likely to use AI in their work, particularly in writing papers and helping with assignments. Their findings suggest that LLMs and other AI tools could be an equalizer for disadvantaged students. Moreover, though only political science students were surveyed, statistics and data science students would reasonably have  general attitudes that are similar. 
+@Cahill_2024 surveyed undergraduate Political Science students on their attitudes toward and usage of AI tools. They found that the use of ChatGPT (among other machine-learning-powered software) was widespread. However, they also found that many students lacked the confidence in using AI for academic purposes - in particular, only 11% 'strongly agreed' that they know how to use AI to improve their writing. Like educators,  students have nuanced views on appropriate AI use. In particular, respondents found that using it to writing whole papers as inappropriate, while using it for basic tasks like general assistance, writing feedback and basic data visualization was perceived more appropriately. Interestingly, first-generation college students were found to be more likely to use AI in their work, particularly in writing papers and helping with assignments. Their findings suggest that LLMs and other AI tools could be an equalizer for disadvantaged students. Rhough only political science students were surveyed, statistics and data science students could reasonably have general attitudes that are similar. 
 
 As we have seen, the existing inquiry by educators has explored the general qualitative usage and student perceptions on these tools. Though informative, there is still a key lack of evidence of how students' academic performance can be affected through allowing them to use LLMs in classwork. This paper aims to fill this gap by quantitatively investigating the relationship between students' grades and measures of student LLM usage and their attitudes toward LLMs in general, using evidence from a third-year undergraduate statistics course at the University of Toronto. Through examining how students interact with and perceive LLM tools and how these variables translate into student outcomes, the effects of LLM integration in data science education can be more precisely determined.
 
-The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data collected from students at the end of the course; @sec-model models our unstructured data to approximate a relationship between grades and usage and attitudes; @sec-results lists the results; @sec-discussion discusses the implications of these findings for data science education and future research and practice in this rapidly evolving field.
+The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data and coursework from students; @sec-model models the unstructured data to approximate a relationship between grades and usage/attitudes; @sec-results describes and analyzes the model's results; @sec-discussion discusses the implications of the findings for data science education and future research and practice in this rapidly evolving field.
 
 
 # Data {#sec-data}
 
-## Background, etc. 
+## Background and Collection
 
-Put the context of the data here (look at the)
+To investigate students' usage and attitudes toward LLM use and how they related to their academic performance, a dataset containing their usage/attitudes, coursework, and academic performance was constructed. Data was sampled from the cohort of students taking STA302 - Methods of Data Analysis I, taught by one of the investigators in the Winter 2024 semester at the University of Toronto. By virtue of pre-requisites needed, this restricted the data collected to be only on upper-year undergraduate students. 
+
+Data was collected from students through an optional end-of-course survey. Whether or not they consented to their data being used in this investigation, all respondents received a +1% increase in their final course grade for their participation. All consenting responses were then cross-referenced to their course grade, as well as the GitHub account they used to complete their course research papers. The responses were finally anonymized by removing any personal references to the students themselves. 
+
+## Cleaning and Variables of Interest
+
+All the data was cleaned using R [@citeR] and it's tidyverse [@tidyverse], janitor [@janitor] and stringr [@stringr], then tested for issues using the testthat package [@testthat]. This led to a final dataset containing 121 responses across (var_num) variables. 
+
+These variables were:
+
+- [list of variables]
+
+## Visualization
+The data was then visualized using the ggplot2 [@ggplot2] package. 
 
 ```{r fig-boilerplate}
 #| message: false
@@ -555,17 +568,10 @@ kable(table_data) |>
 #| tbl-cap: Comparison of Whether AI Use is Appropriate in School
 #| fig-align: center
 
-#Pie chart of program of study
+#Pie chart of student opinion on appropriateness of AI use in class. 
 
 appropriate <- survey_data |> 
   select(ai_schoolwork_appropriate) |>
-  mutate(
-    ai_schoolwork_appropriate = case_when(
-      ai_schoolwork_appropriate == "Appropriate" ~ "Appropriate",
-      ai_schoolwork_appropriate == "Inappropriate" ~ "Inappropriate",
-      TRUE ~ "It depends"
-    )
-  ) |>
   count(ai_schoolwork_appropriate)
 
 ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
@@ -611,7 +617,6 @@ type_data <- survey_data |>
               )|>
               pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
               filter(Response == 1) |>
-              count(Statements) |>
               mutate(Statements = case_when(
                 Statements == "not_used" ~ "Not Used",
                 Statements == "used_technical_q" ~ "Technical Questions",
@@ -625,6 +630,7 @@ type_data <- survey_data |>
                 Statements == "used_writing_code" ~ "Writing Paper Code",
                 TRUE ~ Statements
               )) |>
+              count(Statements) |>
               arrange(desc(n))
 
 type_data |>
@@ -642,6 +648,8 @@ type_data |>
 
 
 ```
+
+## Sentiment Analysis 
 
 # Model {#sec-model}
 
