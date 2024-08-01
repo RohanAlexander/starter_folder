@@ -25,7 +25,8 @@ library(lintr)
 library(tidyr)
 library(tidytext)
 library(textdata)
-library(quanteda)
+library(wordcloud)
+library(reshape2)
 
 
 # Import data
@@ -72,6 +73,34 @@ Data was collected from students through an optional end-of-course survey. Wheth
 ## Cleaning and Variables of Interest
 
 All the data was cleaned using R [@citeR] and it's tidyverse [@tidyverse], janitor [@janitor] and stringr [@stringr], then tested for issues using the testthat package [@testthat]. This led to a final dataset containing 121 responses across 41 variables that corresponded to each survey question. 
+
+```{r fig-boilerplate}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-align: center
+# survey_data |>
+#   ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
+#   #put geom type here (put before compilation) +
+#   labs(title = "Title!",
+#        x = "X label",
+#        y = "Y label") +
+#   theme_minimal() +
+#   scale_fill_discrete(name="Legend Title") +
+#   theme(plot.title.position = "plot",
+#         plot.title = element_text(hjust = 0.5)
+#         )
+```
+
+```{r tbl-boilerplate}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: (CHANGE) Boilerplate table caption 
+#| fig-align: center
+#Put code below this line
+```
 
 ## General Information
 
@@ -681,47 +710,10 @@ TODO: Make a viz of helpfulness in various assignments. Describe the context of 
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: How Students Use ChatGPT
+#| fig-cap: CHANGE/REMOVE
 #| fig-align: center
 
-# Create a bar plot of how students used ChatGPT - FIX: sort from largest to smallest
 
-type_data <- survey_data |>
-  select(
-    not_used,
-    used_technical_q,
-    used_conversation,
-    used_general_knowledge,
-    used_solving_hmk,
-    used_check_soln,
-    used_quick_q,
-    used_expl_concepts,
-    used_writing_content,
-    used_writing_code
-  ) |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-  mutate(Statements = case_when(
-    Statements == "not_used" ~ "Not Used",
-    Statements == "used_technical_q" ~ "Technical Questions",
-    Statements == "used_conversation" ~ "Fun Conversation",
-    Statements == "used_general_knowledge" ~ "General Knowledge",
-    Statements == "used_solving_hmk" ~ "Entirely Solving Homework",
-    Statements == "used_check_soln" ~ "Checking my Solutions",
-    Statements == "used_quick_q" ~ "Quick Questions",
-    Statements == "used_expl_concepts" ~ "Explaining Concepts",
-    Statements == "used_writing_content" ~ "Writing Paper Content",
-    Statements == "used_writing_code" ~ "Writing Paper Code",
-    TRUE ~ Statements
-  )) |>
-  filter(Response == 1) |>
-  count(Statements) |>
-  arrange(desc(n))
-
-type_data |>
-  ggplot(aes(x = n, y = reorder(Statements, n))) +
-  geom_bar(stat = "identity", fill = "grey50") +
-  labs(title = "How Students Used ChatGPT", x = "Count", y = "Use Type") +
-  theme_classic()
 ```
 
 ## Sentiment Analysis
@@ -732,24 +724,24 @@ type_data |>
 #| warning: false
 
 #get positive words from NRC lexicon
-pos_words <- get_sentiments("nrc") |>
-  filter(sentiment = c("anger", "disgust", "fear", "negative", "sadness"))
+neg_words <- get_sentiments("bing") |>
+  filter(sentiment == "negative")
 
 #get negative words from NRC lexicon
-neg_words <- get_sentiments("nrc") |>
-  filter(sentiment = c("joy", "positive",
-"surprise",
-"trust", 
-"anticipation"))
+pos_words <- get_sentiments("bing") |>
+  filter(sentiment == "positive")
 ```
 
-We then performed sentiment analysis on the free-response comment questions asked to students. To perform this text analysis, the tidytext package [@tidytext] was used in conjunction with the NRC word-emotion lexicon compiled by @mohammad. Although four lexicon options were available in tidytext, the NRC lexicon was chosen due to the relatively balanced amounts of positive and negative words in the dataset, allowing for balanced classification. 
+We then performed sentiment analysis on the free-response comment questions asked to students. To perform this text analysis, the tidytext package [@tidytext] was used. 
 
 ### Appropriateness of AI in Schoolwork 
 
 In the survey, students were asked to respond to the question: "Please elaborate on to what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?". 
 
 ```{r setup-ai-appropriate}
+#| message: false
+#| echo: false
+#| warning: false
 
 # AI Appropriateness Comments
 ai_comments <- survey_data |>
@@ -766,6 +758,68 @@ ai_comments <- survey_data |>
 tidy_ai_comments <- ai_comments |>
   group_by(id) |>
   unnest_tokens(word, comment)
+
+```
+
+```{r tbl-ai-appropriate}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Comparing Incidences of Positive and Negative Words.
+#| tbl-subcap: ["Top 10 Mentioned Positive Words", "Top 10 Mentioned Negative Words"]
+#| layout-ncol: 2
+#| fig-align: center
+
+
+# Generate positive words table
+tbl_ai_pos <- tidy_ai_comments |>
+  ungroup() |>
+  select(-c("id")) |>
+  inner_join(pos_words) |>
+  count(word, sort = TRUE) |>
+  head(10) |>
+  kable(, format = "markdown")
+
+# Generate negative words table
+tbl_ai_neg <- tidy_ai_comments |>
+  ungroup() |>
+  select(-c("id")) |>
+  inner_join(neg_words) |>
+  count(word, sort = TRUE) |>
+  head(10) |>
+  kable(, format = "markdown") 
+
+tbl_ai_pos
+tbl_ai_neg
+
+```
+
+```{r fig-wordcloud-ai-appropriate}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-align: center
+
+# Load sentiment lexicon
+sentiments <- get_sentiments()
+
+# Prepare data for comparison cloud
+comparison_data <- tidy_ai_comments |>
+  inner_join(sentiments) |>
+  count(word, sentiment, sort = TRUE) |>
+  acast(word ~ sentiment, value.var = "n", fill = 0)
+
+# Generate comparative word cloud
+comparison.cloud(
+  comparison_data,
+  colors = c("darkred", "darkgreen"),
+  max.words = 100,
+  title.size = 1.5,
+  scale = c(3, 0.5)  # Adjust scale for word size
+)
+
+
 
 ```
 
