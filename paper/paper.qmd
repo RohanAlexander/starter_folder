@@ -73,39 +73,40 @@ These variables were:
 - [list of variables]
 
 ## Visualization
-The data was then visualized using the ggplot2 [@ggplot2] package. 
 
-```{r fig-boilerplate}
+The student survey data was then visualized and analyzed using the ggplot2 [@ggplot2] package. 
+
+
+### General Information
+
+First, some general information about our sample of students was derived through visualizing the basic data about them. 
+
+```{r fig-response-time-hist}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-cap: Distribution of Survey Response Times
 #| fig-align: center
 
-# survey_data |>
-#   ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
-#   #put geom type here (put before compilation) +
-#   labs(title = "Title!",
-#        x = "X label",
-#        y = "Y label") +
-#   theme_minimal() +
-#   scale_fill_discrete(name="Legend Title") +
-#   theme(plot.title.position = "plot",
-#         plot.title = element_text(hjust = 0.5)
-#         )
+#Trim values to histogram
+
+plot_data <- survey_data |>
+    filter(mins_complete < 1000)
+
+
+plot_data |>
+    ggplot(aes(x = mins_complete)) +
+    geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
+    labs(title = "Distribution of Survey Response Times",
+         x = "Time (Mins)",
+         y = "Frequency") +
+    theme_minimal() +
+    theme(plot.title.position = "plot",
+          plot.title = element_text(hjust = 0.5))
 
 ```
+@fig-response-time-hist shows the distribution of response times to the end-of-course survey. Respondents who consented generally took between 0-40 mins to answer all of the questions, with most response times ranging between 2-10 minutes. There was one consenting respondent who took 4308 minutes, whose observation was dropped from the visualization. This suggests that students generally took a meaningful amount of time to engage with the survey.  
 
-```{r tbl-boilerplate}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: (CHANGE) Boilerplate table caption 
-#| fig-align: center
-
-#Put code below this line
-
-```
 
 ```{r fig-gpa-hist}
 #| message: false
@@ -128,11 +129,12 @@ survey_data |>
 
 ```
 
-Maybe a table for the years instead? 
+@fig-gpa-hist shows a wide distribution of student GPAs, with the majority clustering around a B (3.0/4.0) average. One factor possibly affecting the range is the course being a required course for programs in the Statistics, Mathematics and Computer Science departments. Though programs in these departments generally attract high-achieving students, some may still struggle. Another factor is that these GPAs were self-reported, which introduces some ambiguity - students may have provided either their cumulative GPA or their most recent term's GPA, or could have misreported it entirely.  Despite these two factors, the diversity in reported grades suggests the course attracted students across a broad spectrum of academic performance levels.  
+
 
 Get inspired by Cahill and McCabe's paper for visualizations etc. 
 
-```{r fig-year-bar}
+```{r tbl-year-dist}
 #| message: false
 #| echo: false
 #| warning: false
@@ -150,18 +152,16 @@ survey_data <- survey_data |>
       )
     )
 
+year_count <- survey_data |>
+  count(year) |>
+  pivot_wider(names_from = year, values_from = n, values_fill = list(n = 0))
 
-#Bar plot of year
-survey_data |> ggplot(aes(x = year)) +
-    geom_bar(fill = "skyblue", color = "black") +
-    labs(title = "Distribution of Students by Year",
-         x = "Year",
-         y = "Frequency") +
-    theme_minimal() +
-    theme(plot.title.position = "plot",
-          plot.title = element_text(hjust = 0.5))
+# Display the original wide format table
+kable(year_count)
 
 ```
+
+We can also see in from @tbl-year-dist that students from a range of years took the course. That said, the majority of students were in their 3rd or 4th year of study. This makes sense, given the course's prerequisite of general statistics, which is a two-semester sequence typically done in second year statistics. This also explains the lack of any first year students in the course as well. 
 
 ```{r fig-programs-pie}
 #| message: false
@@ -185,7 +185,7 @@ ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
   scale_fill_discrete(name="Program") +
   theme(axis.text.x = element_blank(),  # Remove x-axis text
         axis.title.x = element_blank(), # Remove x-axis title
-        plot.title = element_text(hjust = 1.35)
+        plot.title = element_text(hjust = 1.6)
         ) +
   geom_text(aes(label = n), 
             position = position_stack(vjust = 0.5))
@@ -193,29 +193,50 @@ ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
 
 ```
 
-```{r fig-response-time-hist}
+Programs of study [did something], as we can see in @fig-programs-pie... 
+
+
+### Student Attitudes 
+
+```{r fig-ai-familiarity}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Distribution of Survey Response Times
+#| fig-cap: Student Familiarity with AI
 #| fig-align: center
 
-#Trim values to histogram
+table_data <- survey_data |>
+    select(ai_familiarity)|>
+    mutate(
+      ai_familiarity = case_when(
+        ai_familiarity == "Limited to some liberal arts, such as history courses" ~ "Somewhat familiar",
+        TRUE ~ ai_familiarity
+      )
+    ) |>
+    count(ai_familiarity)
 
-plot_data <- survey_data |>
-    filter(mins_complete < 1000)
-
-plot_data |>
-    ggplot(aes(x = mins_complete)) +
-    geom_histogram(binwidth = 0.1, fill = "skyblue", color = "black") +
-    labs(title = "Distribution of Survey Response Times",
-         x = "Time (Mins)",
-         y = "Frequency") +
-    theme_minimal() +
-    theme(plot.title.position = "plot",
-          plot.title = element_text(hjust = 0.5))
-
+table_data |>
+  ggplot(aes(x = "", y = n, fill = ai_familiarity)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = "Student Familiarity with AI",
+       x = NULL,
+       y = NULL) +
+  theme_minimal() +
+  scale_fill_discrete(name="Program") +
+  theme(axis.text.x = element_blank(),  # Remove x-axis text
+        axis.title.x = element_blank(), # Remove x-axis title
+        plot.title = element_text(hjust = 1.35)
+        ) +
+  geom_text(aes(label = n), 
+            position = position_stack(vjust = 0.5)
+            )
 ```
+
+Just as @Cahill_2024 found, the vast majority of students taking the course were at least "somewhat familiar" with ChatGPT and other LLMs. This overrepresentation of familiarity also primarily driven by the fact that the course is primarily for students in Statistics, Computer Science, Economics, Mathematics and other quantitative disciplines, which could likely lead to a skewing of interest/affinity for computers. 
+
+
+Students were then asked about their attitudes and self-perception on writing and coding.  
 
 ```{r fig-writing-multibar-1}
 #| message: false
@@ -344,63 +365,7 @@ multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLege
 multi_bar
 ```
 
-```{r fig-ai-use-multibar}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: Hello
-#| fig-align: center
-
-# Create a multi-bar plot for AI use/perceptions grouped by response 
-
-# THROWS ERROR: FIX
-
-#Select first three statements
-writing_perceptions <- survey_data |>
-  select(
-    used_ai_any_reason, 
-    used_ai_in_sta302
-  )
-
-writing_perceptions_long <- writing_perceptions |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-  mutate(
-    Statements = case_when(
-      Statements == "used_ai_any_reason" ~ "Used AI for any reason",
-      Statements == "used_ai_in_sta302" ~ "Used AI in Class",
-      TRUE ~ Statements
-    ), 
-  ) |>
-  filter(!is.na(Response)) |>
-  filter(Response == "No" | Response == "Yes")
-
-#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-    myPlot +
-        guides(shape = guide_legend(override.aes = list(size = pointSize)),
-               color = guide_legend(override.aes = list(size = pointSize))) +
-        theme(legend.title = element_text(size = textSize), 
-              legend.text  = element_text(size = textSize),
-              legend.key.size = unit(spaceLegend, "lines"))
-}
-
-# Make the plot
-multi_bar <- writing_perceptions_long |>
-  ggplot(aes(x = Response, fill = Statements)) +
-  geom_bar(position = "dodge", stat = "count") +
-  labs(title = "Student Self-Perceptions of Coding",
-       x = "Response",
-       y = "Frequency") +
-  theme_minimal() +
-  theme(plot.title.position = "plot",
-        plot.title = element_text(hjust = 0.5),
-      )
-
-multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
-
-multi_bar
-
-```
+Students had varied attitudes toward their writing and their writing abilities in general, as we can see from @fig-writing-multibar-1 and fig-writing-multibar-2. ...
 
 ```{r fig-coding-multibar-1}
 #| message: false
@@ -528,38 +493,7 @@ multi_bar
 
 ```
 
-```{r tbl-ai-familiarity}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Familiarity with AI of students
-#| fig-align: center
-
-table_data <- survey_data |>
-    select(ai_familiarity)|>
-    mutate(
-      ai_familiarity = case_when(
-        ai_familiarity == "Limited to some liberal arts, such as history courses" ~ "Somewhat familiar",
-        TRUE ~ ai_familiarity
-      )
-    ) |>
-    count(ai_familiarity) |>
-    pivot_wider(
-      names_from = "ai_familiarity",
-      values_from = "n"
-    )
-  
-   
-
-kable(table_data) |>
-  kable_styling(bootstrap_options = "striped", full_width = F) |>
-  column_spec(1, bold = T)
-
-
-
-```
-
-
+Student self-perceptions about their coding abilities, shown in @fig-coding-multibar-1 and @fig-coding-multibar-2 were also very interesting. ...
 
 ```{r fig-ai-appropriate-pie}
 #| message: false
@@ -593,6 +527,66 @@ ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
 
 ```
 
+### Student Usage 
+
+```{r fig-ai-use-multibar}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Hello
+#| fig-align: center
+
+# Create a multi-bar plot for AI use/perceptions grouped by response 
+
+# THROWS ERROR: FIX
+
+#Select first three statements
+writing_perceptions <- survey_data |>
+  select(
+    used_ai_any_reason, 
+    used_ai_in_sta302
+  )
+
+writing_perceptions_long <- writing_perceptions |>
+  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+  mutate(
+    Statements = case_when(
+      Statements == "used_ai_any_reason" ~ "Used AI for any reason",
+      Statements == "used_ai_in_sta302" ~ "Used AI in Class",
+      TRUE ~ Statements
+    ), 
+  ) |>
+  filter(!is.na(Response)) |>
+  filter(Response == "No" | Response == "Yes")
+
+#Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+# Make the plot
+multi_bar <- writing_perceptions_long |>
+  ggplot(aes(x = Response, fill = Statements)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Student Self-Perceptions of Coding",
+       x = "Response",
+       y = "Frequency") +
+  theme_minimal() +
+  theme(plot.title.position = "plot",
+        plot.title = element_text(hjust = 0.5),
+      )
+
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+
+multi_bar
+
+```
+
 ```{r fig-AI-usage-type-comp}
 #| message: false
 #| echo: false
@@ -616,7 +610,6 @@ type_data <- survey_data |>
                 used_writing_code
               )|>
               pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-              filter(Response == 1) |>
               mutate(Statements = case_when(
                 Statements == "not_used" ~ "Not Used",
                 Statements == "used_technical_q" ~ "Technical Questions",
@@ -630,24 +623,19 @@ type_data <- survey_data |>
                 Statements == "used_writing_code" ~ "Writing Paper Code",
                 TRUE ~ Statements
               )) |>
+              filter(Response == 1) |>
               count(Statements) |>
               arrange(desc(n))
 
 type_data |>
-    ggplot(aes(x = n, y = Statements)) +
+    ggplot(aes(x = n, y = reorder(Statements, n))) +
     geom_bar(stat="identity", fill="grey50") +
     labs(title="How Students Used ChatGPT", x="Count", y="Use Type") +
-    theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5),
-          panel.background = element_blank(),
-          axis.line.y=element_line(color="black"),
-          axis.ticks.y=element_blank(),
-          panel.grid.major.x=element_line(color="grey80"),
-          panel.grid.minor=element_blank(),
-          plot.title.position = "plot",
-          plot.title = element_text(hjust = 0.5))
-
+    theme_classic()
 
 ```
+
+To understand the role of AI chatbots in learning, students identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp demonstrates that asking technical questions and explaining concepts were the two top use cases among students. Less than half used it to entirely solve their homework, which could be explained by the complex nature of the homework, that involved doing extensive research and writing. Also just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes in @Cahill_2024. 
 
 ## Sentiment Analysis 
 
