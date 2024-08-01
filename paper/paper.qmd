@@ -24,6 +24,8 @@ library(knitr)
 library(kableExtra)
 library(lintr)
 library(tidyr)
+library(quanteda)
+
 
 # Import data
 survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w24.csv", show_col_types = FALSE)
@@ -635,9 +637,69 @@ type_data |>
 
 ```
 
-To understand the role of AI chatbots in learning, students identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp demonstrates that asking technical questions and explaining concepts were the two top use cases among students. Less than half used it to entirely solve their homework, which could be explained by the complex nature of the homework, that involved doing extensive research and writing. Also just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes in @Cahill_2024. 
+To understand the role of AI chatbots in learning, students identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp demonstrates that asking technical questions and explaining concepts were the two top use cases among students. Less than half used it to entirely solve their homework, which could be explained by the complex nature of the homework, that involved doing extensive research and writing. Also just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes in @Cahill_2024.
 
-## Sentiment Analysis 
+TODO: Make a viz of helpfulness in various assignments. Describe the context of the assignment. 
+
+```{r fig-AI-helpfulness}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: How Students Use ChatGPT
+#| fig-align: center
+
+# Create a bar plot of how students used ChatGPT - FIX: sort from largest to smallest
+
+type_data <- survey_data |>
+              select(
+                not_used,
+                used_technical_q,
+                used_conversation,
+                used_general_knowledge,
+                used_solving_hmk,
+                used_check_soln,
+                used_quick_q,
+                used_expl_concepts,
+                used_writing_content,
+                used_writing_code
+              )|>
+              pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+              mutate(Statements = case_when(
+                Statements == "not_used" ~ "Not Used",
+                Statements == "used_technical_q" ~ "Technical Questions",
+                Statements == "used_conversation" ~ "Fun Conversation",
+                Statements == "used_general_knowledge" ~ "General Knowledge",
+                Statements == "used_solving_hmk" ~ "Entirely Solving Homework",
+                Statements == "used_check_soln" ~ "Checking my Solutions",
+                Statements == "used_quick_q" ~ "Quick Questions",
+                Statements == "used_expl_concepts" ~ "Explaining Concepts",
+                Statements == "used_writing_content" ~ "Writing Paper Content",
+                Statements == "used_writing_code" ~ "Writing Paper Code",
+                TRUE ~ Statements
+              )) |>
+              filter(Response == 1) |>
+              count(Statements) |>
+              arrange(desc(n))
+
+type_data |>
+    ggplot(aes(x = n, y = reorder(Statements, n))) +
+    geom_bar(stat="identity", fill="grey50") +
+    labs(title="How Students Used ChatGPT", x="Count", y="Use Type") +
+    theme_classic()
+
+```
+
+## Sentiment Analysis
+
+```{r senti-analysis}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Hello
+#| fig-align: center
+
+
+```
 
 # Model {#sec-model}
 
