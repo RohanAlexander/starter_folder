@@ -26,8 +26,10 @@ library(lintr)
 library(tidyr)
 library(tidytext)
 library(textdata)
+library(quanteda)
 library(wordcloud)
 library(reshape2)
+library(topicmodels)
 
 
 # Import data
@@ -713,11 +715,11 @@ pos_words <- get_sentiments() |>
   filter(sentiment == "positive")
 ```
 
-We then performed sentiment analysis on the free-response comment questions asked to students. To perform this text analysis, the tidytext package [@tidytext] was used. 
+We then performed basic sentiment analysis on the open-response comment questions asked to students. To perform this text analysis, the tidytext package [@tidytext] was used. 
 
 ### Appropriateness of AI in Schoolwork 
 
-In the survey, students were asked to respond to the question: "Please elaborate on to what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?". 
+In the survey, students were asked to provide an open-ended response to the question: "Please elaborate on to what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?". These responses were attempted to be understood thematically. 
 
 ```{r setup-ai-appropriate}
 #| message: false
@@ -738,8 +740,35 @@ ai_comments <- survey_data |>
 # put comments into tidytext format
 tidy_ai_comments <- ai_comments |>
   group_by(id) |>
-  unnest_tokens(word, comment)
+  unnest_tokens(word, comment) |>
+  mutate(word = str_to_lower(string = word)) 
 
+```
+
+```{r fig-wordcloud-ai-appropriate}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: (CHANGE) Boilerplate figure caption 
+#| fig-align: center
+
+# Load sentiment lexicon
+sentiments <- get_sentiments()
+
+# Prepare data for comparison cloud
+comparison_data <- tidy_ai_comments |>
+  inner_join(sentiments) |>
+  count(word, sentiment, sort = TRUE) |>
+  acast(word ~ sentiment, value.var = "n", fill = 0)
+
+# Generate comparative word cloud
+comparison.cloud(
+  comparison_data,
+  colors = c("darkred", "darkgreen"),
+  max.words = 100,
+  title.size = 1.5,
+  scale = c(3, 0.5)  # Adjust scale for word size
+)
 ```
 
 ```{r tbl-ai-appropriate}
@@ -775,32 +804,6 @@ tbl_ai_neg
 
 ```
 
-```{r fig-wordcloud-ai-appropriate}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: (CHANGE) Boilerplate figure caption 
-#| fig-align: center
-
-# Load sentiment lexicon
-sentiments <- get_sentiments()
-
-# Prepare data for comparison cloud
-comparison_data <- tidy_ai_comments |>
-  inner_join(sentiments) |>
-  count(word, sentiment, sort = TRUE) |>
-  acast(word ~ sentiment, value.var = "n", fill = 0)
-
-# Generate comparative word cloud
-comparison.cloud(
-  comparison_data,
-  colors = c("darkred", "darkgreen"),
-  max.words = 100,
-  title.size = 1.5,
-  scale = c(3, 0.5)  # Adjust scale for word size
-)
-```
-
 
 ### AI Implementation Recommendations
 
@@ -809,23 +812,76 @@ comparison.cloud(
 #| echo: false
 #| warning: false
 
-# Recommendations Comments
+# Example sentiments data frame
+sentiments <- get_sentiments()
+
+# Prepare data
 recs_comments <- survey_data |>
-  select(
-    id,
-    recs_for_ai_sta302
-  ) |>
-  mutate(
-    comment = recs_for_ai_sta302
-  ) |>
+  select(id, recs_for_ai_sta302) |>
+  mutate(comment = recs_for_ai_sta302) |>
   select(-c(recs_for_ai_sta302))
 
-# Put comments into tidytext format
+# Tokenize and clean individual words
 tidy_recs_comments <- recs_comments |>
-  group_by(id) |>
-  unnest_tokens(word, comment)
+  ungroup() |>
+  unnest_tokens(word, comment) |>
+  anti_join(stop_words)
+
+# Count word frequencies
+word_counts <- tidy_recs_comments |>
+  count(word, sort = TRUE)
+
+# Bigram analysis
+bigrams <- recs_comments |>
+  ungroup() |>
+  unnest_tokens(bigram, comment, token = "ngrams", n = 2) |>
+  separate(bigram, into = c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) |>
+  count(word1, word2, sort = TRUE) |>
+  unite(bigram, word1, word2, sep = " ")
+
+# Prepare data for comparison cloud (including both words and bigrams)
+comparison_data_words <- tidy_recs_comments |>
+  inner_join(sentiments, by = "word") |>
+  count(word, sentiment, sort = TRUE)
+
+comparison_data_bigrams <- bigrams |>
+  separate(bigram, into = c("word1", "word2"), sep = " ") |>
+  inner_join(sentiments, by = c("word1" = "word")) |>
+  inner_join(sentiments, by = c("word2" = "word"), suffix = c(".word1", ".word2")) |>
+  unite(bigram, word1, word2, sep = " ") |>
+  count(bigram, sentiment.word1, sort = TRUE) |>
+  rename(sentiment = sentiment.word1)
+
+# Combine both data sets
+combined_data <- bind_rows(
+  comparison_data_words |> rename(term = word),
+  comparison_data_bigrams |> rename(term = bigram)
+) |>
+  arrange(desc(n))
+
 ```
 
+```{r recs-wordcloud}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Word Cloud for Recommendations Comments
+#| fig-align: center
+
+combined_data |>
+  with(
+    wordcloud(
+      words = term,
+      freq = n,
+      scale = c(3, 0.5),
+      min.freq = 1, # Adjust scale as needed
+      max.words = 100,    # Maximum number of words to display
+      colors = "blue"     # Color for the word cloud
+    )
+  )
+
+```
 
 ```{r tbl-recs-relpolarity}
 #| message: false
@@ -858,76 +914,12 @@ tbl_recs_pos
 tbl_recs_neg
 ```
 
-
-```{r recs-wordcloud}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: Comparative Word Cloud for Recommendations Comments
-#| fig-align: center
-
-# Load sentiment lexicon
-sentiments <- get_sentiments("bing")
-
-# Prepare data for comparison cloud
-comparison_data_recs <- tidy_recs_comments |>
-  inner_join(sentiments) |>
-  count(word, sentiment, sort = TRUE) |>
-  acast(word ~ sentiment, value.var = "n", fill = 0)
-
-# Generate comparative word cloud
-comparison.cloud(
-  comparison_data_recs,
-  colors = c("darkred", "darkgreen"),
-  max.words = 100,
-  title.size = 1.5,
-  scale = c(3, 0.5)  # Adjust scale for word size
-)
-
-```
-
-
-```{r bigram-wordcloud}
-#| message: false
-#| echo: false
-#| warning: false
-
-# Prepare data
-recs_comments <- survey_data |>
-  select(id, recs_for_ai_sta302) |>
-  mutate(comment = recs_for_ai_sta302) |>
-  select(-c(recs_for_ai_sta302))
-
-# Tokenize and clean
-tidy_recs_comments <- recs_comments |>
-  ungroup() |>
-  unnest_tokens(word, comment)
-
-stop_words <- stop_words
-
-clean_recs_comments <- tidy_recs_comments |>
-  anti_join(stop_words)
-
-# Count word frequencies
-word_counts <- clean_recs_comments |>
-  count(word, sort = TRUE)
-
-# Bigram analysis (optional)
-bigrams <- recs_comments |>
-  ungroup() |>
-  unnest_tokens(bigram, comment, token = "ngrams", n = 2) |>
-  separate(bigram, into = c("word1", "word2"), sep = " ") |>
-  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) |>
-  count(word1, word2, sort = TRUE) |>
-  unite(bigram, word1, word2, sep = " ")
-```
-
 ```{r word-cloud}
-
 #| message: false
 #| echo: false
 #| warning: false
 
+# Word cloud based on bigrams
 word_counts |>
   with(
     wordcloud(
@@ -940,19 +932,6 @@ word_counts |>
   )
 ```
 
-```{r word-plot}
-#| message: false
-#| echo: false
-#| warning: false
-
-word_counts[1:20, ] |>
-  ggplot(aes(x = reorder(word, n), y = n)) +
-  geom_bar(stat = "identity") +
-  coord_flip() +
-  labs(x = "Words", y = "Frequency", title = "Top 20 Recommendations") +
-  theme_minimal()
-
-```
 
 
 # Model {#sec-model}
