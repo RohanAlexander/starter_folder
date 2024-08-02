@@ -462,17 +462,16 @@ Students had varied attitudes toward their writing and their writing abilities i
 #| tbl-cap: Student Self-Perceptions on Coding, Part 1
 #| fig-align: center
 
-# Create a multi-bar plot for coding self-perceptions grouped by response
-
-# Select first three statements
-writing_perceptions <- survey_data |>
+# Select first three statements for coding self-perceptions
+coding_perceptions <- survey_data |>
   select(
     coding_is_easy_for_me,
     i_like_to_code,
     i_believe_it_is_important_to_be_a_good_coder
   )
 
-writing_perceptions_long <- writing_perceptions |>
+# Convert to long format and adjust labels
+coding_perceptions_long <- coding_perceptions |>
   pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
   mutate(
     Statements = case_when(
@@ -485,23 +484,10 @@ writing_perceptions_long <- writing_perceptions |>
       Response == "This is a lot like me" ~ "A lot like me",
       Response == "This is very different to me" ~ "Very different from me",
       Response == "This somewhat describes me" ~ "Somewhat describes me",
+      TRUE ~ Response
     )
   ) |>
   filter(!is.na(Response))
-
-# Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-  myPlot +
-    guides(
-      shape = guide_legend(override.aes = list(size = pointSize)),
-      color = guide_legend(override.aes = list(size = pointSize))
-    ) +
-    theme(
-      legend.title = element_text(size = textSize),
-      legend.text = element_text(size = textSize),
-      legend.key.size = unit(spaceLegend, "lines")
-    )
-}
 
 # Custom colors
 response_colors <- c(
@@ -510,25 +496,47 @@ response_colors <- c(
   "Very different from me" = "tomato"
 )
 
+# Function to adjust legend size
+addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
+  myPlot +
+    guides(
+      shape = guide_legend(override.aes = list(size = pointSize)),
+      color = guide_legend(override.aes = list(size = pointSize)),
+      fill = guide_legend(title = "Response", override.aes = list(size = pointSize))
+    ) +
+    theme(
+      legend.title = element_text(size = textSize),
+      legend.text = element_text(size = textSize),
+      legend.key.size = unit(spaceLegend, "lines")
+    )
+}
+
 # Make the plot
-multi_bar <- writing_perceptions_long |>
-  ggplot(aes(x = Response, fill = Statements)) +
+multi_bar <- coding_perceptions_long |>
+  ggplot(aes(x = Response, fill = Response)) +
   geom_bar(position = "dodge", stat = "count") +
+  facet_wrap(~Statements) +
   labs(
     title = "Student Self-Perceptions of Coding",
+    subtitle = "Responses to statements about coding ease, enjoyment, and importance",
     x = "Response",
     y = "Number of Students"
   ) +
+  scale_fill_manual(values = response_colors, name = "Response") + # Using custom colors
   theme_minimal() +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(hjust = 0.5),
-    legend.position = "bottom",
+    plot.subtitle = element_text(hjust = 0.5),
     axis.text.x = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 8)
   )
 
-multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 10, spaceLegend = 0.8)
+multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 9, spaceLegend = 0.8)
 
+# Display the plot
 multi_bar
 ```
 
@@ -539,22 +547,21 @@ multi_bar
 #| tbl-cap: Student Self-Perceptions on Coding, Part 2
 #| fig-align: center
 
-# Create a multi-bar plot for coding self-perceptions grouped by response
-
-# Select first three statements
-writing_perceptions <- survey_data |>
+# Select the statements for coding self-perceptions
+coding_perceptions <- survey_data |>
   select(
     when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes,
     i_feel_confident_sharing_my_code,
     i_am_confident_in_my_overall_coding_ability
   )
 
-writing_perceptions_long <- writing_perceptions |>
+# Convert to long format and adjust labels
+coding_perceptions_long <- coding_perceptions |>
   pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
   mutate(
     Statements = case_when(
       Statements == "when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I check my code, it is\n easy for me to catch my mistakes\"",
-      Statements == "i_feel_confident_sharing_my_code" ~ "\"I feel confident sharing my code\"",
+      Statements == "i_feel_confident_sharing_my_code" ~ "\"I feel confident\n sharing my code\"",
       Statements == "i_am_confident_in_my_overall_coding_ability" ~ "\"I am confident in\n my overall coding ability\"",
       TRUE ~ Statements
     ),
@@ -562,16 +569,25 @@ writing_perceptions_long <- writing_perceptions |>
       Response == "This is a lot like me" ~ "A lot like me",
       Response == "This is very different to me" ~ "Very different from me",
       Response == "This somewhat describes me" ~ "Somewhat describes me",
+      TRUE ~ Response
     )
   ) |>
   filter(!is.na(Response))
 
-# Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
+# Custom colors
+response_colors <- c(
+  "A lot like me" = "lightgreen",
+  "Somewhat describes me" = "lightblue",
+  "Very different from me" = "tomato"
+)
+
+# Function to adjust legend size
 addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
   myPlot +
     guides(
       shape = guide_legend(override.aes = list(size = pointSize)),
-      color = guide_legend(override.aes = list(size = pointSize))
+      color = guide_legend(override.aes = list(size = pointSize)),
+      fill = guide_legend(title = "Response", override.aes = list(size = pointSize))
     ) +
     theme(
       legend.title = element_text(size = textSize),
@@ -581,23 +597,31 @@ addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 
 }
 
 # Make the plot
-multi_bar <- writing_perceptions_long |>
-  ggplot(aes(x = Response, fill = Statements)) +
+multi_bar <- coding_perceptions_long |>
+  ggplot(aes(x = Response, fill = Response)) +
   geom_bar(position = "dodge", stat = "count") +
+  facet_wrap(~Statements) +
   labs(
     title = "Student Self-Perceptions of Coding",
+    subtitle = "Responses to statements about coding confidence and ease",
     x = "Response",
-    y = "Frequency"
+    y = "Number of Students"
   ) +
+  scale_fill_manual(values = response_colors, name = "Response") + # Using custom colors
   theme_minimal() +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.text.x = element_blank(),
     legend.position = "bottom",
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 8)
   )
 
 multi_bar <- addSmallLegend(multi_bar, pointSize = 0.4, textSize = 8.5, spaceLegend = 0.8)
 
+# Display the plot
 multi_bar
 ```
 
@@ -625,7 +649,9 @@ ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
     y = NULL
   ) +
   theme_minimal() +
-  scale_fill_discrete(name = "Response") +
+  scale_fill_manual(
+      name = "Response", 
+      values = c("lightgreen", "tomato", "lightblue")) +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(hjust = 0.5),
@@ -636,6 +662,9 @@ ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
     position = position_stack(vjust = 0.5)
   )
 ```
+
+### Task-Specific Helpfulness
+
 
 ## Student Usage 
 
@@ -685,7 +714,9 @@ type_data |>
   theme_classic()
 ```
 
-To understand the role of AI chatbots in learning, students identified their usage by checking off various pre-defined use cases in the survey. As we can see in @fig-AI-usage-type-comp, technical questions and explaining concepts were the two top use cases among students. More than half of students also used ChatGPT for Quick Questions, General Knowledge, Writing Paper Code, and Checking Solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes in @Cahill_2024.
+To understand the role of AI chatbots in learning, students identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp shows that technical questions and explaining concepts were the two top use cases among students. More than half of students also used ChatGPT for Quick Questions, General Knowledge, Writing Paper Code, and Checking Solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes expressed in @Cahill_2024.
+
+
 
 TODO: Make a viz of helpfulness in various assignments. Describe the context of the assignment. 
 
@@ -804,6 +835,7 @@ tbl_ai_neg
 
 ```
 
+Based on the word cloud and the relative counts of  
 
 ### AI Implementation Recommendations
 
@@ -875,9 +907,9 @@ combined_data |>
       words = term,
       freq = n,
       scale = c(3, 0.5),
-      min.freq = 1, # Adjust scale as needed
+      min.freq = 1, # Min number of occurences
       max.words = 100,    # Maximum number of words to display
-      colors = "blue"     # Color for the word cloud
+      colors = "skyblue4"     # Color for the word cloud
     )
   )
 
@@ -925,7 +957,8 @@ word_counts |>
     wordcloud(
       words = word,
       freq = n,
-      scale = c(3, 0.5),  # Adjust scale as needed
+      scale = c(3, 0.5),
+      min.freq = 1,# Adjust scale as needed
       max.words = 100,    # Maximum number of words to display
       colors = "blue"     # Color for the word cloud
     )
