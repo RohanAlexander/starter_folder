@@ -38,7 +38,7 @@ survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w2
 
 \newpage
 
-# Introduction
+# Introduction and Literature Review
 
 The wide release of ChatGPT and other Large Language Models (LLMs) has rapidly transformed education at all levels and disciplines, creating excitement and apprehension among educators and students alike. They offer unprecedented support for student learning in tasks ranging from writing assistance to support in complex problem-solving, with the potential to enhance academic performance and student outcomes. At the same time, their use raises important questions about academic integrity, the development of critical thinking skills (particular in undergraduates), as well as questions about their implications for effective learning overall. 
 
@@ -78,34 +78,6 @@ Data was collected from students through an optional end-of-course survey. Wheth
 ## Cleaning and Variables of Interest
 
 All the data was cleaned using R [@citeR] and it's tidyverse [@tidyverse], janitor [@janitor] and stringr [@stringr], then tested for issues using the testthat package [@testthat]. This led to a final dataset containing 121 unique responses to 18  survey questions. 
-
-```{r fig-boilerplate}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: (CHANGE) Boilerplate figure caption 
-#| fig-align: center
-# survey_data |>
-#   ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
-#   #put geom type here (put before compilation) +
-#   labs(title = "Title!",
-#        x = "X label",
-#        y = "Y label") +
-#   theme_minimal() +
-#   scale_fill_discrete(name="Legend Title") +
-#   theme(plot.title.position = "plot",
-#         plot.title = element_text(hjust = 0.5)
-#         )
-```
-
-```{r tbl-boilerplate}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: (CHANGE) Boilerplate table caption 
-#| fig-align: center
-#Put code below this line
-```
 
 ## General Information
 
@@ -193,7 +165,8 @@ year_count <- survey_data |>
 kable(year_count)
 ```
 
-We can also see in from @tbl-year-dist that students from a range of years took the course. That said, the majority of students were in their 3rd or 4th year of study. This makes sense, given the course's prerequisite of general statistics, which is a two-semester sequence typically done in second year statistics. This also explains the lack of any first year students in the course as well. 
+We can also see in from @tbl-year-dist that students from a range of years took the course. That said, the majority of students were more senior undergraduates in their 3rd or 4th year of study. This makes sense, given the course's prerequisite of general statistics, which is a two-course sequence typically completed by students in their second year.
+
 
 ```{r fig-programs-pie}
 #| message: false
@@ -280,9 +253,9 @@ table_data |>
   )
 ```
 
-Just as @Cahill_2024 found, the vast majority of students taking the course were at least "somewhat familiar" with ChatGPT and other LLMs. This overrepresentation of familiarity also primarily driven by the fact that the course is primarily targeted for students in Statistics, Computer Science, Economics, Mathematics and other quantitative disciplines, possibly leading to a sample that is skewed to being more interested in computing. 
+Just as @Cahill_2024 found, the vast majority of students taking the course were at least "somewhat familiar" with ChatGPT and other LLMs. However, this vast over-representation of familiarity could be driven by the fact that the course is primarily targeted for students in Statistics, Computer Science, Economics, Mathematics and other quantitative disciplines, leading to a sample that is skewed to being more interested in computing in general. 
 
-Students were then asked about their attitudes and self-perception on writing and coding.  
+Students were then asked about their attitudes and self-perception on writing and coding. First, students had varied attitudes toward their writing and their writing abilities in general, as seen in @fig-writing-multibar-1 and fig-writing-multibar-2.
 
 ```{r fig-writing-multibar-1}
 #| message: false
@@ -367,6 +340,7 @@ multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 9, spaceLegen
 
 multi_bar
 ```
+We can see in @fig-writing-multibar-1 that most students believe it is important to be a good writing, though most are either indifferent or do not really like to write. In parallel way, students also do not find writing to be particularly easy, which could feed into the relative antipathy toward writing in general.  
 
 ```{r fig-writing-multibar-2}
 #| message: false
@@ -452,8 +426,9 @@ multi_bar2 <- addSmallLegend(multi_bar2, pointSize = 0.5, textSize = 9, spaceLeg
 multi_bar2
 
 ```
+Mirroring this, @fig-writing-multibar-2 shows that most students in the class were at least somewhat confident in their own writing abilities, but a significant contingent felt otherwise. Interestingly, although few students felt that they were confident writing ability, more felt that they were able to catch their mistakes, which could indicate a disconnect between how students perceive their work and how the work was actually evaluated. 
 
-Students had varied attitudes toward their writing and their writing abilities in general, as we can see from @fig-writing-multibar-1 and fig-writing-multibar-2. ...
+Students' self-perceptions about their coding abilities, shown in @fig-coding-multibar-1 and @fig-coding-multibar-2, also shed light on how students perceived themselves with respect to coursework, as R programming was a significant component of the course. 
 
 ```{r fig-coding-multibar-1}
 #| message: false
@@ -539,6 +514,8 @@ multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 9, spaceLegen
 # Display the plot
 multi_bar
 ```
+@fig-coding-multibar-1 shows that student self-perceptions regarding coding proficiency and importance varied. There was strong consensus on the perceived importance of coding skills, with a majority of students strongly affirming this belief. However, students' self-assessed coding abilities and enjoyment are more heterogeneous, with a substantial proportion reporting moderate rather than high levels of ease and enjoyment in coding tasks. These findings suggest a complex interplay between students' recognition of coding's significance and their personal experiences with programming activities.
+
 
 ```{r fig-coding-multibar-2}
 #| message: false
@@ -625,7 +602,8 @@ multi_bar <- addSmallLegend(multi_bar, pointSize = 0.4, textSize = 8.5, spaceLeg
 multi_bar
 ```
 
-Student self-perceptions about their coding abilities, shown in @fig-coding-multibar-1 and @fig-coding-multibar-2 were also very interesting. ...
+@fig-coding-multibar-2 reveals a predominant moderate level of confidence among students in their overall coding ability, willingness to share code, and capacity to identify errors. Notably, students express slightly higher confidence in detecting their own coding mistakes compared to general coding ability or code sharing. These patterns suggest that while students have developed some coding self-efficacy, there is still considerable potential for enhancing their perceived competence and comfort across various coding-related activities.
+
 
 ```{r fig-ai-appropriate-pie}
 #| message: false
@@ -663,8 +641,7 @@ ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
   )
 ```
 
-### Task-Specific Helpfulness
-
+Though students' self-perceptions around writing and coding are varied, there was strong consensus that the use of student AI tools is appropriate within an academic setting. One thing of note is that most who responded "It depends" generally found artificial intelligence tools to be appropriate, though with certain guidelines and rules governing their use.
 
 ## Student Usage 
 
@@ -714,21 +691,89 @@ type_data |>
   theme_classic()
 ```
 
-To understand the role of AI chatbots in learning, students identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp shows that technical questions and explaining concepts were the two top use cases among students. More than half of students also used ChatGPT for Quick Questions, General Knowledge, Writing Paper Code, and Checking Solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes expressed in @Cahill_2024.
+To understand the role of AI chatbots in learning, students more granularly identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp shows that technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used ChatGPT for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes expressed in @Cahill_2024.
 
+### Task-Specific Attitudes 
 
+Make a grid of all the tasks, with 
 
-TODO: Make a viz of helpfulness in various assignments. Describe the context of the assignment. 
+Students were also asked to rate the helpfulness of LLMs on various tasks assigned during the course on a 4 point scale of "Did not use" to "Very Helpful". To simplify the presentation, responses were grouped into two main categories: "Less Helpful" and "More Helpful." The "Less Helpful" category combines responses where students found the AI either "Not helpful" or did not use it for the task, while the "More Helpful" category includes responses where the AI was considered "Somewhat helpful" or "Very helpfu
 
-```{r fig-AI-helpfulness}
+```{r fig-AI-helpfulness-grid}
 #| message: false
 #| echo: false
 #| warning: false
 #| fig-cap: CHANGE/REMOVE
 #| fig-align: center
 
+helpful <- survey_data |>
+  select(
+    ai_helpful_weekly_quiz,
+    ai_helpful_weekly_mini_essay,
+    ai_helpful_papers_generating_ideas,
+    ai_helpful_papers_writing_code, 
+    ai_helpful_papers_writing_content, 
+    ai_helpful_papers_improving_content
+  )
 
+# Convert data to long format
+helpful_long <- helpful |>
+  pivot_longer(cols = everything(), names_to = "task", values_to = "response")
+
+# Simplify response categories and rename tasks
+helpful_long <- helpful_long |>
+  mutate(
+    response_simplified = case_when(
+      response %in% c("Not helpful", "I did not use generative AI for this component") ~ "Less Helpful",
+      response %in% c("Somewhat helpful", "Very helpful") ~ "More Helpful",
+      TRUE ~ "Unknown"  # Handle unexpected values
+    ),
+    task = case_when(
+      task == "ai_helpful_weekly_quiz" ~ "Weekly Quiz",
+      task == "ai_helpful_weekly_mini_essay" ~ "Weekly Mini Essay",
+      task == "ai_helpful_papers_generating_ideas" ~ "Generating Ideas",
+      task == "ai_helpful_papers_writing_code" ~ "Writing Code",
+      task == "ai_helpful_papers_writing_content" ~ "Writing Content",
+      task == "ai_helpful_papers_improving_content" ~ "Improving Content",
+      TRUE ~ "Other"  # Handle any unexpected task names
+    )
+  )
+
+# Count the number of responses for each simplified category and task
+helpful_summary <- helpful_long |>
+  group_by(task, response_simplified) |>
+  summarise(count = n(), .groups = 'drop')
+
+custom_colors <- c(
+  "Less Helpful" = "tomato",
+  "More Helpful" = "lightgreen"
+)
+
+# Create grouped bar charts
+grid_bar_chart <- helpful_summary |>
+  ggplot(aes(x = response_simplified, y = count, fill = response_simplified)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ task, scales = "free_y") +
+  labs(title = "Helpfulness of LLMs for Different Tasks", x = "", y = "Number of Students") +
+  theme_minimal() +
+  coord_flip() + 
+  scale_fill_manual(name = "Level", values = custom_colors) +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.text.y = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 8)
+  )
+
+grid_bar_chart <- addSmallLegend(grid_bar_chart, pointSize = 0.5, textSize = 9, spaceLegend = 0.5)
+
+grid_bar_chart
 ```
+
+@fig-AI-helpfulness-grid shows insights about how students used LLMs within the course. While most tasks were roughly split between students finding LLMs helpful or not, it was clear that students found them most helpful in generating code. In the context of the course, this meant generating R code for transforming, analyzing, and visualizing data. To a lesser extent, students also found LLMs to be helpful in improving the existing writing they had, while at the same time not favouring it for writing content from scratch. 
 
 ## Sentiment Analysis
 
@@ -750,7 +795,7 @@ We then performed basic sentiment analysis on the open-response comment question
 
 ### Appropriateness of AI in Schoolwork 
 
-In the survey, students were asked to provide an open-ended response to the question: "Please elaborate on to what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?". These responses were attempted to be understood thematically. 
+In the survey, students were asked to provide an open-ended response to the question: "Do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?". 
 
 ```{r setup-ai-appropriate}
 #| message: false
@@ -964,6 +1009,8 @@ word_counts |>
     )
   )
 ```
+
+
 
 
 
