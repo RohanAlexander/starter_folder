@@ -1,781 +1,385 @@
 ---
-title: "[Result, but poetic]: Does LLM Use Improve Data Science Education?"
-subtitle: "Evidence from a Canadian Undergraduate Statistics Course"
+title: "Self-reported LLM usage and results on a data science project: Evidence from a Canadian undergraduate data science course"
 author: 
   - Rohan Alexander
   - Luca Carnegie
-thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement."
+thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement. We thank Nathalie Moon for developing and sharing her survey questions. This research is currently under review by the University of Toronto's University Research Ethics Board. Comments can be sent to: rohan.alexander@utoronto.ca."
 date: today
 date-format: long
-abstract: "An abstract should eventually go here!!"
+abstract: "To help understand the effect of Large Language Models (LLMs) on data science practice we examine the extent to which LLM usage is correlated with the mark that a student gets on a final paper in a classroom data science setting. We find no clear relationship between more extensive LLM usage and the student's mark. Despite the classroom setting used for evaluation, the particular activity of interest reflects the work done by professional data scientists. Our finding suggests the need for more extensive work evaluating how LLMs can be integrated into the data science workflow in a way that provides value."
 format: pdf
 number-sections: true
-table-of-contents: true
+table-of-contents: false
 bibliography: references.bib
-nocite: | #references.bib entries at end, regardless of intext citation
-  @* 
 ---
 
-```{r setup, include=FALSE}
-## Workspace Setup ##
+```{r setup}
+#| include: false
 
-library(tidyverse)
 library(knitr)
-library(kableExtra)
-library(lintr)
-library(tidyr)
-library(tidytext)
-library(textdata)
 library(quanteda)
-library(wordcloud)
+library(readxl)
 library(reshape2)
-library(topicmodels)
+library(tidytext)
+library(tidyverse)
 
-
-# Import data
+# Old data (REMOVE ONCE THE TEXT ANALYSIS BIT IS UPDATED)
 survey_data <- read_csv("../data/analysis_data/clean_STA302_postcourse_survey_w24.csv", show_col_types = FALSE)
+
+# Read in data
+all_data <- read_excel(here::here("data/raw_data/merged_data.xlsx"), sheet = "Sheet1") |>
+  janitor::clean_names()
 ```
 
-\newpage
+# Introduction
 
-# Introduction and Literature Review
+There are many aspects of trustworthy data science, including education, culture, and workflow to name a few. One aspect of special importance is the tools that we use to do data science: the computers, programming languages, settings, and environments. The wide release of user-friendly Large Language Models (LLMs), especially OpenAI's ChatGPT, is a rare instance of a new tool being made available.
 
-The wide release of ChatGPT and other Large Language Models (LLMs) has rapidly transformed education at all levels and disciplines, creating excitement and apprehension among educators and students alike. They offer unprecedented support for student learning in tasks ranging from writing assistance to support in complex problem-solving, with the potential to enhance academic performance and student outcomes. At the same time, their use raises important questions about academic integrity, the development of critical thinking skills (particular in undergraduates), as well as questions about their implications for effective learning overall. 
+Like all new tools, LLMs have created both excitement and apprehension. ChatGPT's public release on November 30, 2022, brought LLMs into the mainstream conversation. By now many people, especially educators and students, have some experience with LLMs, in both personal and professional contexts.
 
-The potential for LLMs to positively affect students' academic performance in data science can be clearly inferred from already-demonstrated effects on adjacent professional fields. The tasks involved in a data science workflow can be generally broken down into two key competencies. The first is programming, which is done when cleaning, analyzing, visualizing data using languages like R or Python. The second is writing, which is primarily done when communicating results. There is experimental evidence from adjacent professional fields that LLMs can improve productivity in both of these competencies. 
+In the context of teaching statistics and data science LLMs could be useful for many tasks. For instance, there is considerable interest in the potential of chatbots and personalized tutors **[ADD CITE]**. ChatGPT has also been the catalyst for many interesting and important conversations around academic integrity **[ADD CITE]**, the development of critical thinking skills **[ADD CITE]**, and what effective learning looks like **[ADD CITE]**.
 
-@Peng_2023 show the potential impact of LLMs on students' computer programming skills, through their uncovering of the significantly positive impacts of GitHub Copilot (an LLM-powered programming assistant) on the productivity of computer programmers. In an experiment involving 95 freelance programmers, they found that that programmers with access to Copilot completed a standardized programming task 55.8% faster than the control group. Crucially, it was found that programmers with less experience saw the greatest improvements in productivity. Given that programming is a core component of data science practice, this suggests that these benefits could reasonably carry over to students in data science courses as well. 
+In this paper we are interested in better understanding LLMs as a tool for producing trustworthy data science. We study how they were used by students in an upper-year undergraduate data science course and whether students who used LLMs tended to have higher scores than those who did not.
 
-@DellAcqua_2023, while primarily about management consulting tasks, provides evidence that LLMs can significantly improve writing productivity. In a field experiment involving Consultants recruited from the Boston Consulting Group (BCG), they found that the use of GPT-4 in the experimental group led to a 25% increase in delivery speed of business tasks (most involving some writing), as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%. Though not all tasks done using AI saw the same productivity improvements, the authors expressed particular optimism for LLMs' potential to generally expedite menial knowledge-work tasks. These included tasks such as generating new ideas and creating persuasive and informative writing - both examples directly apply to data science education through their analogues of coming up with project ideas and writing more engaging reports. As a whole, they show that LLMs could equally augment the quality of student writing and course projects in data science as well. 
+The tasks involved in a trustworthy data science workflow can be generally broken down into a number of key competencies [@Adhikari2021Interleaving; @Gibbs2021Building]. The potential for LLMs to positively affect students' academic performance in data science can be clearly inferred from already-demonstrated effects in a number of those competencies on adjacent professional fields. The first is programming, which is done when cleaning, analyzing, visualizing data often using languages like R or Python. The second is writing, which is primarily done when communicating results.
 
-Clearly, the implications of these case studies appear promising. However, literature from educators both adjacent to and distant from statistics and data science suggest much more varied perspectives on how LLMs can impact student performance.
+In terms of general programming, @Peng_2023 found a positive impact of GitHub Copilot (an LLM-powered programming assistant) on productivity. Specifically, in an experiment involving 95 freelance programmers, they found that that programmers with access to GitHub Copilot completed a standardized programming task 56% faster than the control group. Programmers with less experience saw the greatest improvements in productivity.
 
-@Valenzuela_2024 argue that LLMs lead to a loss of serendipity (which leads to less original work) and de-skilling (primarily with respect to programming ability), among other consequences. These particular outcomes could negatively affect students' effective learning of data science. On the other hand, @Ellis_Slade_2023 take a more optimistic perspective, taking the popular stance of comparing ChatGPT to previously controversial learning technologies like calculators. They argue that LLMs are just another technology that will impact Statistics and Data Science education like the calculator did. However, they take a broader perspective on the issue and more specific inquiry could be done in how effective LLMs are at improving student outcomes within data science education in particular. 
+@DellAcqua_2023 focus on management consulting tasks and provide evidence that LLMs can improve writing productivity. In a field experiment involving consultants from Boston Consulting Group they found that the use of OpenAI's GPT-4 led to a 25% increase in delivery speed of business tasks (most involving some writing), as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%.
 
-In a similar attitude, @Tu_2024 acknowledge that for students, LLMs can streamline many parts of a data science workflow - with that in mind, they suggest that data scientists in training should shift their self-perspectives from primarily being an analyst to primarily being a manager responsible for strategic oversight of the analysis. Crucially they emphasize that in both education and practice, LLMs and human intelligence should play complementary roles. 
+On the other hand, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity (which leads to less original work) and de-skilling (primarily with respect to programming ability), among other consequences. These outcomes could negatively affect students' effective learning of data science. 
 
-The simultaneous caution and interest the literature expressed toward using LLMs in educational settings was further corroborated by empirical studies on K-12 and university students as well. 
+@Ellis_Slade_2023 take a more optimistic perspective and argue that LLMs are just another technology that will impact statistics and data science education. Similarly, @Tu_2024 acknowledge that LLMs can streamline many parts of a data science workflow. With that in mind, they suggest that data-scientists-in-training should shift their self-perspectives from primarily being an analyst to primarily being a manager responsible for strategic oversight of the analysis. 
 
-At the high school level, @Lazar_2023 conducted a informal survey of secondary school teachers and students on their opinions of ChatGPT, they found that while LLMs could help spark creativity, provide academic support when teachers were unavailable, and model certain types of writing well, teachers were also cognizant of LLMs potential to limit students' learning in certain ways through overreliance. Beyond academic integrity concerns, teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
+At the high school level @Lazar_2023 conducted a informal survey of secondary school teachers and students on their opinions of ChatGPT, and found that while LLMs could: help creativity, provide academic support when teachers were unavailable, and model certain types of writing well; teachers were also aware of LLMs potential to limit students' learning in certain ways through over-reliance. Beyond academic integrity concerns, teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
 
-@Cahill_2024 surveyed undergraduate Political Science students on their attitudes toward and usage of AI tools. They found that the use of ChatGPT (among other machine-learning-powered software) was widespread. However, they also found that many students lacked the confidence in using AI for academic purposes - in particular, only 11% 'strongly agreed' that they know how to use AI to improve their writing. Like educators,  students have nuanced views on appropriate AI use. In particular, respondents found that using it to writing whole papers as inappropriate, while using it for basic tasks like general assistance, writing feedback and basic data visualization was perceived more appropriately. Interestingly, first-generation college students were found to be more likely to use AI in their work, particularly in writing papers and helping with assignments. Their findings suggest that LLMs and other AI tools could be an equalizer for disadvantaged students. Rhough only political science students were surveyed, statistics and data science students could reasonably have general attitudes that are similar. 
+@Cahill_2024 surveyed undergraduate political science students on their attitudes toward and usage of AI tools. They found that the use of ChatGPT was widespread. However, they also found that many students lacked confidence in using AI for academic purposes. In particular, only 11% 'strongly agreed' that they know how to use AI to improve their writing. Students had nuanced views on appropriate AI use. In particular, respondents found that using it to write whole papers as inappropriate, while using it for basic tasks like general assistance, writing feedback and basic data visualization was perceived more appropriately.
 
-As we have seen, the existing inquiry by educators has explored the general qualitative usage and student perceptions on these tools. Though informative, a key question still remains: how can students' academic performance be affected, precisely, through allowing them to use LLMs in classwork? 
+To understand the current state of LLMs as a tool for trustworthy data science, this paper focuses on the association between student academic performance and their LLM usage. Specifically, we examine the relationship between students' grades and self-reported measures of student LLM usage, as well as student attitudes toward LLMs in general. This is based on final papers and a survey, conducted in a third-year undergraduate data science course at the University of Toronto. By examining how students interact with and perceive LLMs as tools, and how these variables translate into student outcomes, the effects of LLM integration in data science can be more precisely determined and recommendations made for future development.
 
-This paper aims to fill this gap by quantitatively investigating the relationship between students' grades and measures of student LLM usage and their attitudes toward LLMs in general, using evidence from a third-year undergraduate statistics course at the University of Toronto. Through examining how students interact with and perceive LLM tools and how these variables translate into student outcomes, the effects of LLM integration in data science education can be more precisely determined.
-
-The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data and coursework from students; @sec-model models the unstructured data to approximate a relationship between grades and usage/attitudes; @sec-results describes and analyzes the model's results; @sec-discussion discusses the implications of the findings for data science education and future research and practice in this rapidly evolving field.
-
+The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data and coursework from students. @sec-model specifies a model used to investigate the relationship. @sec-results describes and analyzes the model's results. @sec-discussion discusses the implications of the findings for data science education and future research and practice at the intersection of LLMs and trustworthy data science.
 
 # Data {#sec-data}
 
-## Background and Collection
+## Background
 
-To investigate students' usage and attitudes toward LLM use and how they related to their academic performance, a dataset containing their usage/attitudes, coursework, and academic performance was constructed. Data was sampled from the cohort of students taking STA302 - Methods of Data Analysis I, taught by one of the investigators in the Winter 2024 semester at the University of Toronto. By virtue of pre-requisites needed, this restricted the data collected to be only on upper-year undergraduate students. 
+To investigate students' usage and attitudes towards LLMs and how they related to their academic performance, a dataset containing their usage/attitudes, coursework, and academic performance was constructed. This was based on three components: 
 
-Data was collected from students through an optional end-of-course survey. Whether or not they consented to their data being used in this investigation, all respondents received a +1% increase in their final course grade for their participation. All consenting responses were then cross-referenced to their course grade, as well as the GitHub account they used to complete their course research papers. The responses were finally anonymized by removing any personal references to the students themselves. 
+1. an optional survey; 
+2. self-reported LLM usage; and 
+3. student marks on the final paper.
 
-## Cleaning and Variables of Interest
+All data are from the cohort of students taking STA302 "Methods of Data Analysis I" in the Winter 2024 semester at the University of Toronto. This course had 275 students initially enrolled which, reflecting a normal rate of attrition for undergraduate statistics courses at the University of Toronto, reduced to 154 students by the end of the semester. Assessment was heavily based on three papers submitted over the course of the 12 week semester. 
 
-All the data was cleaned using R [@citeR] and it's tidyverse [@tidyverse], janitor [@janitor] and stringr [@stringr], then tested for issues using the testthat package [@testthat]. This led to a final dataset containing 121 unique responses to 18  survey questions. 
+The student marks that we analyze are based only on the final paper, which is done individually. By this stage, uninterested students have typically dropped the course, and students are familiar with course expectations. A typical paper submission is 10-20 pages, and requires students to conduct original research to answer a research question of interest to them. It reflects the skills typically used by a professional data scientist. Students are expected to develop a research question of interest to them, identify or collect data to answer the question, conduct statistical analysis, and write a short paper. Examples of final papers (shared with consent) include: @hannahyu; @emilysu; and @bennyrochwerg.
 
-## General Information
+By the time they are working on their final paper, students have submitted and received feedback on two previous papers with similar requirements and rubrics to that of the final paper. Each paper has the same basic structure and expectations. Before the final paper is due students have received feedback on all their previous work in the class (including their past papers) and there is an, optional, two-day period of peer review.
 
-First, general information about the sample of students was derived first, through visualizing the basic data about them. This was done using the ggplot2 [@ggplot2] package.
+By virtue of pre-requisites of this course the typical student is an upper-year undergraduate. Coding and writing are major parts of the course. Students are welcome to use R or Python, but the majority code in R because that is the programming language currently mostly taught in pre-requisite courses. All writing must be in English. The aim of the course for students to create a public portfolio of work they can use to apply for jobs.
 
-```{r fig-response-time-hist}
+Throughout the semester students were encouraged to use LLMs. Formal instruction was provided twice during the semester, with a masterclass taught by a computer science faculty member on the ethics of using LLMs (see @Horton2024 for details), and another masterclass taught by a TA on writing with LLMs. 
+
+Data was collected from students through an optional end-of-course survey. [Appendix -@sec-survey-details] provides all the questions asked in the survey. Whether or not they consented to their data being used, all respondents received a 1% increase in their final course grade for their participation. Consenting responses were then matched to their final paper mark, as well as the GitHub repository for their final paper. The responses were anonymized by removing any personal references to the students themselves including names, emails, student numbers, and GitHub links.
+
+All data cleaning and analysis was done using the `R` statistical programming language [@citeR], and especially uses the `tidyverse` [@tidyverse], `janitor` [@janitor], `reshape2` [@reshape], and `readxl` [@readxl] libraries.
+
+## Survey data
+
+There were 146 responses to the survey. Of these, 119 respondents provided authorization for their data to be collected and used. Four of those respondents submitted the survey twice, and after removing their second response, 115 responses remained. Of those, 15 respondents did not include a statement on LLM usage in the README of the GitHub repository of their final paper, leaving 100 responses that were of use and were merged based on student name.
+
+All but one respondent completed the survey within 45 minutes (@fig-response-time-and-gpa-1). That one respondent took more than 4,000 minutes to complete the survey, suggesting they took a break while filling it out. That respondent is included in the analysis dataset, but without that respondent, the average time to complete the survey was 11 minutes, and the standard deviation was 8 minutes.
+
+```{r fig-response-time-and-gpa}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Distribution of Survey Response Times
-#| fig-align: center
+#| fig-cap: Distribution of respondents' survey response times and GPA
+#| fig-subcap: ["Distribution of survey response times","\"What is your GPA?\""]
+#| layout-ncol: 1
 
-# Trim values to histogram
-
-plot_data <- survey_data |>
-  filter(mins_complete < 1000)
-
-
-plot_data |>
+all_data |>
+  mutate(mins_complete = completion_time - start_time) |> 
+  filter(mins_complete < 1000) |> # Remove one student who took 4,000 minutes to complete
+  # summarize(mean = mean(mins_complete),
+            # standard_dev = sd(mins_complete))
   ggplot(aes(x = mins_complete)) +
-  geom_histogram(binwidth = 2, fill = "lightblue", color = "black") +
+  geom_histogram(binwidth = 1) +
   labs(
-    title = "Distribution of Survey Response Times",
-    x = "Time (Mins)",
+    x = "Time to complete survey (minutes)",
     y = "Frequency"
   ) +
-  theme_minimal() +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5)
-  )
-```
-@fig-response-time-hist shows the distribution of response times to the end-of-course survey. Respondents who consented generally took between 0-40 mins to answer all of the questions, with most response times ranging between 2-10 minutes. There was one consenting respondent who took 4308 minutes, whose observation was dropped from the visualization. Overall, however, this suggests that students generally took a meaningful amount of time and thought to engage with the survey's questions.  
+  theme_minimal() 
 
-
-```{r fig-gpa-hist}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: Distribution of Student GPA
-#| fig-align: center
-
-# Histogram of GPA
-
-survey_data |>
-  ggplot(aes(x = gpa)) +
-  geom_histogram(binwidth = 0.1, fill = "lightblue", color = "black") +
+all_data |>
+  # summarize(mean = mean(what_is_your_gpa, na.rm = TRUE),
+  #           standard_dev = sd(what_is_your_gpa, na.rm = TRUE))
+  ggplot(aes(x = what_is_your_gpa)) +
+  geom_histogram(binwidth = 0.1) +
   labs(
-    title = "Distribution of Student GPA",
-    x = "GPA",
+    x = "Self-reported GPA",
     y = "Frequency"
   ) +
-  theme_minimal() +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.6)
-  )
+  theme_minimal()
 ```
 
-@fig-gpa-hist shows a wide distribution of student GPAs, with the majority clustering around a B (3.0/4.0) average. One factor possibly affecting the range is the course being a required course for programs in the Statistics, Mathematics and Computer Science departments. Though programs in these departments generally attract high-achieving students, some may still struggle. Another factor is that these GPAs were self-reported, which introduces some ambiguity - students may have provided either their cumulative GPA or their most recent term's GPA, or could have misreported it entirely.  Despite these two factors, the diversity in reported grades suggests the course attracted students across a broad spectrum of academic performance levels.  
+There is a wide distribution of self-reported GPAs (@fig-response-time-and-gpa-2). Seven of the 100 respondents included in the analysis dataset did not report their GPA. The majority of responses cluster around a B (3.0/4.0), and the average is 3.06 with a standard deviation of 0.55. One factor that may affect the range is that the course is required for programs in the Statistics, Mathematics and Computer Science Departments. Self-reported GPAs introduce the possibility of reporting bias. For instance, respondents may have provided their cumulative GPA, their most recent term's GPA, or could have misreported it entirely.
+
+Students from a range of years took the course, however the majority of respondents were in their 3rd or 4th year of study (@tbl-year-dist). The course's prerequisite of general statistics, which is a two-course sequence typically completed by students in their second year, would make it difficult to take this course earlier than 3rd year.
 
 ```{r tbl-year-dist}
 #| message: false
 #| echo: false
 #| warning: false
-#| tbl-cap: Count of Students by Year
-#| fig-align: center
+#| tbl-cap: \"What year are you?\"
 
-# Change PEY to 4th year
-survey_data <- survey_data |>
+all_data |> 
   mutate(
-    year = case_when(
-      year == "PEY" ~ "4th",
-      year == "5th" ~ "5th+",
-      year == "6th" ~ "5th+",
-      TRUE ~ year
+    what_year_are_you = case_when(
+      what_year_are_you == "PEY" ~ "4th", # Change PEY to 4th year
+      what_year_are_you == "5th" ~ "5th or over",
+      what_year_are_you == "6th" ~ "5th or over",
+      TRUE ~ what_year_are_you
+    )
+  ) |> 
+  count(what_year_are_you) |>
+  pivot_wider(names_from = what_year_are_you, 
+              values_from = n, 
+              values_fill = list(n = 0)) |> 
+  kable()
+```
+
+Respondents had a varied self-perception of their coding and writing abilities (@fig-selfperception). Most respondents believed it is important to be good at writing, but many are either indifferent or do not like to write (@fig-selfperception-1). Respondents also do not find writing to be particularly easy, which could be associated with the reported relative antipathy toward writing. Most respondents were at least somewhat confident in their own writing abilities, but a substantial contingent felt otherwise. Although few respondents felt that they were confident in their writing ability, more felt that they were able to catch their mistakes, which could indicate a disconnect between how respondents perceive their work and how the work was evaluated.
+
+```{r fig-selfperception}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Self-perception of coding and writing abilities
+#| fig-subcap: ["\"Please rate how much each statement describes you, on a scale from 'This is very different to me' to 'This is a lot like me'\"", "\"Please rate how much each statement describes you, on a scale from 'This is very different to me' to 'This is a lot like me'\""]
+
+# Writing
+writing_perceptions_long <- 
+  all_data |>
+  select(
+    writing_is_easy_for_me, 
+    i_like_to_write, 
+    i_believe_it_is_important_to_be_a_good_writer,
+    when_i_edit_it_is_easy_for_me_to_catch_my_mistakes,
+    i_feel_confident_sharing_my_writing,
+    i_am_confident_in_my_overall_writing_ability
+  ) |> 
+  pivot_longer(cols = everything(), names_to = "statements", values_to = "response") |>
+  mutate(
+    statements = case_when(
+      statements == "writing_is_easy_for_me" ~ "\"Writing is easy for me.\"",
+      statements == "i_like_to_write" ~ "\"I like to write.\"",
+      statements == "i_believe_it_is_important_to_be_a_good_writer" ~ "\"I believe it is important\nto be a good writer.\"",
+      statements == "when_i_edit_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I edit it is easy for\nme to catch my mistakes.\"",
+      statements == "i_feel_confident_sharing_my_writing" ~ "\"I feel confident\nsharing my writing.\"",
+      statements == "i_am_confident_in_my_overall_writing_ability" ~ "\"I am confident in my\noverall writing ability.\"",
+      TRUE ~ statements
+    ),
+    response = case_when(
+      response == "\"This is a lot like me\"" ~ "A lot like me",
+      response == "\"This is very different to me\"" ~ "Very different from me",
+      response == "\"This somewhat describes me\"" ~ "Somewhat describes me",
+      TRUE ~ response
     )
   )
 
-year_count <- survey_data |>
-  count(year) |>
-  pivot_wider(names_from = year, values_from = n, values_fill = list(n = 0))
-
-# Display the original wide format table
-kable(year_count)
-```
-
-We can also see in from @tbl-year-dist that students from a range of years took the course. That said, the majority of students were more senior undergraduates in their 3rd or 4th year of study. This makes sense, given the course's prerequisite of general statistics, which is a two-course sequence typically completed by students in their second year.
-
-
-```{r fig-programs-pie}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Student Distribution by Program of Study
-#| fig-align: center
-
-# Pie chart of program of study
-
-program_counts <- survey_data |>
-  count(program_of_study)
-
-ggplot(program_counts, aes(x = "", y = n, fill = program_of_study)) +
-  geom_bar(stat = "identity", width = 1) +
-  coord_polar("y") +
+writing_perceptions_long |>
+  ggplot(aes(x = response, fill = response)) +
+  geom_bar(position = "stack", stat = "count") +
+  facet_wrap(vars(statements)) +
   labs(
-    title = "Distribution of Students by Program of Study",
-    subtitle = "Visualizing the proportion of students across different programs",
-    x = NULL,
-    y = NULL
+    x = "Response",
+    y = "Number of repondents",
+    fill = "Response:"
   ) +
+  scale_fill_brewer(palette = "Set1") +
   theme_minimal() +
-  scale_fill_discrete(name = "Program of Study") +
   theme(
-    axis.text.x = element_blank(), # Remove x-axis text
-    axis.title.x = element_blank(), # Remove x-axis title
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5)
+    axis.text.x = element_blank(),
+    legend.position = "bottom"
+  )
+
+# Coding
+coding_perceptions_long <- 
+  all_data |>
+  select(
+    coding_is_easy_for_me,
+    i_like_to_code,
+    i_believe_it_is_important_to_be_a_good_coder,
+    when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes,
+    i_feel_confident_sharing_my_code,
+    i_am_confident_in_my_overall_coding_ability
+  ) |> 
+  pivot_longer(cols = everything(), names_to = "statements", values_to = "response") |>
+  mutate(
+    statements = case_when(
+      statements == "coding_is_easy_for_me" ~ "\"Coding is easy for me\"",
+      statements == "i_like_to_code" ~ "\"I like to code\"",
+      statements == "i_believe_it_is_important_to_be_a_good_coder" ~ "\"I believe it is important\n to be a good coder\"",
+      statements == "when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I check my code, it is\n easy for me to catch my\nmistakes\"",
+      statements == "i_feel_confident_sharing_my_code" ~ "\"I feel confident\n sharing my code\"",
+      statements == "i_am_confident_in_my_overall_coding_ability" ~ "\"I am confident in\n my overall coding ability\"",
+      TRUE ~ statements
+    ),
+    response = case_when(
+      response == "\"This is a lot like me\"" ~ "A lot like me",
+      response == "\"This is very different to me\"" ~ "Very different from me",
+      response == "\"This somewhat describes me\"" ~ "Somewhat describes me",
+      TRUE ~ response
+    )
+  )
+
+coding_perceptions_long |>
+  ggplot(aes(x = response, fill = response)) +
+  geom_bar(position = "stack", stat = "count") +
+  facet_wrap(vars(statements)) +
+  labs(
+    x = "Response",
+    y = "Number of repondents",
+    fill = "Response:"
   ) +
-  geom_text(aes(label = n),
-    position = position_stack(vjust = 0.5)
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    legend.position = "bottom"
   )
 ```
 
-Programs of study [did something; waiting on major/minor data], as we can see in @fig-programs-pie... 
+Respondent self-perceptions regarding coding proficiency and importance varied (@fig-selfperception-2). There was strong consensus on the perceived importance of coding skills, with a majority of respondents strongly affirming this belief. However, respondents' self-assessed coding abilities and enjoyment are more heterogeneous, with a substantial proportion reporting moderate rather than high levels of ease and enjoyment in coding tasks. These findings suggest a complicated relationship between respondents' recognition of coding's importance and their personal experience with coding.
 
+Overall there was a moderate level of confidence among respondents in their overall coding ability, willingness to share code, and capacity to identify errors (@fig-selfperception-2). Notably, respondents express slightly higher confidence in detecting their own coding mistakes compared to general coding ability or code sharing. These patterns suggest that while respondents have developed some coding self-efficacy, there is still considerable potential for enhancing their perceived competence and comfort across various coding-related activities.
 
-## Student Attitudes 
+The majority of respondents were at least "somewhat familiar" with generative AI such as ChatGPT (@tbl-ai-familiarity-usage-1). Though respondents' self-perceptions around writing and coding are varied, there was strong consensus that the use of generative AI tools is appropriate within an academic setting (@tbl-ai-familiarity-usage-2). Most respondents who responded "It depends" generally found artificial intelligence tools to be appropriate, though with certain guidelines and rules governing their use.
 
-```{r fig-ai-familiarity}
+```{r tbl-ai-familiarity-usage}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Student Familiarity with AI
-#| fig-align: center
+#| tbl-cap: Familiarity with, and appropriateness of, generative AI
+#| tbl-subcap: ["'How familiar are you with using generative AI tools such as OpenAI's ChatGPT or equivalents?'","'To what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?'"]
 
-table_data <- survey_data |>
-  select(ai_familiarity) |>
+all_data |>
+  rename(ai_familiarity = how_familiar_are_you_with_using_generative_ai_tools_such_as_open_a_is_chat_gpt_or_equivalents) |> 
   mutate(
     ai_familiarity = case_when(
       ai_familiarity == "Limited to some liberal arts, such as history courses" ~ "Somewhat familiar",
       TRUE ~ ai_familiarity
     )
   ) |>
-  count(ai_familiarity)
+  count(ai_familiarity) |> 
+  kable(col.names = c("Extent of AI familiarity", "Number"))
 
-# Custom colors
-familiarity_colors <- c(
-  "Not familiar" = "tomato",
-  "Somewhat familiar" = "lightblue",
-  "Very familiar" = "lightgreen"
-)
 
-table_data |>
-  ggplot(aes(x = "", y = n, fill = ai_familiarity)) +
-  geom_bar(stat = "identity", width = 1) +
-  coord_polar("y") +
-  labs(
-    title = "Student Familiarity with AI",
-    x = NULL,
-    y = NULL
-  ) +
-  theme_minimal() +
-  scale_fill_manual(name = "Familiarity Level", values = familiarity_colors) +
-  theme(
-    axis.text.x = element_blank(), # Remove x-axis text
-    axis.title.x = element_blank(), # Remove x-axis title
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5)
-  ) +
-  geom_text(aes(label = n),
-    position = position_stack(vjust = 0.5)
-  )
-```
-
-Just as @Cahill_2024 found, the vast majority of students taking the course were at least "somewhat familiar" with ChatGPT and other LLMs. However, this vast over-representation of familiarity could be driven by the fact that the course is primarily targeted for students in Statistics, Computer Science, Economics, Mathematics and other quantitative disciplines, leading to a sample that is skewed to being more interested in computing in general. 
-
-Students were then asked about their attitudes and self-perception on writing and coding. First, students had varied attitudes toward their writing and their writing abilities in general, as seen in @fig-writing-multibar-1 and fig-writing-multibar-2.
-
-```{r fig-writing-multibar-1}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Student Self-Perceptions on Writing, Part 1
-#| fig-align: center
-
-# Create a multi-bar plot for writing perceptions grouped by response
-
-# Select first three statements
-writing_perceptions <- survey_data |>
-  select(
-    writing_is_easy_for_me,
-    i_like_to_write,
-    i_believe_it_is_important_to_be_a_good_writer
-  )
-
-writing_perceptions_long <- writing_perceptions |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+all_data |>
+  rename(ai_schoolwork_appropriate = to_what_extent_do_you_think_using_generative_ai_tools_such_as_chat_gpt_by_open_ai_or_equivalents_is_ethical_and_appropriate_for_schoolwork) |> 
   mutate(
-    Statements = case_when(
-      Statements == "writing_is_easy_for_me" ~ "\"Writing is easy for me\"",
-      Statements == "i_like_to_write" ~ "\"I like to write\"",
-      Statements == "i_believe_it_is_important_to_be_a_good_writer" ~ "\"I believe it is important\nto be a good writer\"",
-      TRUE ~ Statements
-    ),
-    Response = case_when(
-      Response == "This is a lot like me" ~ "A lot like me",
-      Response == "This is very different to me" ~ "Very different from me",
-      Response == "This somewhat describes me" ~ "Somewhat describes me",
-    )
-  ) |>
-  filter(!is.na(Response))
-
-# Custom colors
-response_colors <- c(
-  "A lot like me" = "lightgreen",
-  "Somewhat describes me" = "lightblue",
-  "Very different from me" = "tomato"
-)
-
-# Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-  myPlot +
-    guides(
-      shape = guide_legend(override.aes = list(size = pointSize)),
-      color = guide_legend(override.aes = list(size = pointSize)),
-      fill = guide_legend(title = "Response", override.aes = list(size = pointSize))
-    ) +
-    theme(
-      legend.title = element_text(size = textSize),
-      legend.text = element_text(size = textSize),
-      legend.key.size = unit(spaceLegend, "lines")
-    )
-}
-
-# Make the plot
-multi_bar <- writing_perceptions_long |>
-  ggplot(aes(x = Response, fill = Response)) +
-  geom_bar(position = "dodge", stat = "count") +
-  facet_wrap(~Statements) +
-  labs(
-    title = "Student Self-Perceptions on Writing",
-    subtitle = "Responses to statements about writing ease, enjoyment, and importance",
-    x = "Response",
-    y = "Number of Students"
-  ) +
-  scale_fill_manual(values = response_colors, name = "Response") + # Using custom colors
-  theme_minimal() +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.text.x = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8)
-  )
-
-multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 9, spaceLegend = 0.8)
-
-multi_bar
+    ai_schoolwork_appropriate = case_when(
+      ai_schoolwork_appropriate == "Depends of what the main goal of schoolwork is" ~ "It depends",
+      ai_schoolwork_appropriate == "I believe student can only use it if they are allowed to" ~ "It depends",
+      ai_schoolwork_appropriate == "a controllable amount" ~ "It depends",
+      ai_schoolwork_appropriate == "appropriate depending on the context" ~ "It depends",
+      ai_schoolwork_appropriate == "appropriate with rules for usage" ~ "It depends",
+      ai_schoolwork_appropriate == "depends" ~ "It depends",
+      ai_schoolwork_appropriate == "depends on how it is used" ~ "It depends",
+      ai_schoolwork_appropriate == "half and half" ~ "It depends",
+      ai_schoolwork_appropriate == "unsure" ~ "It depends",
+      TRUE ~ ai_schoolwork_appropriate
+      )) |> 
+  count(ai_schoolwork_appropriate) |> 
+  kable(col.names = c("Ethical and appropriate for school?", "Number"))
 ```
-We can see in @fig-writing-multibar-1 that most students believe it is important to be a good writing, though most are either indifferent or do not really like to write. In parallel way, students also do not find writing to be particularly easy, which could feed into the relative antipathy toward writing in general.  
 
-```{r fig-writing-multibar-2}
+To understand the role of LLMs in learning, students more granularly identified their usage by checking off various pre-defined use cases in the survey (@fig-AI-use-and-usefulness-1). Technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used LLMs for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing.
+
+```{r fig-AI-use-and-usefulness}
 #| message: false
 #| echo: false
 #| warning: false
-#| tbl-cap: Student Self-Perceptions on Writing, Part 2
-#| fig-align: center
+#| fig-cap: "Use and usefulness of generative AI"
+#| fig-subcap: ["\"If you have used generative AI tools such as OpenAI's ChatGPT or equivalents, in what ways have you used it (select all that apply)?\"", "\"How helpful did you find generative AI tools such as ChatGPT by OpenAI (or equivalents) for each component of STA302?\""]
 
-# Create a multi-bar plot for writing perceptions grouped by response
-
-# Select last three statements
-writing_perceptions <- survey_data |>
-  select(
-    when_i_edit_it_is_easy_for_me_to_catch_my_mistakes,
-    i_feel_confident_sharing_my_writing,
-    i_am_confident_in_my_overall_writing_ability
-  )
-
-writing_perceptions_long <- writing_perceptions |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+# Use
+all_data |>
+  rename(how_have_you_used = if_you_have_used_generative_ai_tools_such_as_open_a_is_chat_gpt_or_equivalents_in_what_ways_have_you_used_it_select_all_that_apply) |> 
+  select(how_have_you_used) |> 
+  separate_rows(how_have_you_used, sep = ";") |> 
   mutate(
-    Statements = case_when(
-      Statements == "when_i_edit_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I edit, it is easy to\ncatch my own mistakes\"",
-      Statements == "i_feel_confident_sharing_my_writing" ~ "\"I feel confident\nsharing my writing\"",
-      Statements == "i_am_confident_in_my_overall_writing_ability" ~ "\"I am confident in\nmy own writing ability\"",
-      TRUE ~ Statements
-    ),
-    Response = case_when(
-      Response == "This is a lot like me" ~ "A lot like me",
-      Response == "This is very different to me" ~ "Very different from me",
-      Response == "This somewhat describes me" ~ "Somewhat describes me",
+    how_have_you_used = case_when(
+      how_have_you_used == "check grammar mistake" ~ "Other",
+      how_have_you_used == "debugging code" ~ "Other",
+      how_have_you_used == "mental health support" ~ "Other",
+      how_have_you_used == "Making practice questions for me with increasing difficulty" ~ "Other",
+      how_have_you_used == "Generating test questions" ~ "Other",
+      TRUE ~ how_have_you_used
     )
-  ) |>
-  filter(!is.na(Response))
+  ) |> 
+  count(how_have_you_used) |>
+  filter(how_have_you_used != "") |> 
+  arrange(desc(n)) |> 
+  ggplot(aes(x = n, y = reorder(how_have_you_used, n))) +
+  geom_bar(stat = "identity") +
+  labs(x = "Number of respondents", y = "Type of usage") +
+  theme_minimal()
 
-# Custom colors
-response_colors <- c(
-  "A lot like me" = "lightgreen",
-  "Somewhat describes me" = "lightblue",
-  "Very different from me" = "tomato"
-)
 
-# Taken from: https://stackoverflow.com/questions/52297978/decrease-overal-legend-size-elements-and-text
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-  myPlot +
-    guides(
-      shape = guide_legend(override.aes = list(size = pointSize)),
-      color = guide_legend(override.aes = list(size = pointSize)),
-      fill = guide_legend(title = "Response", override.aes = list(size = pointSize))
-    ) +
-    theme(
-      legend.title = element_text(size = textSize),
-      legend.text = element_text(size = textSize),
-      legend.key.size = unit(spaceLegend, "lines")
-    )
-}
-
-# Make the plot
-multi_bar2 <- writing_perceptions_long |>
-  ggplot(aes(x = Response, fill = Response)) +
-  geom_bar(position = "dodge", stat = "count") +
-  facet_wrap(~Statements) +
-  labs(
-    title = "Student Self-Perceptions on Writing",
-    subtitle = "Responses to statements about confidence and editing in writing",
-    x = "Response",
-    y = "Number of Students"
-  ) +
-  scale_fill_manual(values = response_colors, name = "Response") + # Using custom colors
-  theme_minimal() +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.text.x = element_blank(), # Remove x-axis labels
-    legend.position = "bottom",
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8)
-  )
-
-multi_bar2 <- addSmallLegend(multi_bar2, pointSize = 0.5, textSize = 9, spaceLegend = 0.8)
-
-multi_bar2
-
-```
-Mirroring this, @fig-writing-multibar-2 shows that most students in the class were at least somewhat confident in their own writing abilities, but a significant contingent felt otherwise. Interestingly, although few students felt that they were confident writing ability, more felt that they were able to catch their mistakes, which could indicate a disconnect between how students perceive their work and how the work was actually evaluated. 
-
-Students' self-perceptions about their coding abilities, shown in @fig-coding-multibar-1 and @fig-coding-multibar-2, also shed light on how students perceived themselves with respect to coursework, as R programming was a significant component of the course. 
-
-```{r fig-coding-multibar-1}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Student Self-Perceptions on Coding, Part 1
-#| fig-align: center
-
-# Select first three statements for coding self-perceptions
-coding_perceptions <- survey_data |>
+# Usefulness
+all_data |>
   select(
-    coding_is_easy_for_me,
-    i_like_to_code,
-    i_believe_it_is_important_to_be_a_good_coder
-  )
-
-# Convert to long format and adjust labels
-coding_perceptions_long <- coding_perceptions |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
+    weekly_quiz,
+    weekly_mini_essay,
+    papers_generating_ideas,
+    papers_writing_code,
+    papers_writing_content,
+    papers_improving_content
+  ) |>
+  pivot_longer(cols = everything(),
+               names_to = "task",
+               values_to = "response") |>
   mutate(
-    Statements = case_when(
-      Statements == "coding_is_easy_for_me" ~ "\"Coding is easy for me\"",
-      Statements == "i_like_to_code" ~ "\"I like to code\"",
-      Statements == "i_believe_it_is_important_to_be_a_good_coder" ~ "\"I believe it is important\n to be a good coder\"",
-      TRUE ~ Statements
-    ),
-    Response = case_when(
-      Response == "This is a lot like me" ~ "A lot like me",
-      Response == "This is very different to me" ~ "Very different from me",
-      Response == "This somewhat describes me" ~ "Somewhat describes me",
-      TRUE ~ Response
-    )
-  ) |>
-  filter(!is.na(Response))
-
-# Custom colors
-response_colors <- c(
-  "A lot like me" = "lightgreen",
-  "Somewhat describes me" = "lightblue",
-  "Very different from me" = "tomato"
-)
-
-# Function to adjust legend size
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-  myPlot +
-    guides(
-      shape = guide_legend(override.aes = list(size = pointSize)),
-      color = guide_legend(override.aes = list(size = pointSize)),
-      fill = guide_legend(title = "Response", override.aes = list(size = pointSize))
-    ) +
-    theme(
-      legend.title = element_text(size = textSize),
-      legend.text = element_text(size = textSize),
-      legend.key.size = unit(spaceLegend, "lines")
-    )
-}
-
-# Make the plot
-multi_bar <- coding_perceptions_long |>
-  ggplot(aes(x = Response, fill = Response)) +
-  geom_bar(position = "dodge", stat = "count") +
-  facet_wrap(~Statements) +
-  labs(
-    title = "Student Self-Perceptions of Coding",
-    subtitle = "Responses to statements about coding ease, enjoyment, and importance",
-    x = "Response",
-    y = "Number of Students"
-  ) +
-  scale_fill_manual(values = response_colors, name = "Response") + # Using custom colors
-  theme_minimal() +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.text.x = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8)
-  )
-
-multi_bar <- addSmallLegend(multi_bar, pointSize = 0.5, textSize = 9, spaceLegend = 0.8)
-
-# Display the plot
-multi_bar
-```
-@fig-coding-multibar-1 shows that student self-perceptions regarding coding proficiency and importance varied. There was strong consensus on the perceived importance of coding skills, with a majority of students strongly affirming this belief. However, students' self-assessed coding abilities and enjoyment are more heterogeneous, with a substantial proportion reporting moderate rather than high levels of ease and enjoyment in coding tasks. These findings suggest a complex interplay between students' recognition of coding's significance and their personal experiences with programming activities.
-
-
-```{r fig-coding-multibar-2}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Student Self-Perceptions on Coding, Part 2
-#| fig-align: center
-
-# Select the statements for coding self-perceptions
-coding_perceptions <- survey_data |>
-  select(
-    when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes,
-    i_feel_confident_sharing_my_code,
-    i_am_confident_in_my_overall_coding_ability
-  )
-
-# Convert to long format and adjust labels
-coding_perceptions_long <- coding_perceptions |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-  mutate(
-    Statements = case_when(
-      Statements == "when_i_check_my_code_it_is_easy_for_me_to_catch_my_mistakes" ~ "\"When I check my code, it is\n easy for me to catch my mistakes\"",
-      Statements == "i_feel_confident_sharing_my_code" ~ "\"I feel confident\n sharing my code\"",
-      Statements == "i_am_confident_in_my_overall_coding_ability" ~ "\"I am confident in\n my overall coding ability\"",
-      TRUE ~ Statements
-    ),
-    Response = case_when(
-      Response == "This is a lot like me" ~ "A lot like me",
-      Response == "This is very different to me" ~ "Very different from me",
-      Response == "This somewhat describes me" ~ "Somewhat describes me",
-      TRUE ~ Response
-    )
-  ) |>
-  filter(!is.na(Response))
-
-# Custom colors
-response_colors <- c(
-  "A lot like me" = "lightgreen",
-  "Somewhat describes me" = "lightblue",
-  "Very different from me" = "tomato"
-)
-
-# Function to adjust legend size
-addSmallLegend <- function(myPlot, pointSize = 0.5, textSize = 3, spaceLegend = 0.1) {
-  myPlot +
-    guides(
-      shape = guide_legend(override.aes = list(size = pointSize)),
-      color = guide_legend(override.aes = list(size = pointSize)),
-      fill = guide_legend(title = "Response", override.aes = list(size = pointSize))
-    ) +
-    theme(
-      legend.title = element_text(size = textSize),
-      legend.text = element_text(size = textSize),
-      legend.key.size = unit(spaceLegend, "lines")
-    )
-}
-
-# Make the plot
-multi_bar <- coding_perceptions_long |>
-  ggplot(aes(x = Response, fill = Response)) +
-  geom_bar(position = "dodge", stat = "count") +
-  facet_wrap(~Statements) +
-  labs(
-    title = "Student Self-Perceptions of Coding",
-    subtitle = "Responses to statements about coding confidence and ease",
-    x = "Response",
-    y = "Number of Students"
-  ) +
-  scale_fill_manual(values = response_colors, name = "Response") + # Using custom colors
-  theme_minimal() +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.text.x = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8)
-  )
-
-multi_bar <- addSmallLegend(multi_bar, pointSize = 0.4, textSize = 8.5, spaceLegend = 0.8)
-
-# Display the plot
-multi_bar
-```
-
-@fig-coding-multibar-2 reveals a predominant moderate level of confidence among students in their overall coding ability, willingness to share code, and capacity to identify errors. Notably, students express slightly higher confidence in detecting their own coding mistakes compared to general coding ability or code sharing. These patterns suggest that while students have developed some coding self-efficacy, there is still considerable potential for enhancing their perceived competence and comfort across various coding-related activities.
-
-
-```{r fig-ai-appropriate-pie}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Comparison of Whether AI Use is Appropriate in School
-#| fig-align: center
-
-# Pie chart of student opinion on appropriateness of AI use in class.
-
-appropriate <- survey_data |>
-  select(ai_schoolwork_appropriate) |>
-  count(ai_schoolwork_appropriate)
-
-ggplot(appropriate, aes(x = "", y = n, fill = ai_schoolwork_appropriate)) +
-  geom_bar(stat = "identity", width = 1) +
-  coord_polar(theta = "y") +
-  labs(
-    title = "Do students think AI use is appropriate in class?",
-    x = NULL,
-    y = NULL
-  ) +
-  theme_minimal() +
-  scale_fill_manual(
-      name = "Response", 
-      values = c("lightgreen", "tomato", "lightblue")) +
-  theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5),
-    axis.text.x = element_blank(), # Remove x-axis text
-    axis.title.x = element_blank(),
-  ) +
-  geom_text(aes(label = n),
-    position = position_stack(vjust = 0.5)
-  )
-```
-
-Though students' self-perceptions around writing and coding are varied, there was strong consensus that the use of student AI tools is appropriate within an academic setting. One thing of note is that most who responded "It depends" generally found artificial intelligence tools to be appropriate, though with certain guidelines and rules governing their use.
-
-## Student Usage 
-
-```{r fig-AI-usage-type-comp}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: How Students Use ChatGPT
-#| fig-align: center
-
-
-type_data <- survey_data |>
-  select(
-    not_used,
-    used_technical_q,
-    used_conversation,
-    used_general_knowledge,
-    used_solving_hmk,
-    used_check_soln,
-    used_quick_q,
-    used_expl_concepts,
-    used_writing_content,
-    used_writing_code
-  ) |>
-  pivot_longer(cols = everything(), names_to = "Statements", values_to = "Response") |>
-  mutate(Statements = case_when(
-    Statements == "not_used" ~ "Not Used",
-    Statements == "used_technical_q" ~ "Technical Questions",
-    Statements == "used_conversation" ~ "Fun Conversation",
-    Statements == "used_general_knowledge" ~ "General Knowledge",
-    Statements == "used_solving_hmk" ~ "Entirely Solving Homework",
-    Statements == "used_check_soln" ~ "Checking Solutions",
-    Statements == "used_quick_q" ~ "Quick Questions",
-    Statements == "used_expl_concepts" ~ "Explaining Concepts",
-    Statements == "used_writing_content" ~ "Writing Paper Content",
-    Statements == "used_writing_code" ~ "Writing Paper Code",
-    TRUE ~ Statements
-  )) |>
-  filter(Response == 1) |>
-  count(Statements) |>
-  arrange(desc(n))
-
-type_data |>
-  ggplot(aes(x = n, y = reorder(Statements, n))) +
-  geom_bar(stat = "identity", fill = "lightblue") +
-  labs(title = "How Students Used ChatGPT", x = "Number of Students", y = "Type of Usage") +
-  theme_classic()
-```
-
-To understand the role of AI chatbots in learning, students more granularly identified their usage by checking off various pre-defined use cases in the survey. @fig-AI-usage-type-comp shows that technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used ChatGPT for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing, concurring with student attitudes expressed in @Cahill_2024.
-
-### Task-Specific Attitudes 
-
-Make a grid of all the tasks, with 
-
-Students were also asked to rate the helpfulness of LLMs on various tasks assigned during the course on a 4 point scale of "Did not use" to "Very Helpful". To simplify the presentation, responses were grouped into two main categories: "Less Helpful" and "More Helpful." The "Less Helpful" category combines responses where students found the AI either "Not helpful" or did not use it for the task, while the "More Helpful" category includes responses where the AI was considered "Somewhat helpful" or "Very helpfu
-
-```{r fig-AI-helpfulness-grid}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: CHANGE/REMOVE
-#| fig-align: center
-
-helpful <- survey_data |>
-  select(
-    ai_helpful_weekly_quiz,
-    ai_helpful_weekly_mini_essay,
-    ai_helpful_papers_generating_ideas,
-    ai_helpful_papers_writing_code, 
-    ai_helpful_papers_writing_content, 
-    ai_helpful_papers_improving_content
-  )
-
-# Convert data to long format
-helpful_long <- helpful |>
-  pivot_longer(cols = everything(), names_to = "task", values_to = "response")
-
-# Simplify response categories and rename tasks
-helpful_long <- helpful_long |>
-  mutate(
+    # Simplify response categories and rename tasks
     response_simplified = case_when(
-      response %in% c("Not helpful", "I did not use generative AI for this component") ~ "Less Helpful",
-      response %in% c("Somewhat helpful", "Very helpful") ~ "More Helpful",
+      response %in% c("\"Not helpful\"", "\"I did not use generative AI for this component\"") ~ "Less Helpful",
+      response %in% c("\"Somewhat helpful\"", "\"Very helpful\"") ~ "More Helpful",
       TRUE ~ "Unknown"  # Handle unexpected values
     ),
     task = case_when(
-      task == "ai_helpful_weekly_quiz" ~ "Weekly Quiz",
-      task == "ai_helpful_weekly_mini_essay" ~ "Weekly Mini Essay",
-      task == "ai_helpful_papers_generating_ideas" ~ "Generating Ideas",
-      task == "ai_helpful_papers_writing_code" ~ "Writing Code",
-      task == "ai_helpful_papers_writing_content" ~ "Writing Content",
-      task == "ai_helpful_papers_improving_content" ~ "Improving Content",
+      task == "weekly_quiz" ~ "Weekly Quiz",
+      task == "weekly_mini_essay" ~ "Weekly Mini Essay",
+      task == "papers_generating_ideas" ~ "Generating Ideas",
+      task == "papers_writing_code" ~ "Writing Code",
+      task == "papers_writing_content" ~ "Writing Content",
+      task == "papers_improving_content" ~ "Improving Content",
       TRUE ~ "Other"  # Handle any unexpected task names
     )
-  )
-
-# Count the number of responses for each simplified category and task
-helpful_summary <- helpful_long |>
+  ) |> 
   group_by(task, response_simplified) |>
-  summarise(count = n(), .groups = 'drop')
-
-custom_colors <- c(
-  "Less Helpful" = "tomato",
-  "More Helpful" = "lightgreen"
-)
-
-# Create grouped bar charts
-grid_bar_chart <- helpful_summary |>
+  summarise(count = n(), .groups = 'drop') |> 
   ggplot(aes(x = response_simplified, y = count, fill = response_simplified)) +
   geom_bar(stat = "identity") +
   facet_wrap(~ task, scales = "free_y") +
-  labs(title = "Helpfulness of LLMs for Different Tasks", x = "", y = "Number of Students") +
+  labs(y = "Number of respondents",
+       x = "",
+       fill = "Response type: ") +
   theme_minimal() +
   coord_flip() + 
-  scale_fill_manual(name = "Level", values = custom_colors) +
+  scale_fill_brewer(palette = "Set1") +
   theme(
-    plot.title.position = "plot",
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
     axis.text.y = element_blank(),
     legend.position = "bottom",
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8)
   )
 
-grid_bar_chart <- addSmallLegend(grid_bar_chart, pointSize = 0.5, textSize = 9, spaceLegend = 0.5)
-
-grid_bar_chart
 ```
 
-@fig-AI-helpfulness-grid shows insights about how students used LLMs within the course. While most tasks were roughly split between students finding LLMs helpful or not, it was clear that students found them most helpful in generating code. In the context of the course, this meant generating R code for transforming, analyzing, and visualizing data. To a lesser extent, students also found LLMs to be helpful in improving the existing writing they had, while at the same time not favouring it for writing content from scratch. 
+Respondents were also asked to rate the helpfulness of LLMs on various tasks assigned during the course on a 4-point scale of "Did not use" to "Very Helpful" (@fig-AI-use-and-usefulness-2). To simplify the presentation, responses were grouped into two main categories: "Less Helpful" and "More Helpful." The "Less Helpful" category combines responses where students found the AI either "Not helpful" or did not use it for the task, while the "More Helpful" category includes responses where the AI was considered "Somewhat helpful" or "Very helpful".
 
-## Sentiment Analysis
+Respondents differed in terms of how they used LLMs in the course (@fig-AI-use-and-usefulness-2). While most tasks were roughly split between respondents finding LLMs helpful or not, respondents found them most helpful in generating code. In the context of the course, this meant generating R code for transforming, analyzing, and visualizing data. To a lesser extent, respondents also found LLMs to be helpful in improving the existing writing they had, while at the same time not favouring it for writing content from scratch. 
+
+## Open-ended survey responses
 
 ```{r setup-sentiment}
 #| message: false
@@ -791,11 +395,7 @@ pos_words <- get_sentiments() |>
   filter(sentiment == "positive")
 ```
 
-We then performed basic sentiment analysis on the open-response comment questions asked to students. To perform this text analysis, the tidytext package [@tidytext] was used. 
-
-### Appropriateness of AI in Schoolwork 
-
-In the survey, students were asked to provide an open-ended response to the question: "Do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?". 
+One question asked students to elaborate on whether they thought generative AI tools such as ChatGPT were ethical and appropriate for schoolwork. This was an open-response question. We summarized the responses to that question using text analysis and the `tidytext` package [@tidytext].
 
 ```{r setup-ai-appropriate}
 #| message: false
@@ -804,29 +404,15 @@ In the survey, students were asked to provide an open-ended response to the ques
 
 # AI Appropriateness Comments
 ai_comments <- survey_data |>
-  select(
-    id,
-    ai_schoolwork_appropriate_comments
-  ) |>
-  mutate(
-    comment = ai_schoolwork_appropriate_comments
-  ) |>
+  select(id, ai_schoolwork_appropriate_comments) |>
+  mutate(comment = ai_schoolwork_appropriate_comments) |>
   select(-c(ai_schoolwork_appropriate_comments))
 
 # put comments into tidytext format
 tidy_ai_comments <- ai_comments |>
   group_by(id) |>
   unnest_tokens(word, comment) |>
-  mutate(word = str_to_lower(string = word)) 
-
-```
-
-```{r fig-wordcloud-ai-appropriate}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: (CHANGE) Boilerplate figure caption 
-#| fig-align: center
+  mutate(word = str_to_lower(string = word))
 
 # Load sentiment lexicon
 sentiments <- get_sentiments()
@@ -836,58 +422,6 @@ comparison_data <- tidy_ai_comments |>
   inner_join(sentiments) |>
   count(word, sentiment, sort = TRUE) |>
   acast(word ~ sentiment, value.var = "n", fill = 0)
-
-# Generate comparative word cloud
-comparison.cloud(
-  comparison_data,
-  colors = c("darkred", "darkgreen"),
-  max.words = 100,
-  title.size = 1.5,
-  scale = c(3, 0.5)  # Adjust scale for word size
-)
-```
-
-```{r tbl-ai-appropriate}
-#| message: false
-#| echo: false
-#| warning: false
-#| tbl-cap: Comparing Incidences of Positive and Negative Words.
-#| tbl-subcap: ["Top 10 Positive Words", "Top 10 Negative Words"]
-#| layout-ncol: 2
-#| fig-align: center
-
-
-# Generate positive words table
-tbl_ai_pos <- tidy_ai_comments |>
-  ungroup() |>
-  select(-c("id")) |>
-  inner_join(pos_words) |>
-  count(word, sort = TRUE) |>
-  head(10) |>
-  kable(, format = "markdown")
-
-# Generate negative words table
-tbl_ai_neg <- tidy_ai_comments |>
-  ungroup() |>
-  select(-c("id")) |>
-  inner_join(neg_words) |>
-  count(word, sort = TRUE) |>
-  head(10) |>
-  kable(, format = "markdown") 
-
-tbl_ai_pos
-tbl_ai_neg
-
-```
-
-Based on the word cloud and the relative counts of  
-
-### AI Implementation Recommendations
-
-```{r recs-setup}
-#| message: false
-#| echo: false
-#| warning: false
 
 # Example sentiments data frame
 sentiments <- get_sentiments()
@@ -913,7 +447,8 @@ bigrams <- recs_comments |>
   ungroup() |>
   unnest_tokens(bigram, comment, token = "ngrams", n = 2) |>
   separate(bigram, into = c("word1", "word2"), sep = " ") |>
-  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) |>
+  filter(!word1 %in% stop_words$word &
+           !word2 %in% stop_words$word) |>
   count(word1, word2, sort = TRUE) |>
   unite(bigram, word1, word2, sep = " ")
 
@@ -925,7 +460,9 @@ comparison_data_words <- tidy_recs_comments |>
 comparison_data_bigrams <- bigrams |>
   separate(bigram, into = c("word1", "word2"), sep = " ") |>
   inner_join(sentiments, by = c("word1" = "word")) |>
-  inner_join(sentiments, by = c("word2" = "word"), suffix = c(".word1", ".word2")) |>
+  inner_join(sentiments,
+             by = c("word2" = "word"),
+             suffix = c(".word1", ".word2")) |>
   unite(bigram, word1, word2, sep = " ") |>
   count(bigram, sentiment.word1, sort = TRUE) |>
   rename(sentiment = sentiment.word1)
@@ -933,32 +470,10 @@ comparison_data_bigrams <- bigrams |>
 # Combine both data sets
 combined_data <- bind_rows(
   comparison_data_words |> rename(term = word),
-  comparison_data_bigrams |> rename(term = bigram)
-) |>
+  comparison_data_bigrams |> rename(term = bigram)) |>
   arrange(desc(n))
-
 ```
 
-```{r recs-wordcloud}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: Word Cloud for Recommendations Comments
-#| fig-align: center
-
-combined_data |>
-  with(
-    wordcloud(
-      words = term,
-      freq = n,
-      scale = c(3, 0.5),
-      min.freq = 1, # Min number of occurences
-      max.words = 100,    # Maximum number of words to display
-      colors = "skyblue4"     # Color for the word cloud
-    )
-  )
-
-```
 
 ```{r tbl-recs-relpolarity}
 #| message: false
@@ -970,7 +485,7 @@ combined_data |>
 #| fig-align: center
 
 # Generate positive words table
-tbl_recs_pos <- tidy_recs_comments |>
+tidy_recs_comments |>
   ungroup() |>
   select(-c("id")) |>
   inner_join(pos_words) |>
@@ -979,73 +494,136 @@ tbl_recs_pos <- tidy_recs_comments |>
   kable(, format = "markdown")
 
 # Generate negative words table
-tbl_recs_neg <- tidy_recs_comments |>
+tidy_recs_comments |>
   ungroup() |>
   select(-c("id")) |>
   inner_join(neg_words) |>
   count(word, sort = TRUE) |>
   head(10) |>
   kable(, format = "markdown") 
-
-tbl_recs_pos
-tbl_recs_neg
 ```
 
-```{r word-cloud}
+
+## LLM usage and final paper marks
+
+Two other components were merged with the survey responses: self-reported LLM usage on the final paper, and final paper mark.
+
+Students were encouraged to use LLMs to complete their papers. Each paper required the students to disclose their usage through a statement in the GitHub repository README for the paper. Even students who did not use generative AI at all were required to state this in the README. For students who did use generative AI, there was an additional requirement that they save the logs of their usage in a txt file which was also included in their GitHub repository.
+
+Those README statements were gathered and parsed using OpenAI's ChatGPT 4o model (as at 26 July). The following prompt was used: 'The following statement is about to what extent LLMs were used by a student. Please characterize it as one of: "None", "Minimal", "Somewhat", "Extensive", "Unsure". Respond with only one of those options.' All classifications were then manually checked by hand for reasonableness.
+
+We find a varied extent of self-reported LLM usage (@tbl-llm-usage). 41 respondents were classified as having made extensive use of LLMs, while 28 were classified as having made somewhat use. 31 respondents were classified as having made minimal or no use of LLMs. In the analysis dataset we combine those two classifications because only 8 respondents were classified as having minimal usage.
+
+```{r tbl-llm-usage}
 #| message: false
 #| echo: false
 #| warning: false
+#| tbl-cap: Self-reported LLM usage in final paper
 
-# Word cloud based on bigrams
-word_counts |>
-  with(
-    wordcloud(
-      words = word,
-      freq = n,
-      scale = c(3, 0.5),
-      min.freq = 1,# Adjust scale as needed
-      max.words = 100,    # Maximum number of words to display
-      colors = "blue"     # Color for the word cloud
-    )
-  )
+all_data |>
+  count(llm_usage) |> 
+  kable(col.names = c("Self-reported LLM usage", "Number"))
 ```
 
+The third, and final, component is the mark, in percentages, on the final paper (@fig-mark). The overall mean was 78% and standard deviation was 17 percentage points. However there was considerable differences by the extent of LLM usage. For extensive use, the mean was 82% and the standard deviation was 15 percentage points. For somewhat usage, the mean was 77% and the standard deviation was 16 percentage points. For minimal usage, the mean was 74% and the standard deviation was 23 percentage points. Finally for no usage, the mean was 75% and the standard deviation was 19 percentage points.
 
+```{r fig-mark}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Mark on final paper, in percentages, and LLM usage in final paper
 
+# all_data |>
+#   group_by(llm_usage) |> 
+#   summarize(mean = mean(mark) |> round(2),
+#             sd = sd(mark) |> round(2))
+# 
+# all_data |>
+#   summarize(mean = mean(mark) |> round(2),
+#             sd = sd(mark) |> round(2))
 
+all_data |>
+  ggplot(mapping = aes(x = mark, color =)) +
+  geom_histogram(binwidth = 0.01) +
+  scale_x_continuous(labels = scales::label_percent()) +
+  labs(x = "Final paper mark (percentage)", y = "Count") +
+  facet_wrap(vars(llm_usage),
+             ncol = 2,
+             labeller = labeller(
+               llm_usage = c(
+                 "Extensive" = "Extensive LLM usage",
+                 "Minimal" = "Minimal LLM usage",
+                 "None" = "No LLM usage",
+                 "Somewhat" = "Some LLM usage"
+               )
+             )) +
+  theme_minimal()
+```
 
 # Model {#sec-model}
 
-The goal of our modelling strategy is twofold. Firstly,...
+The goal of our modelling strategy is to better understand how respondents result on their final paper is associated with their self-reported LLM usage. The result on the final paper is a proportion and some respondents got full marks and so we use zero-one-inflated beta regression. Here we briefly describe the model that we use, which follows @kurztotherescue. Diagnostics are included in [Appendix -@sec-model-details].
 
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
+Define $y_i$ as the percentage received on the final paper. Then $\beta_1$ is the characterization of self-reported LLM usage and $\beta_2$ is self-reported GPA.
 
 \begin{align}
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
+y_i &\sim \mbox{Beta}(\mu_i, \phi) \\
+logit(\mu_i) &= \beta_0 + \beta_1 \times \mbox{LLM usage}_i + \beta_2 \times \mbox{GPA}_i\\
+\beta_0, \beta_1, \beta_2  &\sim \mbox{Normal}(0, 1) \\
+\phi &\sim \mbox{Gamma}(4, 0.1)
 \end{align}
 
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+We estimate the model in `R` [@citeR] using `brms` [@brms].
 
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
+The expected relationship between LLM usage and final mark is unclear. It may be that stronger students used LLMs in a more sophisticated way or that they did not need to use them. However, the relationship between GPA and final mark is expected to be positive.
 
 # Results {#sec-results}
 
-Our results are summarized in @tbl-modelresults.
+Our results are summarized in @tbl-model-results and @fig-model-results. We especially draw on `modelsummary` [@modelsummary].
+
+```{r tbl-model-results}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Coefficient estimates and mean absolute deviation (MAD)
+
+fit1 <-
+  readRDS(file = here::here("models/fit1brms.rds"))
+fit2 <-
+  readRDS(file = here::here("models/fit2brms.rds"))
+
+modelsummary::modelsummary(
+  list(
+    "Base model" = fit1,
+    "Including self-reported GPA" = fit2
+  ),
+  statistic = "mad",
+  fmt = 2
+)
+```
+
+
+```{r fig-model-results}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Coefficient estimates and 90 per cent credibility intervals
+
+modelsummary::modelplot(
+  list(
+    "Base model" = fit1,
+    "Including self-reported GPA" = fit2
+  ),
+  conf_level = 0.9,
+  coef_omit = "phi") +
+  labs(x= "") +
+  scale_color_brewer(palette = "Set1")
+```
+
+Interestingly, we find a slightly negative effect, relative to self-reported extensive use, of using LLMs less (@fig-model-results). As expected, self-reported GPA is positively associated with final mark.
+
+As always with regression, average estimates over the full dataset. It may be that the results are different for different tranches of respondents. For instance, looking at the 28 students who received an A+ for the final paper, 13 of them had extensive LLM usage.
+
 
 
 
@@ -1057,15 +635,13 @@ Our results are summarized in @tbl-modelresults.
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
-
 ## Second discussion point
 
 ## Third discussion point
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
+We don't know whether it made them faster.
 
 \newpage
 
@@ -1074,22 +650,128 @@ Weaknesses and next steps should also be included.
 # Appendix {-}
 
 
-# Additional data details
+# Survey questions {#sec-survey-details}
+
+1. After carefully reading the informed consent document, please indicate below whether you consent to have your anonymized responses included in the research study?
+    - Yes, I authorize the use of the data collected about me for the STA302 course survey to be used. I will be compensated 1% of my course grade for completing the survey.
+    - No I do not want my data included in the research study, but I want to complete the survey. I will be compensated 1% of my course grade for completing the survey.
+    - I do not want to complete this survey. I realize that I am forfeiting the corresponding course credit.
+2. What is your full name on Quercus?
+3. What is your Student ID?
+4. What year are you?
+5. What is your specialization?
+6. What is/are your major/s?
+7. What is/are your minor/s?
+8. What is your GPA?
+9. Please rate how much each statement describes you, on a scale from "This is very different to me" to "This is a lot like me" ["This is very different to me"; "This somewhat describes me"; "This is a lot like me"]
+    - Writing is easy for me
+    - I like to write
+    - I believe it is important to be a good writer.
+    - When I edit it is easy for me to catch my mistakes.
+    - I feel confident sharing my writing.
+    - I am confident in my overall writing ability.
+10. Please rate how much each statement describes you, on a scale from "This is very different to me" to "This is a lot like me". When answering, please consider whichever programming language you are most familiar with. ["This is very different to me"; "This somewhat describes me"; "This is a lot like me"]
+    - Coding is easy for me
+    - I like to code
+    - I believe it is important to be a good coder.
+    - When I check my code it is easy for me to catch my mistakes.
+    - I feel confident sharing my code.
+    - I am confident in my overall coding ability.
+11. How familiar are you with using generative AI tools such as OpenAI's ChatGPT or equivalents?
+    - Very familiar
+    - Somewhat familiar
+    - Not familiar
+    - Other
+12. Have you used any generative AI tools such as OpenAI's ChatGPT or equivalents for any reason (personal or educational)?
+    - Yes
+    - No
+    - Other
+13. If you have used generative AI tools such as OpenAI's ChatGPT or equivalents, in what ways have you used it (select all that apply)?
+    - Asking technical questions
+    - Carrying on a conversation out of curiosity
+    - Asking general knowledge questions
+    - Solving homework
+    - Checking solutions
+    - Asking quick questions when stuck
+    - Explaining concepts
+    - Writing essays or paragraphs
+    - Writing code
+    - Never used it
+    - Other
+14. To what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?
+    - Appropriate
+    - Inappropriate
+    - Other
+15. Please elaborate on your answer above.
+16. Did you use any generative AI tools such as OpenAI's ChatGPT or equivalents for STA302?
+    - Yes
+    - No
+    - Other
+17. How helpful did you find generative AI tools such as ChatGPT by OpenAI (or equivalents) for each component of STA302? ["Not helpful"; "Somewhat helpful"; "Very helpful"; "I did not use generative AI for this component"]
+    - Weekly quiz
+    - Weekly mini-essay
+    - Papers: Generating ideas
+    - Papers: Writing code
+    - Papers: Writing content
+    - Papers: Improving content
+18. What is your recommendation for how generative AI tools such as ChatGPT by OpenAI (or equivalents) should be used in the course in future?
+19. (Optional) Any other comments?
+
+\newpage
 
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
 
-In ... we implement a posterior predictive check. This shows...
+```{r fig-posteriorchecks}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Posterior predictive checking
+#| fig-subcap: ["Base model","Including self-reported GPA"]
+#| layout-ncol: 2
 
-In ... we compare the posterior with the prior. This shows...
+bayesplot::pp_check(fit1) +
+  theme_classic() +
+  theme(legend.position = "bottom")
 
+bayesplot::pp_check(fit2) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+
+
+```{r tbl-loo}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Model comparison
+
+brms::loo_compare(loo::loo(fit1, cores = 2), loo::loo(fit2, cores = 2))
+```  
+
+\newpage
 
 ## Diagnostics
 
-... is a trace plot. It shows... This suggests...
+```{r fig-basemodeldiagnostics}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Base model diagnostics 
 
-... is a Rhat plot. It shows... This suggests...
+plot(fit1)
+```
+
+```{r fig-gpamodeldiagnostics}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Model including self-reported GPA diagnostics 
+
+plot(fit2)
+```
+
 
 
 
