@@ -17,7 +17,7 @@ library(readxl)
 
 #### Read data ####
 all_data <-
-  read_excel(here::here("data/raw_data/merged_data.xlsx"), sheet = "Sheet1") |>
+  read_excel(here::here("data/merged_data.xlsx"), sheet = "Sheet1") |>
   janitor::clean_names() |>
   mutate(mark = if_else(mark == 1, 0.99, mark)) |> # I'm a monster
   mutate(llm_usage =
