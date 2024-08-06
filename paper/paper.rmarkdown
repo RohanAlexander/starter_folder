@@ -31,6 +31,7 @@ all_data <-
   janitor::clean_names()
 ```
 
+
 # Introduction
 
 There are many aspects of trustworthy data science, including education, culture, and workflow to name a few. One aspect of special importance is the tools that we use to do data science: the computers, programming languages, and environments. The wide release of user-friendly Large Language Models (LLMs), particularly OpenAI's ChatGPT, is a rare instance of a new and powerful tool being made available to add to a data scientist's toolbelt.
@@ -89,6 +90,7 @@ There were 146 responses to the survey. Of these, 119 respondents provided autho
 
 All but one respondent completed the survey within 45 minutes (@fig-response-time-and-gpa-1). That one respondent took more than 4,000 minutes to complete the survey, suggesting they took a break while filling it out. That respondent is included in the analysis dataset, but without that respondent, the average time to complete the survey was 11 minutes, and the standard deviation was 8 minutes.
 
+
 ```{r fig-response-time-and-gpa}
 #| message: false
 #| echo: false
@@ -116,9 +118,11 @@ all_data |>
   theme_minimal()
 ```
 
+
 There is a wide distribution of self-reported GPAs (@fig-response-time-and-gpa-2). Seven of the 100 respondents included in the analysis dataset did not report their GPA. The majority of responses cluster around a B (3.0/4.0), and the average is 3.06 with a standard deviation of 0.55. One factor that may affect the range is that the course is required for programs in the Statistics, Mathematics and Computer Science Departments. Self-reported GPAs also introduce the possibility of reporting bias. For instance, respondents may have provided their cumulative GPA, their most recent term's GPA, or could have misreported it entirely.
 
 Students from a range of years took the course, however the majority of respondents were in their 3rd or 4th year of study (@tbl-year-dist). The course's prerequisite of general statistics, which is a two-course sequence typically completed by students in their second year, would make it difficult to take this course earlier than their 3rd year.
+
 
 ```{r tbl-year-dist}
 #| message: false
@@ -145,7 +149,9 @@ all_data |>
   kable()
 ```
 
+
 Respondents had a varied self-perception of their coding and writing abilities (@fig-selfperception). Most respondents believed it is important to be good at writing, but many are either indifferent or do not like to write (@fig-selfperception-1). Respondents also do not find writing to be particularly easy, which could be associated with the reported relative antipathy toward writing. Most respondents were at least somewhat confident in their own writing abilities, but a substantial contingent felt otherwise. Although few respondents felt that they were confident in their writing ability, more felt that they were able to catch their mistakes, which could indicate a disconnect between how respondents perceive their work and how the work was evaluated.
+
 
 ```{r fig-selfperception}
 #| message: false
@@ -237,11 +243,13 @@ coding_perceptions_long |>
   theme(axis.text.x = element_blank(), legend.position = "bottom")
 ```
 
+
 Respondent self-perceptions regarding coding proficiency and importance varied (@fig-selfperception-2). There was strong consensus on the perceived importance of coding skills, with a majority of respondents strongly affirming this belief. However, respondents' self-assessed coding abilities and enjoyment are more heterogeneous, with a substantial proportion reporting moderate rather than high levels of ease and enjoyment in coding tasks. These findings suggest a complicated relationship between respondents' recognition of coding's importance and their personal experience with coding.
 
 Overall there was a moderate level of confidence among respondents in their overall coding ability, willingness to share code, and capacity to identify errors (@fig-selfperception-2). Notably, respondents express slightly higher confidence in detecting their own coding mistakes compared to general coding ability or code sharing. These patterns suggest that while respondents have developed some coding self-efficacy, there is still considerable potential for enhancing their perceived competence and comfort across various coding-related activities.
 
 The majority of respondents were at least "somewhat familiar" with generative AI such as ChatGPT (@tbl-ai-familiarity-usage-1). Though respondents' self-perceptions around writing and coding are varied, there was strong consensus that the use of generative AI tools is appropriate within an academic setting (@tbl-ai-familiarity-usage-2). Most respondents who responded "It depends" generally found artificial intelligence tools to be appropriate, though with certain guidelines and rules governing their use.
+
 
 ```{r tbl-ai-familiarity-usage}
 #| message: false
@@ -282,7 +290,9 @@ all_data |>
   kable(col.names = c("Ethical & Appropriate for school?", "Students"))
 ```
 
+
 To understand the role of LLMs in learning, students identified their usage in a more granular way by checking off various pre-defined use cases in the survey (@fig-AI-use-and-usefulness-1). Technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used LLMs for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing.
+
 
 ```{r fig-AI-use-and-usefulness}
 #| message: false
@@ -360,6 +370,7 @@ all_data |>
   theme(axis.text.y = element_blank(), legend.position = "bottom")
 ```
 
+
 Respondents were also asked to rate the helpfulness of LLMs on various tasks assigned during the course on a 4-point scale of "Did not use" to "Very Helpful" (@fig-AI-use-and-usefulness-2). To simplify the presentation, responses were grouped into two main categories: "Less Helpful" and "More Helpful." The "Less Helpful" category combines responses where students found the AI either "Not helpful" or did not use it for the task, while the "More Helpful" category includes responses where the AI was considered "Somewhat helpful" or "Very helpful".
 
 Respondents differed in terms of how they used LLMs in the course (@fig-AI-use-and-usefulness-2). While most tasks were roughly split between respondents finding LLMs helpful or not, respondents found them most helpful in generating code. In the context of the course, this meant generating R code for transforming, analyzing, and visualizing data. To a lesser extent, respondents also found LLMs to be helpful in improving the existing writing they had, while at the same time not favouring it for writing content from scratch. 
@@ -379,6 +390,7 @@ Those README statements were gathered and parsed using OpenAI's ChatGPT 4o model
 
 We find a varied extent of self-reported LLM usage (@tbl-llm-usage). 41 respondents were classified as having made extensive use of LLMs, while 28 were classified as having made somewhat use. 31 respondents were classified as having made minimal or no use of LLMs. In the analysis dataset we combine those two classifications because only 8 respondents were classified as having minimal usage.
 
+
 ```{r tbl-llm-usage}
 #| message: false
 #| echo: false
@@ -390,7 +402,9 @@ all_data |>
   kable(col.names = c("Self-reported LLM usage", "Number"))
 ```
 
+
 The third, and final, component is the mark, in percentages, on the final paper (@fig-mark). The overall mean was 78% and standard deviation was 17 percentage points. However there was considerable differences by the extent of LLM usage. For extensive use, the mean was 82% and the standard deviation was 15 percentage points. For somewhat usage, the mean was 77% and the standard deviation was 16 percentage points. For minimal usage, the mean was 74% and the standard deviation was 23 percentage points. Finally for no usage, the mean was 75% and the standard deviation was 19 percentage points.
+
 
 ```{r fig-mark}
 #| message: false
@@ -425,28 +439,28 @@ all_data |>
   theme_minimal()
 ```
 
+
 # Model {#sec-model}
 
-The goal of our modelling strategy is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage.  Students received their result on the final paper as a proportion (a 0-100% mark), so we use zero-one-inflated beta regression to best fit the distribution in this interval. We use this type of regression given the ability of the beta distribution to effectively describe continuous and skewed or heteroskedastic datasets, which we can see in the asymmetrical histogram of the distribution of marks.    
+The goal of our modelling strategy is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage.  Students received their result on the final paper as a proportion (a 0-100% mark), so we use zero-one-inflated beta regression to best fit the distribution in this interval. We use this type of regression given the ability of the beta distribution to effectively describe various skewed datasets, which we have in our data.  
+
 
 ```{r final-grade-dist}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: Distribution of grades on Final Paper
 
 all_data |>
-  select(mark) |>
-  ggplot(aes(x = mark)) +
+  select(Mark) |>
+  ggplot(, mapping = aes(x = Mark, y = n(Mark))) +
   geom_histogram(binwidth = 0.01) +
-  labs(x = "Final paper mark (percentage)", y = "Count") +
+  labs(x = "Final paper mark (percentage)", y = "Count")
   theme_minimal()
 
 ```
 
-Transforming the regression with a logit function as the link function ensures that the predicted values stay between the 0-1 range, like in logistic regression. This allows the regression model to only return values between the 0-1, respecting the boundaries of the data. Finally, since students' grades could be either 0, 100, or in between, the zero-one-inflated beta model design is used to include grades that are 0 and 1 as well. 
 
-Here we briefly describe the model that we use, which follows @kurztotherescue. Model Diagnostics are included in [Appendix -@sec-model-details].
+
+Generally, beta-regression estimates a 0-1 proportion by 
+
+Here we briefly describe the model that we use, which follows @kurztotherescue. Diagnostics are included in [Appendix -@sec-model-details].
 
 Define $y_i$ as the percentage received on the final paper. Then $\beta_1$ is the characterization of self-reported LLM usage and $\beta_2$ is self-reported GPA.
 
@@ -457,13 +471,14 @@ logit(\mu_i) &= \beta_0 + \beta_1 \times \mbox{LLM usage}_i + \beta_2 \times \mb
 \phi &\sim \mbox{Gamma}(4, 0.1)
 \end{align}
 
-We estimate the model in `R` [@citeR] as well, using `brms` [@brms].
+We estimate the model in `R` [@citeR] using `brms` [@brms].
 
-The expected relationship between LLM usage and final mark is unclear. It could be that stronger students used LLMs in a more sophisticated way or that they did not need to use them. However, the relationship between GPA and final mark is expected to be positive.
+The expected relationship between LLM usage and final mark is unclear. It may be that stronger students used LLMs in a more sophisticated way or that they did not need to use them. However, the relationship between GPA and final mark is expected to be positive.
 
 # Results {#sec-results}
 
 Our results are summarized in @tbl-model-results and @fig-model-results. We especially draw on `modelsummary` [@modelsummary].
+
 
 ```{r tbl-model-results}
 #| message: false
@@ -486,7 +501,6 @@ modelsummary::modelsummary(
 )
 ```
 
-
 ```{r fig-model-results}
 #| message: false
 #| echo: false
@@ -503,6 +517,7 @@ modelsummary::modelplot(
   labs(x= "") +
   scale_color_brewer(palette = "Set1")
 ```
+
 
 Interestingly, we find a slightly negative effect, relative to self-reported extensive use, of using LLMs less (@fig-model-results). As expected, self-reported GPA is positively associated with final mark.
 
@@ -611,6 +626,7 @@ We use `bayesplot` [@bayesplot] and `loo` [@loo] help with posterior predictive 
 
 ## Posterior predictive check
 
+
 ```{r fig-posteriorchecks}
 #| message: false
 #| echo: false
@@ -628,7 +644,6 @@ bayesplot::pp_check(fit2) +
   theme(legend.position = "bottom")
 ```
 
-
 ```{r tbl-loo}
 #| message: false
 #| echo: false
@@ -638,9 +653,11 @@ bayesplot::pp_check(fit2) +
 brms::loo_compare(loo::loo(fit1, cores = 2), loo::loo(fit2, cores = 2))
 ```  
 
+
 \newpage
 
 ## Diagnostics
+
 
 ```{r fig-basemodeldiagnostics}
 #| fig-height: 7
@@ -662,6 +679,8 @@ plot(fit1)
 plot(fit2)
 ```
 
+
 \newpage
 
 # References
+
