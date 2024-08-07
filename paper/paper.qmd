@@ -437,7 +437,7 @@ The goal of our modelling strategy is to better understand how a respondents' re
 all_data |>
   select(mark) |>
   ggplot(aes(x = mark)) +
-  geom_histogram(binwidth = 0.01) +
+  geom_histogram(binwidth = 0.05) +
   labs(x = "Final paper mark (percentage)", y = "Count") +
   theme_minimal()
 
