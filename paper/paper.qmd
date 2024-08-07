@@ -3,7 +3,6 @@ title: "Self-reported LLM usage and results on a data science project: Evidence 
 author: 
   - Rohan Alexander
   - Luca Carnegie
-  - Nathalie Moon
 thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement. We thank Nathalie Moon for developing and sharing her survey questions. We thank Tiffany Timbers and attendees at JSM 2024 for helpful suggestions. This research is currently under review by the University of Toronto's University Research Ethics Board. Comments can be sent to: rohan.alexander@utoronto.ca."
 date: today
 date-format: long
