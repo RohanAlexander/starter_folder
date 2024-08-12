@@ -258,6 +258,9 @@ all_data |>
       TRUE ~ ai_familiarity
     )
   ) |>
+  mutate(
+     ai_familiarity = factor(ai_familiarity, levels=c("Very familiar", "Somewhat familiar", "Not familiar"))
+     ) |>
   count(ai_familiarity) |>
   kable(col.names = c("Extent of AI familiarity", "Students"))
 
