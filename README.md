@@ -1,4 +1,4 @@
-# Self-reported LLM usage and results on a datascience project: Evidence from a Canadian undergraduate data science course
+# Self-reported LLM Usage and Results on a Data Science Project: Evidence from a Canadian Undergraduate Data Science Course
 
 ## Overview
 
