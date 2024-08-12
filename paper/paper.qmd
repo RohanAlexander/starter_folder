@@ -33,11 +33,11 @@ all_data <-
 
 # Introduction
 
-There are many aspects of trustworthy data science, including education, culture, and workflow to name a few. One aspect of special importance is the tools that we use to do data science: the computers, programming languages, and environments among other factors. The wide release of user-friendly Large Language Models (LLMs), particularly OpenAI's ChatGPT, is the rare instance of a new tool being added to the data science toolkit.
+Trustworthy data science is the practice of conducting data analysis in a transparent, ethical, and reliable manner. These principles are upheld in various ways, through ongoing education, adherence to professional norms and, and implementation of reproducible workflows.  To stay current, data scientists must continually update their knowledge of best practices for transparency and reproducibility, foster a culture which values different perspectives and accountability, and critically consider the broader impact of data-driven decisions.  Recent advances, such as the wide release of user-friendly Large Language Models (LLMs), particularly OpenAI’s ChatGPT, have transformed the data science toolkit. These powerful tools for natural language processing and generation influence various aspects of data analysis and automation, further emphasizing the need for trustworthy practices.
 
-Like all new tools, however, LLMs have created both excitement and apprehension. ChatGPT's public release on November 30, 2022, brought LLMs into the mainstream conversation. LLMs have quickly been put to use in both industry and academia. By now, many people, especially educators and students, have some experience with LLMs, in both personal and professional contexts.
+Like all new tools, LLMs have created both excitement and apprehension. ChatGPT's public release on November 30, 2022, brought LLMs into the mainstream conversation. LLMs have quickly been put to use in both industry and academia. By now, many people, especially educators and students, have some experience with LLMs, in both personal and professional contexts.
 
-In the context of teaching statistics and data science, LLMs could be useful for many tasks. For instance, there is considerable interest in the potential of chatbots to act as personalized tutors for students [fulgencio2024developing; afzal2024tailoring; @Winkler_2018]. ChatGPT has also been the catalyst for many interesting and important conversations around academic integrity [@Eke2023], the development of critical thinking skills, and what effective learning looks like [@BaidooAnu_2023].
+In the context of teaching statistics and data science, LLMs could be useful for many tasks. For instance, there is considerable interest in the potential of chatbots to act as personalized tutors for students [@fulgencio2024developing; @afzal2024tailoring]. ChatGPT has also been the catalyst for many interesting and important conversations around academic integrity [@Eke2023], the development of critical thinking skills [@thiga2024generative], and what effective learning looks like [@BaidooAnu_2023].
 
 In this paper we are interested in better understanding LLMs as a tool for producing trustworthy data science. We study how they were used by students in an upper-year undergraduate data science course and whether students who used LLMs tended to have higher scores than those who did not.
 
@@ -258,6 +258,9 @@ all_data |>
       TRUE ~ ai_familiarity
     )
   ) |>
+  mutate(
+     ai_familiarity = factor(ai_familiarity, levels=c("Very familiar", "Somewhat familiar", "Not familiar"))
+     ) |>
   count(ai_familiarity) |>
   kable(col.names = c("Extent of AI familiarity", "Students"))
 
