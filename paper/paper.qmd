@@ -4,10 +4,10 @@ author:
   - Rohan Alexander
   - Luca Carnegie
   - Nathalie Moon
-thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement. We thank Tiffany Timbers and attendees at JSM 2024 for helpful suggestions. This research is currently under review by the University of Toronto's Research Ethics Board. Comments can be sent to: rohan.alexander@utoronto.ca."
+thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement. We thank Tiffany Timbers and attendees at JSM 2024 for helpful suggestions. This research is currently under review by the University of Toronto's Research Ethics Board. Contributions: RA: Conceptualization, Data Curation, Formal Analysis, Funding Acquisition, Investigation, Methodology, Project Administration, Software, Visualization, Writing – Original Draft Preparation, Writing – Review & Editing; LC: Formal Analysis, Visualization, Writing – Original Draft Preparation, Writing – Review & Editing; NM: Conceptualization, Methodology; Writing – Original Draft Preparation, Writing – Review & Editing. Comments can be sent to: rohan.alexander@utoronto.ca."
 date: today
 date-format: long
-abstract: "To help understand the effect of Large Language Models (LLMs) on data science practice we examine the extent to which LLM usage is correlated with the mark that a student gets on a final paper in a classroom data science setting. We find some very mild evidence from this observational study that LLM usage may be associated with better scores, but our main conclusion is that there is no clear relationship between more extensive LLM usage and the student's mark. Despite the classroom setting used for evaluation, the particular activity of interest reflects the work done by professional data scientists. Our finding suggests the need for more extensive work evaluating how LLMs can be integrated into the data science workflow in a way that provides value."
+abstract: "To help understand the effect of Large Language Models (LLMs) on data science practice we examine the extent to which LLM usage is correlated with the mark that a student gets on a final paper in a classroom data science setting. We find some very mild evidence from this observational study that LLM usage may be associated with better scores, but our main conclusion is that there is no clear relationship between more extensive LLM usage and the student's mark. Despite the classroom setting used for evaluation, the particular activity of interest is similar to the work done by professional data scientists. Our finding suggests the need for more extensive work evaluating how LLMs can be integrated into the data science workflow in a way that provides value."
 format: pdf
 number-sections: true
 table-of-contents: false
@@ -17,45 +17,43 @@ bibliography: references.bib
 ```{r setup}
 #| include: false
 
+library(arrow)
+library(here)
 library(knitr)
-library(quanteda)
-library(readxl)
-library(reshape2)
-library(tidytext)
 library(tidyverse)
-library(tinytex)
+library(scales)
+library(modelsummary)
 
 # Read in data
 all_data <-
-  read_excel(here::here("data/merged_data.xlsx"), sheet = "Sheet1") |>
-  janitor::clean_names()
+  read_parquet(here("data/analysis_data.parquet"))
 ```
 
 # Introduction
 
 Trustworthy data science is the practice of conducting data analysis in a transparent, ethical, and reliable manner. These principles are upheld in various ways, through ongoing education, adherence to professional norms and, and implementation of reproducible workflows.  To stay current, data scientists must continually update their knowledge of best practices for transparency and reproducibility, foster a culture which values different perspectives and accountability, and critically consider the broader impact of data-driven decisions.  Recent advances, such as the wide release of user-friendly Large Language Models (LLMs), particularly OpenAI’s ChatGPT, have transformed the data science toolkit. These powerful tools for natural language processing and generation influence various aspects of data analysis and automation, further emphasizing the need for trustworthy practices.
 
-Like all new tools, LLMs have created both excitement and apprehension. ChatGPT's public release on November 30, 2022, brought LLMs into the mainstream conversation. LLMs have quickly been put to use in both industry and academia. By now, many people, especially educators and students, have some experience with LLMs, in both personal and professional contexts.
+Like all new tools LLMs have created both excitement and apprehension. ChatGPT's public release on November 30, 2022, brought LLMs into the mainstream conversation. LLMs have quickly been put to use in both industry and academia. By now, many people, especially educators and students, have some experience with LLMs, in both personal and professional contexts.
 
 In the context of teaching statistics and data science, LLMs could be useful for many tasks. For instance, there is considerable interest in the potential of chatbots to act as personalized tutors for students [@fulgencio2024developing; @afzal2024tailoring]. ChatGPT has also been the catalyst for many interesting and important conversations around academic integrity [@Eke2023], the development of critical thinking skills [@thiga2024generative], and what effective learning looks like [@BaidooAnu_2023].
 
 In this paper we are interested in better understanding LLMs as a tool for producing trustworthy data science. We study how they were used by students in an upper-year undergraduate data science course and whether students who used LLMs tended to have higher scores than those who did not.
 
-The tasks involved in a trustworthy data science workflow can be generally broken down into a number of key competencies [@Adhikari2021Interleaving; @Gibbs2021Building]. The first is programming, which is done when cleaning, analyzing, visualizing data often using languages like R or Python. The second is writing, which is primarily done when communicating results. The potential for LLMs to positively affect students' academic performance in data science can be clearly inferred from already-demonstrated effects in a number of those competencies on adjacent professional fields.
+The tasks involved in a trustworthy data science workflow can be generally broken down into a number of key competencies [@Adhikari2021Interleaving; @Gibbs2021Building]. One is programming, which is done when cleaning, analyzing, and visualizing data often using programming languages like R or Python. Another is writing, which is primarily done when communicating results. The potential for LLMs to positively affect students' academic performance in data science can be clearly inferred from their already-demonstrated capability in those competencies in adjacent professional fields.
 
-In terms of computer programming, @Peng_2023 found a positive impact of GitHub Copilot (an LLM-powered programming assistant) on productivity. Specifically, in an experiment involving 95 freelance programmers, they found that that programmers with access to GitHub Copilot completed a standardized programming task 56% faster than the control group. Programmers with less experience saw the greatest improvements in productivity.
+In terms of computer programming, @Peng_2023 found a positive impact of GitHub Copilot (an LLM-powered programming assistant) on productivity. Specifically, in an experiment involving 95 freelance programmers, they found that a treatment group of programmers with access to GitHub Copilot completed a standardized programming task 56% faster than the control group. Programmers with less experience saw the greatest improvements in productivity.
 
-@DellAcqua_2023, focusing on management consulting tasks, provide evidence that LLMs can improve writing productivity. In a field experiment involving consultants from Boston Consulting Group they found that the use of OpenAI's GPT-4 led to a 25% increase in delivery speed of business tasks (most involving some writing), as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%.
+@DellAcqua_2023, focusing on management consulting tasks, provide evidence that LLMs can improve writing productivity. In a field experiment involving consultants from Boston Consulting Group they found that the use of OpenAI's GPT-4 led to a 25% increase in delivery speed of business tasks, most of which involved some writing, as well as a 40% increase in human-rated performance on those tasks. Similar to computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43%.
 
-On the other hand, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity (which leads to less original work) and de-skilling (primarily with respect to programming ability), among other consequences. These outcomes could negatively affect students' effective learning of data science.
+On the other hand, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity which may lead to less original work, and potentially de-skilling primarily with respect to programming ability, among other consequences. These outcomes could negatively affect students' effective learning of data science.
 
-@Ellis_Slade_2023 take a more optimistic perspective and argue that LLMs are just another technology that will impact statistics and data science education. Similarly, @Tu_2024 acknowledge that LLMs can streamline many parts of a data science workflow. With that in mind, they suggest that data-scientists-in-training should shift their self-perspectives from primarily being an 'analyst' to primarily being a 'product manager' responsible for strategic oversight of the analysis carried out by LLMs.
+@Ellis_Slade_2023 take a more optimistic perspective and argue that LLMs are just another technology that will impact statistics and data science education. Similarly, @Tu_2024 acknowledge that LLMs can streamline many parts of a data science workflow. With that in mind, they suggest that data-scientists-in-training should shift their self-perspectives from primarily being an "analyst" to primarily being a "product manager" responsible for strategic oversight of the analysis carried out by LLMs.
 
-At the high school level @Lazar_2023 conducted an informal survey of secondary school teachers and students on their opinions of ChatGPT, and found that while LLMs could: help creativity, provide academic support when teachers were unavailable, and model certain types of writing well; teachers were also aware of LLMs potential to limit students' learning in certain ways through over-reliance. Beyond academic integrity concerns, teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
+At the high school level @Lazar_2023 conducted an informal survey of secondary school teachers and students on their opinions of ChatGPT, and found that while LLMs could: help creativity, provide academic support when teachers were unavailable, and model certain types of writing well. Teachers were also concerned about the potential of LLMs to limit students' learning in certain ways through over-reliance. Beyond academic integrity concerns, @Lazar_2023 found that teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
 
-@Cahill_2024 surveyed undergraduate political science students on their attitudes toward and usage of AI tools. They found that the use of ChatGPT was widespread. However, they also found that many students lacked confidence in using AI for academic purposes. In particular, only 11% "strongly agreed" that they know how to use AI to improve their writing. Students had nuanced views on appropriate AI use. In particular, respondents found that using it to write whole papers as inappropriate, while using it for basic tasks like general assistance, writing feedback and basic data visualization was perceived as more appropriate.
+@Cahill_2024 surveyed undergraduate political science students on their attitudes toward, and usage of, AI tools. They found that the use of ChatGPT was widespread. However, they also found that many students lacked confidence in using AI for academic purposes. In particular, only 11% "strongly agreed" that they know how to use AI to improve their writing. Students had nuanced views on appropriate AI use. In particular, many respondents felt that using it to write whole papers was inappropriate, but using it for basic tasks like general assistance, writing feedback and basic data visualization appropriate.
 
-To understand the current state of LLMs as a tool for trustworthy data science, this paper focuses on the association between student academic performance and their LLM usage. Specifically, we examine the relationship between students' grades and self-reported measures of student LLM usage, as well as student attitudes toward LLMs in general. This is based on students' final papers and a survey, conducted in a third-year undergraduate data science course at the University of Toronto. By examining how students interact with and perceive LLMs as tools, and how these variables translate into student outcomes, the effects of LLM integration in data science can be more precisely determined, leading to better recommendations for their future development.
+To understand the current state of LLMs as a tool for trustworthy data science, this paper focuses on the association between student academic performance and their LLM usage. Specifically, we examine the relationship between students' grades and self-reported measures of student LLM usage, as well as student attitudes toward LLMs in general. This is based on students' final papers and a survey, conducted in a third-year undergraduate data science course at the University of Toronto. By examining how students interact with and perceive LLMs as tools, and how these variables translate into student outcomes, current practice with regard to LLM integration in data science can be better understood, leading to better recommendations for their future development.
 
 The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data and coursework from students. @sec-model specifies a model used to investigate the relationship. @sec-results describes and analyzes the model's results. @sec-discussion discusses the implications of the findings for data science education and future research and practice at the intersection of LLMs and trustworthy data science.
 
@@ -63,7 +61,7 @@ The remainder of this paper is structured as follows: @sec-data visualizes and a
 
 ## Background
 
-To investigate students' usage and attitudes towards LLMs and how they related to their academic performance, a dataset containing their usage/attitudes, coursework, and academic performance was constructed. This was based on three components:
+To investigate students' usage and attitudes towards LLMs and how they related to their academic performance, a dataset containing their usage and attitudes, coursework, and academic performance was constructed. This was based on three components:
 
 1.  an optional survey;
 2.  self-reported LLM usage; and
@@ -75,17 +73,17 @@ The student marks that we analyze are based only on the final paper, which is do
 
 By the time they are working on their final paper, students have submitted and received feedback on two previous papers with similar requirements and rubrics to that of the final paper. Each paper has the same basic structure and expectations. Before the final paper is due, students have received feedback on all their previous work in the class (including their past papers) and there is an optional two-day period of peer review.
 
-By virtue of pre-requisites of this course the typical student is an upper-year undergraduate. Coding and writing are major parts of the course. Students are welcome to use R or Python, but the majority code in R because that is the programming language currently mostly taught in pre-requisite courses. All writing must be in English. The primary aim of the course for students is to create a public portfolio of work they can use to apply for jobs.
+The pre-requisites of this course mean that the typical student is an upper-year undergraduate. Coding and writing are major parts of the course. Students are welcome to use R or Python, but the majority code in R because that is the programming language currently mostly taught in pre-requisite courses. All writing must be in English. The primary motivation for having students write three papers as the main assessment for the course is to give them the opportunity to create a public portfolio of work they can use to apply for jobs.
 
-Throughout the semester students were encouraged to use LLMs. Formal instruction was provided twice during the semester, with a masterclass taught by a computer science faculty member on the ethics of using LLMs (see @Horton2024 for details), and another masterclass taught by a TA on writing with LLMs.
+Throughout the semester students were encouraged to use LLMs. Formal instruction was provided twice during the semester. The first was a masterclass taught by a computer science faculty member on the ethics of using LLMs (see @Horton2024 for details). The second was a masterclass taught by a TA on writing with LLMs.
 
-Data was collected from students through an optional end-of-course survey. [Appendix -@sec-survey-details] provides all the questions asked in the survey. Whether or not they consented to their data being used, all respondents received a 1% increase in their final course grade for their participation. Consenting responses were then matched to their final paper mark, as well as the GitHub repository for their final paper. The responses were anonymized by removing any personal references to the students themselves including names, emails, student numbers, and GitHub links.
+Data was collected from students through an optional end-of-course survey. [Appendix -@sec-survey-details] details the questions asked in the survey. Whether or not they consented to their data being used, all respondents received a 1% increase in their final course grade for their participation. Consenting responses were then matched to their final paper mark, as well as the GitHub repository for their final paper. The responses were anonymized by removing any personal references to the students themselves including, names, emails, student numbers, and GitHub links.
 
-All data cleaning and analysis was done using the `R` statistical programming language [@citeR], and especially uses the `tidyverse` [@tidyverse], `janitor` [@janitor], `reshape2` [@reshape], and `readxl` [@readxl] packages.
+Data cleaning and analysis was done using the `R` statistical programming language [@citeR], and the `tidyverse` [@tidyverse], `janitor` [@janitor], `reshape2` [@reshape], and `readxl` [@readxl] packages.
 
 ## Survey data
 
-There were 146 responses to the survey. Of these, 119 respondents provided authorization for their data to be collected and used. Four of those respondents submitted the survey twice, and after removing their second response, 115 responses remained. Of those, 15 respondents did not include a statement on LLM usage in the README of the GitHub repository of their final paper, leaving 100 responses that were of use and were merged based on student name.
+There were 146 responses to the survey. Of these, 119 respondents provided authorization for their data to be collected and used. Four of those respondents submitted the survey twice, and after removing their second response, 115 responses remained. Of those, 15 respondents did not include a statement on LLM usage in the README of the GitHub repository of their final paper, leaving 100 responses. Finally 7 of those respondents did not provide a usable GPA response. This leaves 93 respondents that were of use and were merged based on student name.
 
 All but one respondent completed the survey within 45 minutes (@fig-response-time-and-gpa-1). That one respondent took more than 4,000 minutes to complete the survey, suggesting they took a break while filling it out. That respondent is included in the analysis dataset, but without them, the average time to complete the survey was 11 minutes, and the standard deviation was 8 minutes.
 
@@ -93,16 +91,14 @@ All but one respondent completed the survey within 45 minutes (@fig-response-tim
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Distribution of respondents' survey response times and GPA
+#| fig-cap: Distribution of respondents' survey response times and self-reported GPA
 #| fig-subcap: ["Distribution of survey response times","\"What is your GPA?\""]
 #| layout-ncol: 1
 
 all_data |>
-  mutate(mins_complete = completion_time - start_time) |>
-  filter(mins_complete < 1000) |> # Remove one student who took 4,000 minutes to complete
-  # summarize(mean = mean(mins_complete),
-  # standard_dev = sd(mins_complete))
-  ggplot(aes(x = mins_complete)) +
+  # summarize(mean = mean(mins_complete/60),
+  # standard_dev = sd(mins_complete/60))
+  ggplot(aes(x = mins_complete/60)) +
   geom_histogram(binwidth = 1) +
   labs(x = "Time to complete survey (minutes)", y = "Frequency") +
   theme_minimal()
@@ -116,9 +112,9 @@ all_data |>
   theme_minimal()
 ```
 
-There is a wide distribution of self-reported GPAs (@fig-response-time-and-gpa-2). Seven of the 100 respondents included in the analysis dataset did not report their GPA. The majority of responses cluster around a B (3.0/4.0), and the average is 3.06 with a standard deviation of 0.55. One factor that may affect the range is that the course is required for programs in the Statistics, Mathematics and Computer Science Departments. Self-reported GPAs also introduce the possibility of reporting bias. For instance, respondents may have provided their cumulative GPA, their most recent term's GPA, or could have misreported it entirely.
+There is a wide distribution of self-reported GPAs (@fig-response-time-and-gpa-2). The majority of responses cluster around a B (3.0 out of 4.0), and the average is 3.06 with a standard deviation of 0.55. One factor that may affect the range is that the course is required for programs in the Statistics, Mathematics and Computer Science Departments. Self-reported GPAs also introduce the possibility of reporting bias. For instance, respondents may have provided their cumulative GPA, their most recent term's GPA, or could have misreported it entirely.
 
-Students from a range of years took the course, however the majority of respondents were in their 3rd or 4th year of study (@tbl-year-dist). The course's prerequisite of general statistics, which is a two-course sequence typically completed by students in their second year, would make it difficult to take this course earlier than their 3rd year.
+Students from a range of years took the course, however the majority of respondents were in their 3rd or 4th year of study (@tbl-year-dist). The course's prerequisite two-course sequence is typically completed by students in their second year, would make it difficult to take this course earlier than their 3rd year.
 
 ```{r tbl-year-dist}
 #| message: false
@@ -127,15 +123,6 @@ Students from a range of years took the course, however the majority of responde
 #| tbl-cap: \"What year are you?\"
 
 all_data |>
-  mutate(
-    what_year_are_you = case_when(
-      what_year_are_you == "PEY" ~ "4th",
-      # Change PEY to 4th year
-      what_year_are_you == "5th" ~ "5th or over",
-      what_year_are_you == "6th" ~ "5th or over",
-      TRUE ~ what_year_are_you
-    )
-  ) |>
   count(what_year_are_you) |>
   pivot_wider(
     names_from = what_year_are_you,
@@ -145,7 +132,7 @@ all_data |>
   kable()
 ```
 
-Respondents had a varied self-perception of their coding and writing abilities (@fig-selfperception). Most respondents believed it is important to be good at writing, but many are either indifferent or do not like to write (@fig-selfperception-1). Respondents also do not find writing to be particularly easy, which could be associated with the reported relative antipathy toward writing. Most respondents were at least somewhat confident in their own writing abilities, but a substantial contingent felt otherwise. Although few respondents felt that they were confident in their writing ability, more felt that they were able to catch their mistakes, which could indicate a disconnect between how respondents perceive their work and how the work was evaluated.
+Respondents had a varied self-perception of their coding and writing abilities (@fig-selfperception). Most respondents believe it is important to be good at writing, but many are either indifferent or do not like to write (@fig-selfperception-1). Respondents also do not find writing to be particularly easy, which could be associated with the reported relative antipathy toward writing. Most respondents were at least somewhat confident in their own writing abilities, but a substantial number felt otherwise. Although few respondents felt that they were confident in their writing ability, more felt that they were able to catch their mistakes, which could indicate a disconnect between how respondents perceive their work and how the work was evaluated.
 
 ```{r fig-selfperception}
 #| message: false
@@ -237,7 +224,7 @@ coding_perceptions_long |>
   theme(axis.text.x = element_blank(), legend.position = "bottom")
 ```
 
-Respondent self-perceptions regarding coding proficiency and importance varied (@fig-selfperception-2). There was strong consensus on the perceived importance of coding skills, with a majority of respondents strongly affirming this belief. However, respondents' self-assessed coding abilities and enjoyment are more heterogeneous, with a substantial proportion reporting moderate rather than high levels of ease and enjoyment in coding tasks. These findings suggest a complicated relationship between respondents' recognition of coding's importance and their personal experience with coding.
+Respondent self-perceptions regarding coding proficiency and importance varied (@fig-selfperception-2). There is strong consensus on the perceived importance of coding skills. However, respondents' self-assessed coding abilities and enjoyment are more heterogeneous, with a substantial proportion reporting moderate rather than high levels of ease and enjoyment in coding tasks.
 
 Overall there was a moderate level of confidence among respondents in their overall coding ability, willingness to share code, and capacity to identify errors (@fig-selfperception-2). Notably, respondents express slightly higher confidence in detecting their own coding mistakes compared to general coding ability or code sharing. These patterns suggest that while respondents have developed some coding self-efficacy, there is still considerable potential for enhancing their perceived competence and comfort across various coding-related activities.
 
@@ -251,44 +238,16 @@ The majority of respondents were at least "somewhat familiar" with generative AI
 #| tbl-subcap: ["'How familiar are you with using generative AI tools such as OpenAI's ChatGPT or equivalents?'","'To what extent do you think using generative AI tools such as ChatGPT by OpenAI (or equivalents) is ethical and appropriate for schoolwork?'"]
 
 all_data |>
-  rename(ai_familiarity = how_familiar_are_you_with_using_generative_ai_tools_such_as_open_a_is_chat_gpt_or_equivalents) |>
-  mutate(
-    ai_familiarity = case_when(
-      ai_familiarity == "Limited to some liberal arts, such as history courses" ~ "Somewhat familiar",
-      TRUE ~ ai_familiarity
-    )
-  ) |>
-  mutate(
-     ai_familiarity = factor(ai_familiarity, levels=c("Very familiar", "Somewhat familiar", "Not familiar"))
-     ) |>
   count(ai_familiarity) |>
   kable(col.names = c("Extent of AI familiarity", "Students"))
 
 
 all_data |>
-  rename(ai_schoolwork_appropriate = to_what_extent_do_you_think_using_generative_ai_tools_such_as_chat_gpt_by_open_ai_or_equivalents_is_ethical_and_appropriate_for_schoolwork) |>
-  mutate(
-    ai_schoolwork_appropriate = case_when(
-      ai_schoolwork_appropriate == "Depends of what the main goal of schoolwork is" ~ "It depends",
-      ai_schoolwork_appropriate == "I believe student can only use it if they are allowed to" ~ "It depends",
-      ai_schoolwork_appropriate == "a controllable amount" ~ "It depends",
-      ai_schoolwork_appropriate == "appropriate depending on the context" ~ "It depends",
-      ai_schoolwork_appropriate == "appropriate with rules for usage" ~ "It depends",
-      ai_schoolwork_appropriate == "depends" ~ "It depends",
-      ai_schoolwork_appropriate == "depends on how it is used" ~ "It depends",
-      ai_schoolwork_appropriate == "half and half" ~ "It depends",
-      ai_schoolwork_appropriate == "unsure" ~ "It depends",
-      TRUE ~ ai_schoolwork_appropriate
-    )
-  ) |>
-   mutate(
-     ai_schoolwork_appropriate = factor(ai_schoolwork_appropriate, levels=c("Appropriate", "It depends", "Inappropriate"))
-   ) |>
   count(ai_schoolwork_appropriate) |>
   kable(col.names = c("Ethical & Appropriate for school?", "Students"))
 ```
 
-To understand the role of LLMs in learning, students identified their usage in a more granular way by checking off various pre-defined use cases in the survey (@fig-AI-use-and-usefulness-1). Technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used LLMs for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing.
+To understand the role of LLMs in learning, students identified their usage in a more granular way by selecting various pre-defined use cases in the survey (@fig-AI-use-and-usefulness-1). Technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used LLMs for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing.
 
 ```{r fig-AI-use-and-usefulness}
 #| message: false
@@ -299,7 +258,6 @@ To understand the role of LLMs in learning, students identified their usage in a
 
 # Use
 all_data |>
-  rename(how_have_you_used = if_you_have_used_generative_ai_tools_such_as_open_a_is_chat_gpt_or_equivalents_in_what_ways_have_you_used_it_select_all_that_apply) |>
   select(how_have_you_used) |>
   separate_rows(how_have_you_used, sep = ";") |>
   mutate(
@@ -311,7 +269,7 @@ all_data |>
       how_have_you_used == "Generating test questions" ~ "Other",
       TRUE ~ how_have_you_used
     )
-  ) |>
+  ) |> 
   count(how_have_you_used) |>
   filter(how_have_you_used != "") |>
   arrange(desc(n)) |>
@@ -366,9 +324,9 @@ all_data |>
   theme(axis.text.y = element_blank(), legend.position = "bottom")
 ```
 
-Respondents were also asked to rate the helpfulness of LLMs on various tasks assigned during the course on a 4-point scale of "Did not use" to "Very Helpful" (@fig-AI-use-and-usefulness-2). To simplify the presentation, responses were grouped into two main categories: "Less Helpful" and "More Helpful." The "Less Helpful" category combines responses where students found the AI either "Not helpful" or did not use it for the task, while the "More Helpful" category includes responses where the AI was considered "Somewhat helpful" or "Very helpful".
+Respondents were also asked to rate the helpfulness of LLMs on various tasks assigned during the course on a 4-point scale of "Did not use" to "Very Helpful" (@fig-AI-use-and-usefulness-2). To simplify the presentation, responses were grouped into two main categories: "Less Helpful" and "More Helpful." The "Less Helpful" category combines responses where students found the AI either "Not helpful" or did not use it for the task, while the "More Helpful" category includes responses where the LLM was considered "Somewhat helpful" or "Very helpful".
 
-Respondents differed in terms of how they used LLMs in the course (@fig-AI-use-and-usefulness-2). While most tasks were roughly split between respondents finding LLMs helpful or not, respondents found them most helpful in generating code. In the context of the course, this meant generating R code for transforming, analyzing, and visualizing data. To a lesser extent, respondents also found LLMs to be helpful in improving the existing writing they had, while at the same time not favouring it for writing content from scratch.
+Respondents differed in terms of how they used LLMs in the course (@fig-AI-use-and-usefulness-2). While most tasks were roughly split between respondents finding LLMs helpful or not, respondents found them most helpful in generating code. In the context of the course, this mostly meant generating R code for transforming, analyzing, and visualizing data. To a lesser extent, respondents also found LLMs to be helpful in improving the existing writing they had, while at the same time not favouring it for writing content from scratch.
 
 Finally, one question asked students to elaborate on whether they thought generative AI tools such as ChatGPT were ethical and appropriate for schoolwork. This was an open-response question. To provide a sense of the responses, we used Anthropic's Claude 3.5 Sonnet model (as at 5 August 2024) to summarize the comments and it provided:
 
@@ -378,13 +336,13 @@ Finally, one question asked students to elaborate on whether they thought genera
 
 Two other components were merged with the survey responses: self-reported LLM usage on the final paper, and final paper mark.
 
-Students were encouraged to use LLMs to complete their papers. Each paper required the students to disclose their usage through a statement in the GitHub repository README for the paper. Even students who did not use generative AI at all were required to state this in the README. For students who did use generative AI, there was an additional requirement that they save the logs of their usage in a txt file which was also included in their GitHub repository.
+Students were encouraged to use LLMs to complete their papers. Each paper required the students to disclose their usage through a statement in the GitHub repository README for the paper. Even students who did not use generative AI at all were required to state this in the README. For students who did use generative AI, there was an additional requirement, where possible, that they save the logs of their usage in a txt file which was also included in their GitHub repository.
 
 Those README statements were gathered and parsed using OpenAI's ChatGPT 4o model (as at 26 July). The following prompt was used:
 
 > The following statement is about to what extent LLMs were used by a student. Please characterize it as one of: "None", "Minimal", "Somewhat", "Extensive", "Unsure". Respond with only one of those options.
 
-All classifications were then manually checked by hand for reasonableness.
+All classifications were then manually checked for reasonableness.
 
 We find a varied extent of self-reported LLM usage (@tbl-llm-usage). 41 respondents were classified as having made extensive use of LLMs, while 28 were classified as having made somewhat use. 31 respondents were classified as having made minimal or no use of LLMs. In the analysis dataset we combine those two classifications because only 8 respondents were classified as having minimal usage.
 
@@ -395,7 +353,6 @@ We find a varied extent of self-reported LLM usage (@tbl-llm-usage). 41 responde
 #| tbl-cap: Self-reported LLM usage in final paper
 
 all_data |>
-  mutate(llm_usage = factor(llm_usage, levels = c("Extensive", "Somewhat", "Minimal", "None"))) |>
   count(llm_usage) |> 
   kable(col.names = c("Self-reported LLM usage", "Number"))
 ```
@@ -413,14 +370,14 @@ all_data |>
   select(mark) |>
   ggplot(aes(x = mark)) +
   geom_histogram(binwidth = 0.05) +
-  scale_x_continuous(labels = scales::label_percent()) +
+  scale_x_continuous(labels = label_percent()) +
   labs(x = "Final paper mark (percentage)", y = "Count") +
   theme_minimal()
 
 all_data |>
   ggplot(mapping = aes(x = mark)) +
   geom_histogram(binwidth = 0.01) +
-  scale_x_continuous(labels = scales::label_percent()) +
+  scale_x_continuous(labels = label_percent()) +
   labs(x = "Final paper mark (percentage)", y = "Count") +
   facet_wrap(vars(llm_usage),
              ncol = 2,
@@ -443,9 +400,6 @@ all_data |>
 
 all_data |>
   group_by(llm_usage) |>
-  mutate(llm_usage = factor(llm_usage, levels = c(
-    "Extensive", "Somewhat", "Minimal", "None"
-  ))) |>
   summarize(mean = mean(mark) |> round(2),
             sd = sd(mark) |> round(2)) |>
   kable(col.names = c("Self-reported LLM usage", "Mean", "Std dev"))
@@ -481,11 +435,11 @@ Our results are summarized in @tbl-model-results and @fig-model-results. We espe
 #| tbl-cap: Coefficient estimates and mean absolute deviation (MAD)
 
 fit1 <-
-  readRDS(file = here::here("models/fit1brms.rds"))
+  readRDS(file = here("models/fit1brms.rds"))
 fit2 <-
-  readRDS(file = here::here("models/fit2brms.rds"))
+  readRDS(file = here("models/fit2brms.rds"))
 
-modelsummary::modelsummary(
+modelsummary(
   list(
     "Base model" = fit1,
     "Including self-reported GPA" = fit2
@@ -501,7 +455,7 @@ modelsummary::modelsummary(
 #| warning: false
 #| fig-cap: Coefficient estimates and 90 per cent credibility intervals
 
-modelsummary::modelplot(
+modelplot(
   list(
     "Base model" = fit1,
     "Including self-reported GPA" = fit2
@@ -509,7 +463,8 @@ modelsummary::modelplot(
   conf_level = 0.9,
   coef_omit = "phi") +
   labs(x= "") +
-  scale_color_brewer(palette = "Set1")
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
 ```
 
 Interestingly, we find a slightly negative effect, relative to self-reported extensive use, of using LLMs less (@fig-model-results). As expected, self-reported GPA is positively associated with final mark.

@@ -12,30 +12,31 @@
 library(tidyverse)
 library(rstanarm)
 library(brms)
-library(readxl)
+library(arrow)
 
 
 #### Read data ####
 all_data <-
-  read_excel(here::here("data/merged_data.xlsx"), sheet = "Sheet1") |>
-  janitor::clean_names() |>
-  mutate(mark = if_else(mark == 1, 0.99, mark)) |> # I'm a monster
-  mutate(llm_usage =
-           if_else(llm_usage %in% c("Minimal", "None"), "None or minimal", llm_usage)) |>
-  filter(!is.na(what_is_your_gpa))
+  read_parquet(here::here("data/analysis_data.parquet"))
 
 
-### Model data ####
+#### Model data ####
+#### Simplified data ####
+# Change the 1s to 0.99 so we can just use Beta initially
+all_data <-
+  all_data |>
+  mutate(mark_no_ones = if_else(mark == 1, 0.99, mark))
+
 # Using rstanarm
 fit1rstanarm <-
-  stan_betareg(mark ~ llm_usage,
+  stan_betareg(mark_no_ones ~ llm_usage,
                data = all_data,
                link = "logit",
                seed = 853)
 
 fit2rstanarm <-
   stan_betareg(
-    mark ~ llm_usage + what_is_your_gpa,
+    mark_no_ones ~ llm_usage + what_is_your_gpa,
     data = all_data,
     link = "logit",
     seed = 853
@@ -45,7 +46,7 @@ fit2rstanarm <-
 fit1brms <- brm(
   data = all_data,
   family = Beta,
-  mark ~ llm_usage,
+  mark_no_ones ~ llm_usage,
   prior = prior(normal(0, 1), class = b) +
     prior(gamma(4, 0.1), class = phi),
   cores = 4,
@@ -55,7 +56,7 @@ fit1brms <- brm(
 fit2brms <- brm(
   data = all_data,
   family = Beta,
-  mark ~ llm_usage + what_is_your_gpa,
+  mark_no_ones ~ llm_usage + what_is_your_gpa,
   prior = prior(normal(0, 1), class = b) +
     prior(gamma(4, 0.1), class = phi),
   cores = 4,
@@ -63,7 +64,39 @@ fit2brms <- brm(
 )
 
 
-#### Save model ####
+#### Real data ####
+# There are no zeros, but there are ones so need one-inflated Beta
+# Achieve by using zero-one-inflated Beta and setting coi to 1 following:
+# https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#special-case-2-one-inflated-beta-regression
+
+fit_one_inflated <- brm(
+  formula = bf(
+    mark ~ llm_usage,
+    phi ~ llm_usage,
+    zoi ~ llm_usage,
+    coi ~ 1
+  ),
+  family = zero_one_inflated_beta(),
+  data = all_data,
+  cores = 4,
+  seed = 853
+)
+
+fit_one_inflated_gpa <- brm(
+  formula = bf(
+    mark ~ llm_usage + what_is_your_gpa,
+    phi ~ llm_usage + what_is_your_gpa,
+    zoi ~ llm_usage + what_is_your_gpa,
+    coi ~ 1
+  ),
+  family = zero_one_inflated_beta(),
+  data = all_data,
+  cores = 4,
+  seed = 853
+)
+
+
+#### Save models ####
 saveRDS(fit1rstanarm, file = "models/fit1rstanarm.rds")
 
 saveRDS(fit2rstanarm, file = "models/fit2rstanarm.rds")
@@ -71,3 +104,7 @@ saveRDS(fit2rstanarm, file = "models/fit2rstanarm.rds")
 saveRDS(fit1brms, file = "models/fit1brms.rds")
 
 saveRDS(fit2brms, file = "models/fit2brms.rds")
+
+saveRDS(fit_one_inflated, file = "models/fit_one_inflated.rds")
+
+saveRDS(fit_one_inflated_gpa, file = "models/fit_one_inflated_gpa.rds")
