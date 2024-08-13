@@ -23,6 +23,7 @@ library(knitr)
 library(tidyverse)
 library(scales)
 library(modelsummary)
+library(bayesplot)
 
 # Read in data
 all_data <-
@@ -51,7 +52,7 @@ On the other hand, @Valenzuela_2024 argue that LLMs lead to a loss of serendipit
 
 At the high school level @Lazar_2023 conducted an informal survey of secondary school teachers and students on their opinions of ChatGPT, and found that while LLMs could: help creativity, provide academic support when teachers were unavailable, and model certain types of writing well. Teachers were also concerned about the potential of LLMs to limit students' learning in certain ways through over-reliance. Beyond academic integrity concerns, @Lazar_2023 found that teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
 
-@Cahill_2024 surveyed undergraduate political science students on their attitudes toward, and usage of, AI tools. They found that the use of ChatGPT was widespread. However, they also found that many students lacked confidence in using AI for academic purposes. In particular, only 11% "strongly agreed" that they know how to use AI to improve their writing. Students had nuanced views on appropriate AI use. In particular, many respondents felt that using it to write whole papers was inappropriate, but using it for basic tasks like general assistance, writing feedback and basic data visualization appropriate.
+@Cahill_2024 surveyed undergraduate political science students on their attitudes toward, and usage of, AI tools. They found that the use of ChatGPT was widespread. However, they also found that many students lacked confidence in using AI for academic purposes. In particular, only 11% "strongly agreed" that they know how to use AI to improve their writing. Students had nuanced views on appropriate AI use. Many respondents felt that using it to write whole papers was inappropriate, but using it for basic tasks like general assistance, writing feedback and basic data visualization appropriate.
 
 To understand the current state of LLMs as a tool for trustworthy data science, this paper focuses on the association between student academic performance and their LLM usage. Specifically, we examine the relationship between students' grades and self-reported measures of student LLM usage, as well as student attitudes toward LLMs in general. This is based on students' final papers and a survey, conducted in a third-year undergraduate data science course at the University of Toronto. By examining how students interact with and perceive LLMs as tools, and how these variables translate into student outcomes, current practice with regard to LLM integration in data science can be better understood, leading to better recommendations for their future development.
 
@@ -413,12 +414,50 @@ Transforming the regression with a logit function as the link function ensures t
 
 Here we briefly describe the model that we use, which follows @kurztotherescue. Model diagnostics are included in [Appendix -@sec-model-details].
 
+OLD: 
+
 Define $y_i$ as the percentage received on the final paper. Then $\beta_1$ and $\beta_2$ are the effect of self-reported LLM usage and self-reported GPA on the final paper grade, respectively. \begin{align}
 y_i &\sim \mbox{Beta}(\mu_i, \phi) \\
 logit(\mu_i) &= \beta_0 + \beta_1 \times \mbox{LLM usage}_i + \beta_2 \times \mbox{GPA}_i\\
 \beta_0, \beta_1, \beta_2  &\sim \mbox{Normal}(0, 1) \\
 \phi &\sim \mbox{Gamma}(4, 0.1)
 \end{align}
+
+NEW:
+
+Let $Y_i$ represent the dependent variable "mark" for observation $i$. The model assumes a zero-one inflated beta distribution for $Y_i$, which can be represented as:
+
+$Y_i \sim \text{Zero-One Inflated Beta}(\mu_i, \phi_i, \pi_{zoi_i}, \pi_{coi_i})$
+
+Where:
+
+- $\mu_i$ is the mean of the beta distribution (related to the location parameter).
+- $\phi_i$ is the precision parameter (related to the dispersion of the beta distribution).
+- $\pi_{zoi_i}$ is the probability of $Y_i$ being exactly 0 or 1 (zero-one inflation component).
+- $\pi_{coi_i}$ is the probability of $Y_i$ being in the continuous part of the beta distribution (continuous component inflation).
+
+The specific linear models for each parameter are given by:
+
+1. **Mean (Location) Component:**
+   $logit(\mu_i) = \beta_{0,\mu} + \beta_{1,\mu} \cdot \text{llm\_usage}_i + \beta_{2,\mu} \cdot \text{what\_is\_your\_gpa}_i$
+   
+2. **Precision Component:**
+   $\log(\phi_i) = \beta_{0,\phi} + \beta_{1,\phi} \cdot \text{llm\_usage}_i + \beta_{2,\phi} \cdot \text{what\_is\_your\_gpa}_i$
+   
+3. **Zero-One Inflation Component:**
+   $logit(\pi_{zoi_i}) = \beta_{0,zoi} + \beta_{1,zoi} \cdot \text{llm\_usage}_i + \beta_{2,zoi} \cdot \text{what\_is\_your\_gpa}_i$
+   
+4. **Continuous Outcome Inflation (coi) Component:**
+   $logit(\pi_{coi_i}) = \beta_{0,coi}$
+
+In this model:
+
+- $\beta_{0,\mu}, \beta_{0,\phi}, \beta_{0,zoi},$ and $\beta_{0,coi}$ are the intercepts for the respective components.
+- $\beta_{1,\mu}, \beta_{1,\phi}, \beta_{1,zoi}$ represent the coefficients for the effect of "llm\_usage" on the respective components.
+- $\beta_{2,\mu}, \beta_{2,\phi}, \beta_{2,zoi}$ represent the coefficients for the effect of "what\_is\_your\_gpa" on the respective components. 
+- The term $logit(\cdot)$ denotes the logit link function, commonly used for modeling probabilities.
+
+This notation captures the model's structure as defined in the `brms` code, with each parameter modeled as a function of the predictors "llm\_usage" and "what\_is\_your\_gpa", except for the continuous outcome inflation (coi) component, which is modeled with just an intercept.
 
 We estimate the model in `R` [@citeR] as well, using `brms` [@brms].
 
@@ -435,9 +474,9 @@ Our results are summarized in @tbl-model-results and @fig-model-results. We espe
 #| tbl-cap: Coefficient estimates and mean absolute deviation (MAD)
 
 fit1 <-
-  readRDS(file = here("models/fit1brms.rds"))
+  readRDS(file = here("models/fit_one_inflated.rds"))
 fit2 <-
-  readRDS(file = here("models/fit2brms.rds"))
+  readRDS(file = here("models/fit_one_inflated_gpa.rds"))
 
 modelsummary(
   list(
@@ -453,7 +492,7 @@ modelsummary(
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Coefficient estimates and 90 per cent credibility intervals
+#| fig-cap: Selected coefficient estimates and 90 per cent credibility intervals
 
 modelplot(
   list(
@@ -461,27 +500,58 @@ modelplot(
     "Including self-reported GPA" = fit2
   ),
   conf_level = 0.9,
-  coef_omit = "phi") +
+  drop = c("phi", "b_zoi_Intercept")) +
   labs(x= "") +
   scale_color_brewer(palette = "Set1") +
   theme(legend.position = "bottom")
 ```
 
-Interestingly, we find a slightly negative effect, relative to self-reported extensive use, of using LLMs less (@fig-model-results). As expected, self-reported GPA is positively associated with final mark.
+@tbl-model-results and @fig-model-results present the results from two models estimating the association between LLM usage, GPA and final paper mark. The first model includes only LLM usage, while the second model also includes self-reported GPA.
+
+LLM usage estimates are in relation to "Extensive" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this slight association, but with slightly smaller coefficients. For instance, the negative impact of “b_llm_usageSomewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model might be explained by the GPA variable.
+
+Including self-reported GPA in the second model does considerably change the  changes the interpretation of some coefficients. For instance, intercept for "b_zoi_Intercept" becomes much more negative in the GPA-included model, suggesting that the GPA significantly affects the zero-one inflation part of the model. However, the essential relationship between LLM usage and final mark is retained.
+
+The overall fit of the model improves when GPA is included. There is an increase in R-squared from 0.095 to 0.478 and improvements in the ELPD and LOOIC metrics. This is also suggested by the LOO comparison between the two models (@tbl-loo in [Appendix -@sec-model-details]).
 
 # Discussion {#sec-discussion}
 
-There is some very mild evidence from this observational study that LLM usage may be associated with better scores. However, this work should mostly be treated as a direction for future research in this area. More broadly, our work has three major take-aways: 1) LLMs have a major role to play in enhancing the trustworthiness of data science. 2) Making general purpose chatbots more opinionated and knowledgeable about data science would considerably help (i.e. fine-tuning them - maybe talk more about the GPT store and the "Telling Stories with Data chatbot") 3) Alternative interaction approaches, beyond a chatbot interface, could be especially useful.
+There is some very mild evidence from this observational study that LLM usage may be associated with better scores. However, this work should mostly be treated as a direction for future research in this area. More broadly, our work has three major take-aways: 1) LLMs could help enhance the trustworthiness of data science, but not without considerable futher development. 2) Making general purpose chatbots more opinionated and knowledgeable about data science would considerably help. 3) Alternative interaction approaches, beyond a chatbot interface, could be especially useful.
 
 ## Impact of LLMs on trustworthy data science
 
+We found that many students did use LLMs to help them complete a data science project closely related to what professional data scientists do. A common use case to ask the LLM to write code to make a graph. Another was to ask for some example paragraphs.
+
+Data science code tends to be written differently to software engineering code. Functions and loops are used less, as there is often less reuse of code. The training data of these LLMs is dominated by software engineering code, and so when an LLM is asked to write code for a data science project it tends to produce code with some of those features. This is neither good nor bad in and of itself, however it can clash with the style of the code that surrounds it.
+
+LLMs are also being used as an alternative search engine. Students often asked, for instance, how to modify a graph to add a vertical line, or similar. Here LLMs tended to be especially useful and able to answer questions. In the past students may have used StackOverflow or similar to find their answers, but the nature of the chat response likely provided a faster answer.
+
+Finally, there is the question of whether the nature of the data science has fundamentally changed or improved. For now, there was no evidence of that. It was clear when a student had just used LLM-generated text without modification, and it was often clear when large amounts of code had been written by an LLM. But it was not obvious when small amounts of either had been used, or when LLM-generated content had just been used as an initial draft.
+
+Many of these issues were alluded to by @bommasani2021opportunities, in the context of data science, and it is striking that they remain today.
+
+
 ## General purpose compared with opinionated specific chatbots
 
-## On the need for LLM-based infrastructure
+ChatGPT and equivalents are general-purpose chatbots. One can ask them a technical data science question and then in the same session ask for a brownie recipe! However this general-purpose nature means that they are not necessarily optimized toward one particular task [@thoppilan2022lamda]. When used for data science, this means that sometimes the functions or libraries recommended may not exist, code may not run, or out-dated approaches may be used. Frontier models make things up and are unnervingly confident, even when wrong [@openai2023gpt4, p. 59], which can create special issues for learners.
+
+General-purpose chatbots being used for data science are fine for experienced data scientists who have an established sense of when something might be not ideal or even wrong. But it is problematic for novices who may not know, can lack the confidence to push back, and possibly, may learn the wrong approach.
+
+Retrieval-augmented generation (RAG) means providing various sources, for instance books or manuals, which the LLM uses to base its response on. Fine-tuning means providing the previously trained LLM with a large number of example input and outputs, which again guide the response from the LLM [@raffel2020exploring]. A chatbot based interface, focused on the needs of data science beginners, could use RAG and/or fine-tuning to considerably improve the quality of its responses. The trade-off would be a reduction in the general-purpose usability of the chatbot, but in the context of this use this that trade-off is likely acceptable.
+
+## Changed LLM-based interfaces
+
+LLMs existed before ChatGPT, but it was the launch of ChatGPT that brought them into the mainstream. The underlying model was not considerably different to others and the main difference that ChatGPT brought was the chat interaction. These are useful, but there is considerable opportunity to develop additional ways of interacting with LLMs. This is particularly relevant for enhancing trustworthy data science.
+
+Search-based LLM tools like Elicit and Perplexity.ai differ to ChatGPT in that they focus on search. In contrast to Google, which typically provides a list of websites related to a particular search, Perplexity.ai attempts to provide an answer. In contrast to ChatGPT, search-based LLM tools focus on answering a question rather than engaging in discussion. 
+
+Students in this class were required to use GitHub to host their papers, as well as supporting code and data. GitHub Issues and Pull Requests were used for peer review and submission occurred based on links to GitHub repositories. Trustworthy data science could be considerably enhanced by establishing something analogous to continuous integration and a suite of tests, but for data science. The once-off nature of much data science code would mean that LLMs could be especially useful in this proposed infrastructure stack. For instance, when a data scientist committed their code or writing, a suite of static tests could run, for instance to check that the data are being read in, that classes are appropriate, etc. But additionally LLMs could be used to check for possible improvements in writing, and propose context-specific improvements in code. For instance, to make sure that what is being described in the paper is actually what is happening in the code.
+
+Finally, one exciting area of current development in LLMs is tool use. One early example of this was enabling LLMs to use search engines such as Google. As LLMs can produce writing, and writing is the input to a Google Search, enabling this tool broadened the types of queries that LLMs could respond effectively to. Tool use, focused on data science, exists. For instance, LLMs can use R and Python to respond to queries about a dataset. However, further development could be useful. For instance, when a user wrote code in an IDE to import some data, a tool-enhanced LLM could notice and automatically write code that establishes a Pydantic-based validation model for that data. Similarly, consider an LLM in an IDE context where a data scientist wrote out the model, in statistical notation, that they were interested in estimating, and the LLM was able write the model in Stan, run it, save the estimates, and add a summary table to the paper, all automatically and in the background. Similar work has occured in other contexts and found to bring substantial benefits [@chen2022evaluating].
 
 ## Weaknesses and next steps
 
-There are a number of substantial weaknesses of this study. The foundational one is that we used observational data, much of which was self-reported. There may be selection bias present in terms of who used LLMs, who reported their LLM usage truthfully, and even who remained in the class. A different design, specifically a randomized controlled trial (RCT) would deal with many of these issues, although likely at some cost.
+There are several substantial weaknesses of this study. The foundational one is that we used observational data, much of which was self-reported. There may be selection bias present in terms of who used LLMs, who reported their LLM usage truthfully, and even who remained in the class. A different design, specifically a randomized controlled trial (RCT) would deal with many of these issues, although likely at some cost.
 
 Regression reports average estimates over the full dataset. However, many earlier studies found distributional effects, with low-performing individuals benefiting more than high-performing individuals. Again, a change in design toward an RCT could enable the exploration of this question. Stratification of our dataset would result in small sample size, but nonetheless our data does provide some limited suggestive evidence that this effect may be present in data science. For instance, looking at the 28 students who received an A+ for the final paper, 13 of them had extensive LLM usage, whereas looking at the same number of worst performing students finds that only six of them had extensive LLM usage.
 
@@ -568,7 +638,7 @@ Despite these shortcomings, our work clearly identifies a need for further resea
 
 # Model details {#sec-model-details}
 
-We use `bayesplot` [@bayesplot] and `loo` [@loo] help with posterior predictive checks and model diagnostics.
+We use `bayesplot` [@bayesplot] and `loo` [@loo] conduct posterior predictive checks and evaluate model diagnostics.
 
 ## Posterior predictive check
 
@@ -580,11 +650,11 @@ We use `bayesplot` [@bayesplot] and `loo` [@loo] help with posterior predictive 
 #| fig-subcap: ["Base model", "Including self-reported GPA"]
 #| layout-ncol: 2
 
-bayesplot::pp_check(fit1) +
+pp_check(fit1) +
   theme_classic() +
   theme(legend.position = "bottom")
 
-bayesplot::pp_check(fit2) +
+pp_check(fit2) +
   theme_classic() +
   theme(legend.position = "bottom")
 ```
@@ -595,7 +665,8 @@ bayesplot::pp_check(fit2) +
 #| warning: false
 #| tbl-cap: Model comparison
 
-brms::loo_compare(loo::loo(fit1, cores = 2), loo::loo(fit2, cores = 2))
+brms::loo_compare(loo::loo(fit1, cores = 2), loo::loo(fit2, cores = 2)) |>
+  kable(digits = 3)
 ```
 
 \newpage
