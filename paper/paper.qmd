@@ -4,7 +4,7 @@ author:
   - Rohan Alexander
   - Luca Carnegie
   - Nathalie Moon
-thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement. We thank Tiffany Timbers and attendees at JSM 2024 for helpful suggestions. This research is currently under review by the University of Toronto's Research Ethics Board. Contributions: RA: Conceptualization, Data Curation, Formal Analysis, Funding Acquisition, Investigation, Methodology, Project Administration, Software, Visualization, Writing – Original Draft Preparation, Writing – Review & Editing; LC: Formal Analysis, Visualization, Writing – Original Draft Preparation, Writing – Review & Editing; NM: Conceptualization, Methodology; Writing – Original Draft Preparation, Writing – Review & Editing. Comments can be sent to: rohan.alexander@utoronto.ca."
+thanks: "Code and data are available at: https://github.com/lcarnegie/llms-achievement. We thank Tiffany Timbers and attendees at JSM 2024 for helpful suggestions. This research is currently under review by the University of Toronto's Research Ethics Board. Contributions: RA: Conceptualization, Data Curation, Formal Analysis, Funding Acquisition, Investigation, Methodology, Project Administration, Software, Visualization, Writing – Original Draft Preparation, Writing – Review & Editing; LC: Formal Analysis, Visualization, Writing – Original Draft Preparation, Writing – Review & Editing; NM: Conceptualization, Methodology, Writing – Original Draft Preparation, Writing – Review & Editing. Comments can be sent to: rohan.alexander@utoronto.ca."
 date: today
 date-format: long
 abstract: "To help understand the effect of Large Language Models (LLMs) on data science practice we examine the extent to which LLM usage is correlated with the mark that a student gets on a final paper in a classroom data science setting. We find some very mild evidence from this observational study that LLM usage may be associated with better scores, but our main conclusion is that there is no clear relationship between more extensive LLM usage and the student's mark. Despite the classroom setting used for evaluation, the particular activity of interest is similar to the work done by professional data scientists. Our finding suggests the need for more extensive work evaluating how LLMs can be integrated into the data science workflow in a way that provides value."
@@ -463,6 +463,18 @@ We estimate the model in `R` [@citeR] as well, using `brms` [@brms].
 
 The expected relationship between LLM usage and final mark is unclear. It could be that stronger students used LLMs in a more sophisticated way or that they did not need to use them. However, the relationship between GPA and final mark is expected to be positive.
 
+*NM Comments (I'm not familiar with 0-1 inflated beta regression so I'll leave these as comments to be considered)*
+
+- The text refers to a zero-one inflated beta, but the code chunk below is for a one-inflated model (linked to the zero-or-one inflated beta referenced, if I understand correctly).  I think the text should be updated
+- Is the Kurz (2023) reference correct? It looks like this is for standard beta regression, so perhaps an additional reference to one-inflated beta regression would be helpful (e.g. Ospina 2012)
+- Regarding $\pi_{zoi}$ and $\pi_{coi}$ - based on the descriptions it seems like these should sum to 1, but if that's the case it's not clear to me why we would model both.  I suspect I'm missing something here, but tweaking the descriptions could help
+- llm_usage is in the model as a categorical variable, do we want to make that explicit in the model descriptions?
+- Related to the above, perhaps it makes more sense to have "None" as the reference level for llm_usage instead of "Extensive"
+- I typically prefer not to have raw variable names in the body of a paper, so if there's a way to do that without being to cumbersome that could be good (perhaps a personal preference though)
+- Similarly, in Table 5 is it possible to use the mathematical notation instead of the variable names?
+- In Figure 5 is it possible to have different symbols for the two models to make it more readable in grayscale?
+- [Related to section 5.1]: There are references to how students used LLMs (e.g. to write code/text, as an alternative search engine), and I'm just curious where this information comes from. Were the LLM usage statements submitted and analysed, or is this more annecdotal? Either way, I think a bit more context about where it came from would help give the reader context.
+
 # Results {#sec-results}
 
 Our results are summarized in @tbl-model-results and @fig-model-results. We especially draw on `modelsummary` [@modelsummary].
@@ -504,6 +516,10 @@ modelplot(
   labs(x= "") +
   scale_color_brewer(palette = "Set1") +
   theme(legend.position = "bottom")
+
+# Can you change the symbol for one of the models in the above plot?
+
+
 ```
 
 @tbl-model-results and @fig-model-results present the results from two models estimating the association between LLM usage, GPA and final paper mark. The first model includes only LLM usage, while the second model also includes self-reported GPA.
@@ -522,13 +538,13 @@ There is some very mild evidence from this observational study that LLM usage ma
 
 We found that many students did use LLMs to help them complete a data science project closely related to what professional data scientists do. A common use case to ask the LLM to write code to make a graph. Another was to ask for some example paragraphs.
 
-Data science code tends to be written differently to software engineering code. Functions and loops are used less, as there is often less reuse of code. The training data of these LLMs is dominated by software engineering code, and so when an LLM is asked to write code for a data science project it tends to produce code with some of those features. This is neither good nor bad in and of itself, however it can clash with the style of the code that surrounds it.
+Data science code tends to be written differently than software engineering code. Functions and loops are used less, as there is often less reuse of code. The training data of these LLMs is dominated by software engineering code, and so when an LLM is asked to write code for a data science project it tends to produce code with some of those features. This is neither good nor bad in and of itself, however it can clash with the style of the code that surrounds it.
 
 LLMs are also being used as an alternative search engine. Students often asked, for instance, how to modify a graph to add a vertical line, or similar. Here LLMs tended to be especially useful and able to answer questions. In the past students may have used StackOverflow or similar to find their answers, but the nature of the chat response likely provided a faster answer.
 
-Finally, there is the question of whether the nature of the data science has fundamentally changed or improved. For now, there was no evidence of that. It was clear when a student had just used LLM-generated text without modification, and it was often clear when large amounts of code had been written by an LLM. But it was not obvious when small amounts of either had been used, or when LLM-generated content had just been used as an initial draft.
+Finally, there is the question of whether the nature of the data science has fundamentally changed or improved. For now, there is no evidence of that. It was clear when a student had just used LLM-generated text without modification, and it was often clear when large amounts of code had been written by an LLM. But it was not obvious when small amounts of either had been used, or when LLM-generated content had just been used as an initial draft.
 
-Many of these issues were alluded to by @bommasani2021opportunities, in the context of data science, and it is striking that they remain today.
+Many of these issues were alluded to by @bommasani2021opportunities, in the context of data science, and it is striking that they remain relevant today.
 
 
 ## General purpose compared with opinionated specific chatbots
@@ -537,7 +553,7 @@ ChatGPT and equivalents are general-purpose chatbots. One can ask them a technic
 
 General-purpose chatbots being used for data science are fine for experienced data scientists who have an established sense of when something might be not ideal or even wrong. But it is problematic for novices who may not know, can lack the confidence to push back, and possibly, may learn the wrong approach.
 
-Retrieval-augmented generation (RAG) means providing various sources, for instance books or manuals, which the LLM uses to base its response on. Fine-tuning means providing the previously trained LLM with a large number of example input and outputs, which again guide the response from the LLM [@raffel2020exploring]. A chatbot based interface, focused on the needs of data science beginners, could use RAG and/or fine-tuning to considerably improve the quality of its responses. The trade-off would be a reduction in the general-purpose usability of the chatbot, but in the context of this use this that trade-off is likely acceptable.
+Retrieval-augmented generation (RAG) means providing various sources, for instance books or manuals, which the LLM uses to base its response on. Fine-tuning means providing the previously trained LLM with a large number of example input and outputs, which again guide the response from the LLM [@raffel2020exploring]. A chatbot-based interface, focused on the needs of data science beginners, could use RAG and/or fine-tuning to considerably improve the quality of its responses. The trade-off would be a reduction in the general-purpose usability of the chatbot, but in the context of this use, such a trade-off is likely acceptable.
 
 ## Changed LLM-based interfaces
 
@@ -545,7 +561,7 @@ LLMs existed before ChatGPT, but it was the launch of ChatGPT that brought them 
 
 Search-based LLM tools like Elicit and Perplexity.ai differ to ChatGPT in that they focus on search. In contrast to Google, which typically provides a list of websites related to a particular search, Perplexity.ai attempts to provide an answer. In contrast to ChatGPT, search-based LLM tools focus on answering a question rather than engaging in discussion. 
 
-Students in this class were required to use GitHub to host their papers, as well as supporting code and data. GitHub Issues and Pull Requests were used for peer review and submission occurred based on links to GitHub repositories. Trustworthy data science could be considerably enhanced by establishing something analogous to continuous integration and a suite of tests, but for data science. The once-off nature of much data science code would mean that LLMs could be especially useful in this proposed infrastructure stack. For instance, when a data scientist committed their code or writing, a suite of static tests could run, for instance to check that the data are being read in, that classes are appropriate, etc. But additionally LLMs could be used to check for possible improvements in writing, and propose context-specific improvements in code. For instance, to make sure that what is being described in the paper is actually what is happening in the code.
+Students in this class were required to use GitHub to host their papers, as well as supporting code and data. GitHub Issues and Pull Requests were used for peer review and submission occurred based on links to GitHub repositories. Trustworthy data science could be considerably enhanced by establishing something analogous to continuous integration and a suite of tests, but for data science. The one-off nature of much data science code would mean that LLMs could be especially useful in this proposed infrastructure stack; for instance, when a data scientist commits their code or writing, a suite of static tests could run, for instance to check that the data are being read in, that classes are appropriate, etc. But additionally LLMs could be used to check for possible improvements in writing, and propose context-specific improvements in code. For instance, to make sure that what is being described in the paper is actually what is happening in the code.
 
 Finally, one exciting area of current development in LLMs is tool use. One early example of this was enabling LLMs to use search engines such as Google. As LLMs can produce writing, and writing is the input to a Google Search, enabling this tool broadened the types of queries that LLMs could respond effectively to. Tool use, focused on data science, exists. For instance, LLMs can use R and Python to respond to queries about a dataset. However, further development could be useful. For instance, when a user wrote code in an IDE to import some data, a tool-enhanced LLM could notice and automatically write code that establishes a Pydantic-based validation model for that data. Similarly, consider an LLM in an IDE context where a data scientist wrote out the model, in statistical notation, that they were interested in estimating, and the LLM was able write the model in Stan, run it, save the estimates, and add a summary table to the paper, all automatically and in the background. Similar work has occured in other contexts and found to bring substantial benefits [@chen2022evaluating].
 
