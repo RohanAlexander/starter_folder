@@ -115,7 +115,7 @@ all_data |>
 
 There is a wide distribution of self-reported GPAs (@fig-response-time-and-gpa-2). The majority of responses cluster around a B (3.0 out of 4.0), and the average is 3.06 with a standard deviation of 0.55. One factor that may affect the range is that the course is required for programs in the Statistics, Mathematics and Computer Science Departments. Self-reported GPAs also introduce the possibility of reporting bias. For instance, respondents may have provided their cumulative GPA, their most recent term's GPA, or could have misreported it entirely.
 
-Students from a range of years took the course, however the majority of respondents were in their 3rd or 4th year of study (@tbl-year-dist). The course's prerequisite two-course sequence is typically completed by students in their second year, would make it difficult to take this course earlier than their 3rd year.
+Students from a range of years took the course, however the majority of respondents were in their 3rd or 4th year of study (@tbl-year-dist). The course's prerequisite two-course sequence is typically completed by students in their second year, which makes it difficult for students to take this course earlier than their 3rd year.
 
 ```{r tbl-year-dist}
 #| message: false
@@ -174,12 +174,15 @@ writing_perceptions_long <-
     )
   )
 
+# so that "Very different from me" is Red - better visuals
+set1_palette <- c("#4DAF4A", "#377EB8", "#E41A1C")
+
 writing_perceptions_long |>
   ggplot(aes(x = response, fill = response)) +
   geom_bar(position = "stack", stat = "count") +
   facet_wrap(vars(statements)) +
   labs(x = "Response", y = "Number of repondents", fill = "Response:") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = set1_palette) +
   theme_minimal() +
   theme(axis.text.x = element_blank(), legend.position = "bottom")
 
@@ -220,7 +223,7 @@ coding_perceptions_long |>
   geom_bar(position = "stack", stat = "count") +
   facet_wrap(vars(statements)) +
   labs(x = "Response", y = "Number of repondents", fill = "Response:") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = set1_palette) +
   theme_minimal() +
   theme(axis.text.x = element_blank(), legend.position = "bottom")
 ```
@@ -248,7 +251,7 @@ all_data |>
   kable(col.names = c("Ethical & Appropriate for school?", "Students"))
 ```
 
-To understand the role of LLMs in learning, students identified their usage in a more granular way by selecting various pre-defined use cases in the survey (@fig-AI-use-and-usefulness-1). Technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used LLMs for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing.
+To understand the role of LLMs in learning, students identified their usage in a more granular way by selecting various pre-defined use cases in the survey (@fig-AI-use-and-usefulness-1). Technical questions and explaining concepts were the two top use cases among students in the course. More than half of students also used LLMs for quick questions, general knowledge, writing paper code, and checking solutions. Just less than half used it to write paper content, which could suggest that students do not feel confident using it to improve writing; this could be similar to the attitudes expressed by students surveyed in @Cahill_2024. 
 
 ```{r fig-AI-use-and-usefulness}
 #| message: false
@@ -408,11 +411,13 @@ all_data |>
 
 # Model {#sec-model}
 
-The goal of our modelling strategy is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage. Students received their result on the final paper as a proportion (a 0-100% mark), so we use zero-one-inflated beta regression to best fit the distribution in this interval. We use this type of regression given the ability of the beta distribution to effectively describe continuous and skewed or heteroskedastic datasets, which we can see in the asymmetrical histogram of the distribution of marks.
+The goal of our modelling strategy is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage. Students received their result on the final paper as a proportion (a 0-100% mark), so we use a Bayesian zero-one-inflated beta regression to best fit the distribution in this interval. We use this type of regression given the ability of the beta distribution to effectively describe continuous and skewed  (heteroskedastic) datasets, which we can see in the asymmetrical histogram of the distribution of marks.
 
-Transforming the regression with a logit function as the link function ensures that the predicted values stay between zero and one, respecting the boundaries of the data. Some students got full marks for the paper, so we use the zero-one-inflated beta model.
+Transforming the regression with a logit function as the link function ensures that the predicted values stay between zero and one, respecting the boundaries of the data. 
 
-Here we briefly describe the model that we use, which follows @kurztotherescue. Model diagnostics are included in [Appendix -@sec-model-details].
+We briefly describe the model that we use, which follows @kurztotherescue. No students got zeroes, though some got full marks (100%) one the paper, so we adapt the regression to one-inflated beta model as described by @heisstotherescue to account for this.  
+
+Model diagnostics are included in [Appendix -@sec-model-details].
 
 OLD: 
 
@@ -524,7 +529,7 @@ modelplot(
 
 @tbl-model-results and @fig-model-results present the results from two models estimating the association between LLM usage, GPA and final paper mark. The first model includes only LLM usage, while the second model also includes self-reported GPA.
 
-LLM usage estimates are in relation to "Extensive" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this slight association, but with slightly smaller coefficients. For instance, the negative impact of “b_llm_usageSomewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model might be explained by the GPA variable.
+LLM usage estimates are in relation to "Extensive" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this association, but with slightly smaller coefficients. For instance, the negative impact of “b_llm_usageSomewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model might be explained by the GPA variable.
 
 Including self-reported GPA in the second model does considerably change the  changes the interpretation of some coefficients. For instance, intercept for "b_zoi_Intercept" becomes much more negative in the GPA-included model, suggesting that the GPA significantly affects the zero-one inflation part of the model. However, the essential relationship between LLM usage and final mark is retained.
 
