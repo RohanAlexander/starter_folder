@@ -1,152 +1,152 @@
 division,state,party
-Division 1,Victoria,Other
+Division 1,Victoria,Liberal
 Division 2,New South Wales,Liberal
-Division 3,Victoria,Labor
-Division 4,Victoria,National
-Division 5,New South Wales,Liberal
-Division 6,Victoria,Liberal
-Division 7,New South Wales,Labor
-Division 8,New South Wales,Liberal
-Division 9,New South Wales,Liberal
-Division 10,New South Wales,Liberal
-Division 11,Northern Territory,Liberal
-Division 12,Tasmania,Labor
-Division 13,New South Wales,Liberal
-Division 14,New South Wales,Labor
-Division 15,Victoria,Liberal
-Division 16,New South Wales,Liberal
-Division 17,Victoria,National
-Division 18,Victoria,Labor
-Division 19,New South Wales,Labor
-Division 20,New South Wales,Liberal
-Division 21,Northern Territory,Liberal
-Division 22,New South Wales,Labor
-Division 23,New South Wales,Labor
-Division 24,Queensland,Liberal
+Division 3,Tasmania,Liberal
+Division 4,New South Wales,Liberal
+Division 5,Queensland,Liberal
+Division 6,New South Wales,Labor
+Division 7,Victoria,Liberal
+Division 8,Western Australia,Labor
+Division 9,Western Australia,Greens
+Division 10,Queensland,Labor
+Division 11,Queensland,Labor
+Division 12,Northern Territory,Liberal
+Division 13,New South Wales,Labor
+Division 14,Western Australia,Labor
+Division 15,Western Australia,National
+Division 16,Victoria,Liberal
+Division 17,South Australia,Liberal
+Division 18,Victoria,Liberal
+Division 19,Western Australia,Labor
+Division 20,South Australia,Labor
+Division 21,New South Wales,Liberal
+Division 22,Queensland,Greens
+Division 23,New South Wales,Liberal
+Division 24,New South Wales,Liberal
 Division 25,Queensland,Labor
-Division 26,Victoria,Liberal
-Division 27,Victoria,Greens
-Division 28,Victoria,Liberal
-Division 29,Queensland,Other
+Division 26,Victoria,National
+Division 27,New South Wales,Liberal
+Division 28,Queensland,Liberal
+Division 29,Tasmania,Liberal
 Division 30,South Australia,Liberal
-Division 31,Victoria,National
-Division 32,Tasmania,Labor
-Division 33,Victoria,Liberal
-Division 34,Victoria,Liberal
-Division 35,Queensland,Labor
-Division 36,Queensland,National
-Division 37,Western Australia,National
-Division 38,Victoria,Labor
-Division 39,Queensland,National
-Division 40,Queensland,Liberal
-Division 41,Queensland,Labor
-Division 42,New South Wales,Labor
-Division 43,New South Wales,Labor
+Division 31,New South Wales,Liberal
+Division 32,Victoria,Labor
+Division 33,Tasmania,Liberal
+Division 34,New South Wales,Liberal
+Division 35,Western Australia,Labor
+Division 36,New South Wales,Liberal
+Division 37,Tasmania,Greens
+Division 38,Tasmania,Labor
+Division 39,Victoria,Greens
+Division 40,South Australia,Labor
+Division 41,New South Wales,Other
+Division 42,New South Wales,Other
+Division 43,Tasmania,Labor
 Division 44,Tasmania,National
-Division 45,Tasmania,Labor
-Division 46,Queensland,Liberal
-Division 47,South Australia,Labor
-Division 48,Victoria,Liberal
-Division 49,New South Wales,Liberal
-Division 50,New South Wales,Labor
-Division 51,New South Wales,Liberal
-Division 52,Queensland,National
-Division 53,New South Wales,Labor
-Division 54,New South Wales,Liberal
-Division 55,South Australia,National
-Division 56,South Australia,Labor
-Division 57,New South Wales,Labor
-Division 58,Tasmania,Labor
-Division 59,Queensland,Liberal
-Division 60,New South Wales,Liberal
-Division 61,Tasmania,Labor
-Division 62,New South Wales,Liberal
-Division 63,South Australia,Labor
-Division 64,Queensland,Liberal
-Division 65,New South Wales,Other
-Division 66,New South Wales,Liberal
+Division 45,Queensland,Liberal
+Division 46,Australian Capital Territory,Other
+Division 47,Queensland,Labor
+Division 48,Queensland,Other
+Division 49,South Australia,Liberal
+Division 50,Victoria,National
+Division 51,South Australia,Liberal
+Division 52,Victoria,Labor
+Division 53,South Australia,National
+Division 54,Queensland,Liberal
+Division 55,Queensland,Labor
+Division 56,South Australia,Liberal
+Division 57,New South Wales,Other
+Division 58,Northern Territory,Liberal
+Division 59,New South Wales,Labor
+Division 60,Western Australia,Labor
+Division 61,New South Wales,Liberal
+Division 62,South Australia,Liberal
+Division 63,Queensland,Labor
+Division 64,Tasmania,Labor
+Division 65,South Australia,Labor
+Division 66,Victoria,Labor
 Division 67,Queensland,Liberal
-Division 68,Victoria,Labor
+Division 68,Queensland,Liberal
 Division 69,Tasmania,Labor
-Division 70,Queensland,Labor
-Division 71,New South Wales,Liberal
-Division 72,South Australia,Labor
-Division 73,Victoria,Liberal
-Division 74,Tasmania,Labor
-Division 75,New South Wales,Liberal
-Division 76,Victoria,Liberal
-Division 77,South Australia,Liberal
-Division 78,New South Wales,Labor
-Division 79,Victoria,Liberal
-Division 80,Victoria,National
-Division 81,New South Wales,Labor
-Division 82,South Australia,Labor
-Division 83,Victoria,Labor
-Division 84,New South Wales,Labor
-Division 85,Western Australia,Labor
-Division 86,Tasmania,Liberal
+Division 70,South Australia,National
+Division 71,Australian Capital Territory,Labor
+Division 72,Western Australia,Labor
+Division 73,Queensland,National
+Division 74,Victoria,Labor
+Division 75,Western Australia,Labor
+Division 76,Tasmania,Labor
+Division 77,Queensland,Liberal
+Division 78,Western Australia,Liberal
+Division 79,Queensland,Labor
+Division 80,Queensland,Liberal
+Division 81,Victoria,Labor
+Division 82,New South Wales,Liberal
+Division 83,Victoria,Liberal
+Division 84,Queensland,National
+Division 85,Western Australia,Liberal
+Division 86,New South Wales,Labor
 Division 87,Queensland,Liberal
-Division 88,Queensland,Liberal
-Division 89,Tasmania,Labor
-Division 90,Queensland,Liberal
+Division 88,New South Wales,Liberal
+Division 89,Tasmania,Liberal
+Division 90,South Australia,Labor
 Division 91,Victoria,Liberal
-Division 92,South Australia,Labor
-Division 93,Victoria,Labor
-Division 94,New South Wales,Labor
-Division 95,New South Wales,Liberal
-Division 96,Queensland,Labor
-Division 97,New South Wales,Labor
-Division 98,Western Australia,Liberal
+Division 92,New South Wales,Labor
+Division 93,Tasmania,Labor
+Division 94,South Australia,Labor
+Division 95,Victoria,Liberal
+Division 96,Victoria,Labor
+Division 97,Western Australia,Liberal
+Division 98,Queensland,Liberal
 Division 99,South Australia,Liberal
-Division 100,Victoria,Liberal
-Division 101,New South Wales,Greens
-Division 102,Victoria,Liberal
-Division 103,Victoria,Liberal
-Division 104,Victoria,Liberal
-Division 105,Tasmania,Labor
-Division 106,New South Wales,Labor
-Division 107,Queensland,Labor
-Division 108,New South Wales,Liberal
-Division 109,South Australia,National
-Division 110,Queensland,Liberal
-Division 111,Victoria,National
-Division 112,Victoria,Labor
-Division 113,Victoria,Greens
-Division 114,Queensland,National
-Division 115,Victoria,Labor
-Division 116,New South Wales,Labor
-Division 117,Tasmania,Liberal
-Division 118,New South Wales,Liberal
-Division 119,Victoria,Liberal
-Division 120,Western Australia,Liberal
-Division 121,New South Wales,Liberal
-Division 122,Queensland,Liberal
-Division 123,Victoria,Liberal
-Division 124,Tasmania,National
-Division 125,Tasmania,Liberal
-Division 126,Tasmania,Labor
-Division 127,New South Wales,Labor
-Division 128,Victoria,Liberal
-Division 129,Victoria,Liberal
-Division 130,Victoria,Labor
-Division 131,Victoria,Liberal
-Division 132,Tasmania,Liberal
-Division 133,Victoria,Labor
-Division 134,Tasmania,Labor
-Division 135,Victoria,Labor
-Division 136,New South Wales,National
-Division 137,Queensland,Liberal
-Division 138,Western Australia,Labor
-Division 139,Queensland,Liberal
-Division 140,Victoria,Liberal
-Division 141,Australian Capital Territory,Liberal
-Division 142,Western Australia,Labor
-Division 143,New South Wales,Labor
-Division 144,Western Australia,Liberal
-Division 145,South Australia,National
-Division 146,Tasmania,Labor
-Division 147,Victoria,Labor
-Division 148,South Australia,Greens
-Division 149,New South Wales,Labor
-Division 150,Victoria,Labor
+Division 100,New South Wales,Labor
+Division 101,South Australia,Labor
+Division 102,New South Wales,Labor
+Division 103,Victoria,Labor
+Division 104,Victoria,Labor
+Division 105,South Australia,Other
+Division 106,Western Australia,Labor
+Division 107,Tasmania,Liberal
+Division 108,Victoria,Labor
+Division 109,Queensland,Liberal
+Division 110,Victoria,Labor
+Division 111,Australian Capital Territory,Labor
+Division 112,Victoria,Liberal
+Division 113,Victoria,Liberal
+Division 114,Victoria,Liberal
+Division 115,Tasmania,Labor
+Division 116,Victoria,Labor
+Division 117,New South Wales,Labor
+Division 118,Victoria,Labor
+Division 119,Victoria,Greens
+Division 120,Northern Territory,Labor
+Division 121,South Australia,Liberal
+Division 122,New South Wales,Liberal
+Division 123,New South Wales,Labor
+Division 124,New South Wales,Liberal
+Division 125,New South Wales,National
+Division 126,New South Wales,Labor
+Division 127,Queensland,Labor
+Division 128,New South Wales,Other
+Division 129,Queensland,Labor
+Division 130,Australian Capital Territory,Liberal
+Division 131,Tasmania,Greens
+Division 132,New South Wales,National
+Division 133,New South Wales,Labor
+Division 134,Northern Territory,Labor
+Division 135,South Australia,National
+Division 136,Victoria,Labor
+Division 137,Tasmania,National
+Division 138,South Australia,Liberal
+Division 139,New South Wales,Labor
+Division 140,Victoria,Other
+Division 141,Queensland,Greens
+Division 142,Victoria,National
+Division 143,Western Australia,Labor
+Division 144,Victoria,Labor
+Division 145,Queensland,Liberal
+Division 146,Tasmania,Liberal
+Division 147,South Australia,Liberal
+Division 148,Victoria,Labor
+Division 149,New South Wales,National
+Division 150,New South Wales,Labor
 Division 151,Victoria,Liberal
