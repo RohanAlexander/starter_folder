@@ -25,13 +25,38 @@ library(palmerpenguins)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+Overview paragraph
 
-The remainder of this paper is structured as follows. @sec-data....
+Estimand paragraph
+
+Results paragraph
+
+Why it matters paragraph
+
+Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
+
+
+
 
 
 
 # Data {#sec-data}
+
+## Overview
+
+We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
+
+Overview text
+
+## Measurement
+	
+Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+
+## Outcome variables
+
+Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
+
+
 
 Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
@@ -71,6 +96,17 @@ analysis_data |>
 ```
 
 Talk way more about it. 
+
+## Predictor variables
+
+Add graphs, tables and text.
+
+Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+
+
+
+
+
 
 
 
@@ -145,6 +181,8 @@ modelsummary::modelsummary(
 If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
 
 ## Second discussion point
+
+Please don't use these as sub-heading labels - change them to be what your point actually is.
 
 ## Third discussion point
 
