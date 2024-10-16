@@ -28,3 +28,14 @@ Aspects of the code were written with the help of the auto-complete tool, Codriv
 - [ ] Remove files that you're not using
 - [ ] Update comments in R scripts
 - [ ] Remove this checklist
+
+## CHECKLISTS
+- [ ] MODEL
+- [ ] POLLSTER Selected: Redfield & Wilton Strategies
+- [ ] CONDUCT A NEW SURVEY
+SUBLISTS OF POLLSTER
+1. INTRODUCTION: WHY SHOULD THE POLLSTER CONDUCT THE SURVEY - JUNBO
+2. SURVEY'S METHODOLOGY(WEAKNESS & STRENGTH & FEATURES) - YOUNA
+3. SELECTED POPULATION - 
+4. 
+5. 
