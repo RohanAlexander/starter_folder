@@ -199,6 +199,32 @@ Weaknesses and next steps should also be included.
 
 # Additional data details
 
+## pollster methodology analysis
+
+This survey was conducted by Redfield & Wilton Strategies to assess the voting intentions of eligible voters in key U.S. swing states ahead of the 2024 Presidential Election. The primary goal of this poll is to provide an accurate and timely snapshot of public opinion in states where electoral outcomes are uncertain and could have a decisive impact on the overall result of the election. Swing states, due to their political volatility and diverse voter bases, are critical in determining the balance of power in the U.S. electoral system. Understanding voter preferences in these states is essential for political analysts, campaigns, and the general public.
+
+### Population of Interest
+The population of interest for this survey consists of all eligible voters residing in major U.S. swing states, specifically Arizona, Florida, Georgia, Michigan, North Carolina, and Pennsylvania. These states are known for their fluctuating political alignments and are expected to play a crucial role in the upcoming election.
+
+### Sampling Frame
+The population sampled includes eligible voters from Arizona, Florida, Georgia, Michigan, North Carolina, and Pennsylvania. Participants were selected via an online panel.
+
+### Sample
+The sample sizes for each state were as follows:
+
+Arizona: 750 respondents
+
+Florida: 1,350 respondents
+
+Georgia: 927 respondents
+
+Michigan: 970 respondents
+
+North Carolina: 880 respondents
+
+Pennsylvania: 1,070 respondents
+
+
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
