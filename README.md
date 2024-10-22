@@ -2,14 +2,13 @@
 
 ## Overview
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
-
+In this study, we aim to study the 2024 U.S. Presidential Election with the methodology of  polls of polls across various states. With the insightful analyses on polls provided by Redfiled & Wilton Strategies, the conducted survey on the population highlights various key point for the prediction of US president. Using Generalized Linear Models (GLMs), this report analyzes the accuracy of prediction in president votes through several key variables from pollster.
 
 ## File Structure
 
 The repo is structured as:
 
--   `data/raw_data` contains the raw data as obtained from X.
+-   `data/raw_data` contains the raw data as obtained from 538 website.
 -   `data/analysis_data` contains the cleaned dataset that was constructed.
 -   `model` contains fitted models. 
 -   `other` contains relevant literature, details about LLM chat interactions, and sketches.
@@ -19,23 +18,5 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt.
+Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt. 
 
-## Some checks
-
-- [ ] Change the rproj file name so that it's not starter_folder.Rproj
-- [ ] Change the README title so that it's not Starter folder
-- [ ] Remove files that you're not using
-- [ ] Update comments in R scripts
-- [ ] Remove this checklist
-
-## CHECKLISTS
-- [ ] MODEL
-- [ ] POLLSTER Selected: Redfield & Wilton Strategies
-- [ ] CONDUCT A NEW SURVEY
-SUBLISTS OF POLLSTER
-1. INTRODUCTION: WHY SHOULD THE POLLSTER CONDUCT THE SURVEY - JUNBO
-2. SURVEY'S METHODOLOGY(WEAKNESS & STRENGTH & FEATURES) - YOUNA
-3. SELECTED POPULATION - 
-4. 
-5. 
