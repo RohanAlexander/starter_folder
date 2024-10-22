@@ -1,13 +1,14 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "US President Prediction"
+subtitle: "Predict the results of 2024 US President Election"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
-date: today
+  - Yun Chu
+  - Felix Li
+  - Wen Han Zhao 
+thanks: "Code and data are available at: [https://github.com/younazhao/US-President-Prediction/tree/main](https://github.com/younazhao/US-President-Prediction/tree/main)."
+date: 22 October 2024
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "In this study, we aim to study the 2024 U.S. Presidential Election with the methodology of  polls of polls across various states. With the insightful analyses on polls provided by Redfiled & Wilton Strategies, the conducted survey on the population highlights various key point for the prediction of US president. Using Generalized Linear Models (GLMs), this report analyzes the accuracy of prediction in president votes through several key variables from pollster. The model incorporates variables such as pollscore, methodology, transparency_score and hypothetical. The prediction finding highlights the significance of candicate trustworthiness among the voter decision, providing insights for swing voters. This analysis offers valuable information into the potential electoral outcomes driving the 2024 US president election. "
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -17,9 +18,11 @@ bibliography: references.bib
 #| include: false
 #| warning: false
 #| message: false
-
 library(tidyverse)
-library(palmerpenguins)
+library(knitr)
+library(kableExtra)
+library(readr)
+library(dplyr)
 ```
 
 
@@ -44,7 +47,7 @@ Telegraphing paragraph: The remainder of this paper is structured as follows. @s
 
 ## Overview
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
+We use the statistical programming language R [@citeR].... Our data.... Following @tellingstories, we consider...
 
 Overview text
 
@@ -53,47 +56,6 @@ Overview text
 Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
 
 ## Outcome variables
-
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
-
-```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
 
 Talk way more about it. 
 
@@ -105,43 +67,31 @@ Use sub-sub-headings for each outcome variable and feel free to combine a few in
 
 
 
-
-
-
-
-
-# Model
+# Model {#set-model}
 
 The goal of our modelling strategy is twofold. Firstly,...
 
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix @sec-model-details].
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+Define $y_i$ as the percentage of support for a candicate in a poll.
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
+${y_i} = \beta_0 + \beta_1 pollscore + \beta_2 methodology + \beta_3transparency score + \beta_4 hypothetical + \epsilon$ 
 
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+pollscore: A numeric value representing the score or reliability of the pollster in question (e.g., -1.1). "The error and bias we can attribute to a pollster. Negative numbers are better. Stands for "Predictive Optimization of Latent skill Level in Surveys, Considering Overall Record, Empirically.
+
+methodology: The method used to conduct the poll (e.g., Online Panel).
+
+transparency_score: A score reflecting the pollster’s transparency about their methodology (e.g., 9.0). "A grade for how transparent a pollster is, calculated based on how much information it discloses about its polls and weighted by 
+by recency. The highest Transparency Score is 10."
+ 
+hypothetical: Indicates whether the poll is about a hypothetical match-up.
+
+We run the model in R [@citeR].
 
 
 ### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
 
 ```{r}
 #| echo: false
@@ -149,46 +99,122 @@ Our results are summarized in @tbl-modelresults.
 #| warning: false
 #| message: false
 
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+# Library setup
+#install.packages("glm")
+library(glmnet)
+library(ggplot2)
 ```
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| label: tbl-model1
+#| tbl-cap: "model 1"
 #| warning: false
+# Get the analysis data
+analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
+# Model
+glm_model1 <- glm(pct ~ pollscore + methodology + transparency_score + hypothetical, data = analysis_data, family = gaussian()) 
+
+# Get the summary
+model_summary <- summary(glm_model1)
+
+# Convert the summary coefficients to a data frame
+summary_table <- as.data.frame(model_summary$coefficients)
+
+# Create a table with a caption and control the size
+kable(summary_table, caption = "Model 1 Summary Table", size = "small")
+```
+
+## Lasso Regularization {#sec-model-lassoregularization}
+Lasso Regularization is performed to see if the selected variable in our model would best predict the results of polls percentage of a candidate. If the variable do not align with our actual numbers, we should consider other variables or a interaction variable. 
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-lassoregularization
+#| tbl-cap: "lasso regularization"
+#| warning: false
+# Prepare the predictors
+x <- model.matrix(pct ~ pollscore + methodology + transparency_score + hypothetical, data = analysis_data)[, -1]
+
+# Prepare the response variable
+y <- analysis_data$pct
+
+# Lasso regression (alpha = 1)
+lasso_model <- glmnet(x, y, alpha = 1, family = "gaussian")
+
+# Cross-validation for Lasso
+cv_lasso <- cv.glmnet(x, y, alpha = 1, family = "gaussian")
+
+plot(cv_lasso)
+
+# Get the best lambda
+best_lambda_lasso <- cv_lasso$lambda.min
+
+# Refit Lasso with the optimal lambda
+lasso_final_model <- glmnet(x, y, alpha = 1, lambda = best_lambda_lasso, family = "gaussian")
+
+# View Lasso coefficients
+coef.lasso <- coef(lasso_final_model)
+
+# Predict using Lasso
+pred_lasso <- predict(lasso_final_model, s = best_lambda_lasso, newx = x)
+
 ```
 
 
+Computing the Mean Square Error would give us a sense of our lasso model prediction. 
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-msr
+#| tbl-cap: "Mean Squared Error"
+#| warning: false
+# Calculate Mean Squared Error
+mse <- mean((y - pred_lasso)^2)
+cat("Mean Squared Error:", mse, "\n")
+
+# Calculate R-squared
+sst <- sum((y - mean(y))^2)
+sse <- sum((y - pred_lasso)^2)
+r_squared <- 1 - (sse / sst)
+cat("R-squared:", r_squared, "\n")
+
+# Create a data frame for plotting
+results_df <- data.frame(
+  Metric = c("SST", "SSE", "R-squared"),
+  Value = c(sst, sse, r_squared)
+)
+
+kable(results_df, caption = "Mean Squared Error Table")
+```
 
 
-# Discussion
+From this graph, we can see that the cluster points do not perfectly align on the line of the best fit so we should still investigate in other variables. 
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-actualvspredicted
+#| tbl-cap: "actual vs predicted"
+#| warning: false
 
-## First discussion point {#sec-first-point}
+# Compare predicted vs actual values
+comparison <- data.frame(Actual = y, Predicted = as.vector(pred_lasso))
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+kable(head(comparison), caption = "Actual vs Predicted")
 
-## Second discussion point
+# Plot actual vs predicted values
+ggplot(comparison, aes(x = Actual, y = Predicted)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = "red") +
+  labs(title = "Actual vs Predicted Values",
+       x = "Actual Values",
+       y = "Predicted Values") +
+  theme_minimal()
+```
 
-Please don't use these as sub-heading labels - change them to be what your point actually is.
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
 
 \newpage
 
@@ -224,56 +250,16 @@ North Carolina: 880 respondents
 
 Pennsylvania: 1,070 respondents
 
+## Weakness & Strength of the methodology
+
+In terms of strengths, Redfield & Wilton has a great reputation for producing reliable polling data. They have employ a mix of online and telephone survey, which add in various resources of collecting their data. This approach can help reduce bias. In addition, Redfield & Wilton often target swing states, which makes their polls results important to the US president election.
+
+The weakness of their methodology would incorporate a certain potential bias based on their political leaning of their clients or media. This could cause a certain neutrality in their dataset. 
+
+Overall, Redfield & Wilton has been considered as a competent, reputable and reliable pollster with his variaty and methodology on polls. Even though the pollster contained a potential bias, it has been a reliable resource in prediction of US president election. 
+
 
 # Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
 
 
 
