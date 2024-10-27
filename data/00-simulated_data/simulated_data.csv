@@ -1,152 +1,101 @@
-division,state,party
-Division 1,Victoria,Liberal
-Division 2,New South Wales,Liberal
-Division 3,Tasmania,Liberal
-Division 4,New South Wales,Liberal
-Division 5,Queensland,Liberal
-Division 6,New South Wales,Labor
-Division 7,Victoria,Liberal
-Division 8,Western Australia,Labor
-Division 9,Western Australia,Greens
-Division 10,Queensland,Labor
-Division 11,Queensland,Labor
-Division 12,Northern Territory,Liberal
-Division 13,New South Wales,Labor
-Division 14,Western Australia,Labor
-Division 15,Western Australia,National
-Division 16,Victoria,Liberal
-Division 17,South Australia,Liberal
-Division 18,Victoria,Liberal
-Division 19,Western Australia,Labor
-Division 20,South Australia,Labor
-Division 21,New South Wales,Liberal
-Division 22,Queensland,Greens
-Division 23,New South Wales,Liberal
-Division 24,New South Wales,Liberal
-Division 25,Queensland,Labor
-Division 26,Victoria,National
-Division 27,New South Wales,Liberal
-Division 28,Queensland,Liberal
-Division 29,Tasmania,Liberal
-Division 30,South Australia,Liberal
-Division 31,New South Wales,Liberal
-Division 32,Victoria,Labor
-Division 33,Tasmania,Liberal
-Division 34,New South Wales,Liberal
-Division 35,Western Australia,Labor
-Division 36,New South Wales,Liberal
-Division 37,Tasmania,Greens
-Division 38,Tasmania,Labor
-Division 39,Victoria,Greens
-Division 40,South Australia,Labor
-Division 41,New South Wales,Other
-Division 42,New South Wales,Other
-Division 43,Tasmania,Labor
-Division 44,Tasmania,National
-Division 45,Queensland,Liberal
-Division 46,Australian Capital Territory,Other
-Division 47,Queensland,Labor
-Division 48,Queensland,Other
-Division 49,South Australia,Liberal
-Division 50,Victoria,National
-Division 51,South Australia,Liberal
-Division 52,Victoria,Labor
-Division 53,South Australia,National
-Division 54,Queensland,Liberal
-Division 55,Queensland,Labor
-Division 56,South Australia,Liberal
-Division 57,New South Wales,Other
-Division 58,Northern Territory,Liberal
-Division 59,New South Wales,Labor
-Division 60,Western Australia,Labor
-Division 61,New South Wales,Liberal
-Division 62,South Australia,Liberal
-Division 63,Queensland,Labor
-Division 64,Tasmania,Labor
-Division 65,South Australia,Labor
-Division 66,Victoria,Labor
-Division 67,Queensland,Liberal
-Division 68,Queensland,Liberal
-Division 69,Tasmania,Labor
-Division 70,South Australia,National
-Division 71,Australian Capital Territory,Labor
-Division 72,Western Australia,Labor
-Division 73,Queensland,National
-Division 74,Victoria,Labor
-Division 75,Western Australia,Labor
-Division 76,Tasmania,Labor
-Division 77,Queensland,Liberal
-Division 78,Western Australia,Liberal
-Division 79,Queensland,Labor
-Division 80,Queensland,Liberal
-Division 81,Victoria,Labor
-Division 82,New South Wales,Liberal
-Division 83,Victoria,Liberal
-Division 84,Queensland,National
-Division 85,Western Australia,Liberal
-Division 86,New South Wales,Labor
-Division 87,Queensland,Liberal
-Division 88,New South Wales,Liberal
-Division 89,Tasmania,Liberal
-Division 90,South Australia,Labor
-Division 91,Victoria,Liberal
-Division 92,New South Wales,Labor
-Division 93,Tasmania,Labor
-Division 94,South Australia,Labor
-Division 95,Victoria,Liberal
-Division 96,Victoria,Labor
-Division 97,Western Australia,Liberal
-Division 98,Queensland,Liberal
-Division 99,South Australia,Liberal
-Division 100,New South Wales,Labor
-Division 101,South Australia,Labor
-Division 102,New South Wales,Labor
-Division 103,Victoria,Labor
-Division 104,Victoria,Labor
-Division 105,South Australia,Other
-Division 106,Western Australia,Labor
-Division 107,Tasmania,Liberal
-Division 108,Victoria,Labor
-Division 109,Queensland,Liberal
-Division 110,Victoria,Labor
-Division 111,Australian Capital Territory,Labor
-Division 112,Victoria,Liberal
-Division 113,Victoria,Liberal
-Division 114,Victoria,Liberal
-Division 115,Tasmania,Labor
-Division 116,Victoria,Labor
-Division 117,New South Wales,Labor
-Division 118,Victoria,Labor
-Division 119,Victoria,Greens
-Division 120,Northern Territory,Labor
-Division 121,South Australia,Liberal
-Division 122,New South Wales,Liberal
-Division 123,New South Wales,Labor
-Division 124,New South Wales,Liberal
-Division 125,New South Wales,National
-Division 126,New South Wales,Labor
-Division 127,Queensland,Labor
-Division 128,New South Wales,Other
-Division 129,Queensland,Labor
-Division 130,Australian Capital Territory,Liberal
-Division 131,Tasmania,Greens
-Division 132,New South Wales,National
-Division 133,New South Wales,Labor
-Division 134,Northern Territory,Labor
-Division 135,South Australia,National
-Division 136,Victoria,Labor
-Division 137,Tasmania,National
-Division 138,South Australia,Liberal
-Division 139,New South Wales,Labor
-Division 140,Victoria,Other
-Division 141,Queensland,Greens
-Division 142,Victoria,National
-Division 143,Western Australia,Labor
-Division 144,Victoria,Labor
-Division 145,Queensland,Liberal
-Division 146,Tasmania,Liberal
-Division 147,South Australia,Liberal
-Division 148,Victoria,Labor
-Division 149,New South Wales,National
-Division 150,New South Wales,Labor
-Division 151,Victoria,Liberal
+pollster,numeric_grade,pollscore,methodology,transparency_score,state,start_date,population_full,candidate_name,pct
+InsiderAdvantage,3.9,0.7,Phone,1.4,MD,2024-02-11,Likely Voters,Kamala Harris,47.9
+TIPP,2.4,-0.3,Online,1.5,GA,2024-10-26,Registered Voters,Kamala Harris,45.4
+Gallup,4.6,0.7,Online,9.9,OR,2024-03-30,Registered Voters,Donald Trump,51.3
+InsiderAdvantage,1.3,1.6,Online,3.5,WY,2024-04-30,Likely Voters,Donald Trump,51.1
+Gallup,2.1,0.4,Phone,9,IL,2024-08-07,Likely Voters,Kamala Harris,53.9
+Gallup,2,-0.5,Mixed,9,MA,2024-05-22,Registered Voters,Donald Trump,48.6
+TIPP,4.8,-1,Mixed,9.6,NC,2024-10-18,Likely Voters,Donald Trump,47.6
+Ipsos,3.3,0.9,Mixed,9.4,KY,2024-05-05,Registered Voters,Kamala Harris,49.8
+YouGov,2.1,1.2,Mixed,5.9,NM,2024-10-30,Likely Voters,Donald Trump,53.1
+YouGov,4.5,1.6,Online,8.5,AR,2024-06-12,Likely Voters,Kamala Harris,49.6
+InsiderAdvantage,3.5,-0.4,Mixed,0.2,NE,2024-08-25,Registered Voters,Kamala Harris,52.5
+YouGov,2.9,0.8,Phone,5.6,NE,2024-08-28,Registered Voters,Donald Trump,48.6
+YouGov,2.4,0.1,Online,0.1,NY,2024-09-14,Likely Voters,Donald Trump,49
+YouGov,3.9,-0,Online,5.2,NV,2024-04-20,Likely Voters,Kamala Harris,50
+TIPP,3,0.7,Mixed,9.5,CA,2024-04-10,Registered Voters,Kamala Harris,52
+Gallup,4,-0.1,Mixed,0.9,SD,2024-03-07,Likely Voters,Donald Trump,49.1
+TIPP,3.5,-0.7,Phone,8.1,MA,2024-05-19,Likely Voters,Kamala Harris,47.8
+Ipsos,1.8,0.8,Online,2,SC,2024-04-11,Likely Voters,Donald Trump,50.8
+Gallup,3.8,0.8,Online,6.6,VA,2024-06-13,Registered Voters,Donald Trump,45.7
+Ipsos,2.5,-1.5,Phone,6.6,FL,2024-08-14,Registered Voters,Donald Trump,49.3
+TIPP,4.2,-1.5,Online,0.5,ME,2024-01-09,Registered Voters,Donald Trump,54.6
+Gallup,2.7,-0.2,Phone,3.9,IN,2024-08-04,Likely Voters,Donald Trump,47.7
+TIPP,4.5,0.3,Mixed,3.6,ND,2024-10-06,Registered Voters,Kamala Harris,52.2
+InsiderAdvantage,1.3,-0.2,Phone,7.1,NM,2024-03-05,Likely Voters,Kamala Harris,47.7
+InsiderAdvantage,1.3,-0.8,Phone,5.7,NM,2024-01-14,Registered Voters,Kamala Harris,47.8
+Ipsos,2.9,0.9,Mixed,1.8,RI,2024-05-09,Likely Voters,Donald Trump,47.4
+Gallup,2.9,-1.2,Online,9.5,MD,2024-07-15,Likely Voters,Kamala Harris,49.4
+YouGov,1.2,-0.9,Online,3.9,WV,2024-08-16,Registered Voters,Kamala Harris,50.8
+YouGov,1.9,0,Phone,8.9,OH,2024-09-06,Likely Voters,Kamala Harris,51.5
+TIPP,2.8,0.4,Phone,8.3,AZ,2024-05-26,Likely Voters,Donald Trump,51.5
+InsiderAdvantage,2.4,0.3,Online,5.3,WI,2024-02-07,Registered Voters,Donald Trump,47.4
+YouGov,4.1,-0.7,Online,6.3,PA,2024-03-17,Likely Voters,Kamala Harris,53.6
+TIPP,4.7,-1.2,Online,1.2,VA,2024-08-15,Likely Voters,Kamala Harris,46.5
+InsiderAdvantage,4.1,-2.8,Phone,4.3,KS,2024-04-25,Registered Voters,Kamala Harris,48.3
+InsiderAdvantage,4.9,0.8,Online,9.6,CT,2024-08-28,Likely Voters,Donald Trump,48.6
+Gallup,3.1,1.4,Mixed,3,PA,2024-07-16,Likely Voters,Kamala Harris,55
+Gallup,4.3,0.4,Online,5.4,SC,2024-08-24,Registered Voters,Donald Trump,49.5
+InsiderAdvantage,1.6,-0.5,Phone,6.9,OK,2024-09-03,Likely Voters,Kamala Harris,50.7
+InsiderAdvantage,3.7,0.2,Online,6.4,NJ,2024-05-13,Registered Voters,Donald Trump,48.3
+Gallup,3.7,-0.3,Mixed,0.9,NM,2024-10-12,Registered Voters,Donald Trump,48.8
+Gallup,1.7,1.5,Phone,2.9,OH,2024-09-29,Registered Voters,Donald Trump,51
+Ipsos,4.5,-1.5,Mixed,8.5,TN,2024-06-07,Registered Voters,Donald Trump,53.8
+InsiderAdvantage,4.5,0.4,Phone,0.4,AL,2024-08-10,Registered Voters,Donald Trump,51.4
+Ipsos,1.1,-0.1,Online,1.8,AK,2024-09-21,Likely Voters,Donald Trump,53.5
+Gallup,4.2,-2.5,Online,3.9,MI,2024-08-09,Likely Voters,Kamala Harris,53
+InsiderAdvantage,3.1,-0.9,Phone,3.4,WV,2024-02-22,Registered Voters,Kamala Harris,53.3
+TIPP,2.2,-0.7,Online,5.5,PA,2024-07-26,Likely Voters,Kamala Harris,51.2
+YouGov,1.5,1.1,Phone,5.2,MT,2024-07-03,Registered Voters,Kamala Harris,48.6
+Gallup,1.9,0.5,Online,7.8,MO,2024-08-11,Registered Voters,Donald Trump,49
+InsiderAdvantage,4.5,1,Phone,0.5,WA,2024-10-15,Likely Voters,Donald Trump,53.8
+InsiderAdvantage,2.5,0.6,Phone,1.2,OH,2024-01-01,Registered Voters,Kamala Harris,49.8
+Ipsos,4.1,-1.7,Mixed,7.6,SD,2024-03-10,Registered Voters,Donald Trump,49.7
+Ipsos,2.3,0.1,Online,4.6,HI,2024-10-03,Likely Voters,Donald Trump,45.9
+YouGov,4.1,0.3,Mixed,3.3,NJ,2024-08-17,Registered Voters,Kamala Harris,48.3
+YouGov,3.2,0.8,Mixed,5.2,CO,2024-03-01,Registered Voters,Kamala Harris,46.4
+InsiderAdvantage,2.4,0.7,Mixed,7.5,OR,2024-09-08,Registered Voters,Kamala Harris,54.1
+YouGov,3.9,-0.7,Phone,4.4,CT,2024-07-09,Likely Voters,Donald Trump,50.8
+Ipsos,4.2,-0.1,Mixed,0.4,OR,2024-07-16,Likely Voters,Kamala Harris,49.5
+Ipsos,2.2,-1.2,Online,2.7,OH,2024-01-27,Likely Voters,Donald Trump,52.3
+TIPP,3.7,0.7,Phone,8.8,SC,2024-06-18,Likely Voters,Kamala Harris,50.4
+YouGov,4.4,-0.4,Phone,1.3,NH,2024-05-30,Registered Voters,Donald Trump,45.4
+Gallup,2.6,-0.1,Mixed,6.6,NV,2024-04-19,Likely Voters,Kamala Harris,46.1
+YouGov,2,1.5,Phone,6.3,DE,2024-10-10,Registered Voters,Donald Trump,54.1
+TIPP,2.2,0.6,Online,6.1,WV,2024-05-09,Likely Voters,Donald Trump,47.9
+Gallup,3.1,0.5,Online,6.2,UT,2024-04-19,Registered Voters,Donald Trump,54.9
+Gallup,3.1,-0.1,Online,6.9,WV,2024-01-09,Likely Voters,Donald Trump,47.2
+YouGov,1.9,-0.5,Phone,8.9,MD,2024-07-30,Registered Voters,Donald Trump,45.1
+InsiderAdvantage,4.1,0.6,Online,0.6,ND,2024-07-30,Registered Voters,Donald Trump,45.1
+InsiderAdvantage,2.2,-1.4,Online,3.8,SD,2024-05-07,Likely Voters,Kamala Harris,54.9
+YouGov,3.9,-0.6,Mixed,10,WI,2024-01-22,Likely Voters,Kamala Harris,46.1
+Ipsos,4.9,1.2,Mixed,7.9,MT,2024-04-03,Registered Voters,Kamala Harris,47.9
+YouGov,3.3,-1.1,Online,6.7,NY,2024-10-22,Registered Voters,Donald Trump,52
+TIPP,3.3,1.3,Online,7.7,CA,2024-06-09,Registered Voters,Donald Trump,47.9
+InsiderAdvantage,1.5,1.7,Online,0.8,KY,2024-08-22,Likely Voters,Donald Trump,50.5
+Ipsos,1.7,-1.1,Phone,2.3,WA,2024-10-24,Likely Voters,Donald Trump,49.1
+Gallup,2.5,-0.6,Phone,6,VT,2024-06-11,Registered Voters,Kamala Harris,48.4
+Gallup,4,-0.3,Online,0.5,MT,2024-03-15,Likely Voters,Kamala Harris,47
+YouGov,1,-0.2,Online,5.8,PA,2024-07-26,Likely Voters,Kamala Harris,52.1
+Ipsos,3.3,-0.6,Phone,3.3,FL,2024-02-05,Registered Voters,Donald Trump,52.7
+InsiderAdvantage,1,0.3,Mixed,8.5,ME,2024-05-22,Registered Voters,Kamala Harris,49.3
+Ipsos,3.5,-0.1,Online,1.6,WI,2024-08-06,Likely Voters,Kamala Harris,47.9
+YouGov,3.4,0,Online,6.1,TN,2024-07-24,Likely Voters,Kamala Harris,53.5
+YouGov,3.1,-0.1,Phone,6,NM,2024-06-04,Likely Voters,Donald Trump,53.6
+InsiderAdvantage,2.3,-1.5,Phone,1.5,MO,2024-01-04,Registered Voters,Donald Trump,46.7
+InsiderAdvantage,3.5,-1.4,Online,5.8,SC,2024-10-18,Registered Voters,Donald Trump,52.3
+Gallup,4.4,-0.1,Phone,0.7,NH,2024-09-28,Likely Voters,Donald Trump,48.9
+Gallup,1.6,-0.2,Online,0.7,MA,2024-10-08,Registered Voters,Donald Trump,53.2
+Ipsos,1.6,-0.1,Mixed,0.4,MN,2024-10-05,Likely Voters,Donald Trump,47.5
+YouGov,1.5,-0.7,Online,7.3,HI,2024-03-04,Likely Voters,Donald Trump,50
+Gallup,1.6,-0.7,Online,8.1,NE,2024-09-26,Likely Voters,Kamala Harris,49
+Gallup,1,-0.5,Mixed,6.2,OK,2024-01-30,Likely Voters,Donald Trump,53.8
+Ipsos,3.7,-1,Mixed,5.6,KS,2024-05-05,Registered Voters,Donald Trump,53.4
+Ipsos,3.6,-1.9,Mixed,9.1,ME,2024-04-15,Likely Voters,Kamala Harris,47.3
+Ipsos,4.1,-0.9,Phone,5.2,CT,2024-04-21,Likely Voters,Donald Trump,50.5
+InsiderAdvantage,1.6,-1.2,Online,9.8,TX,2024-06-08,Registered Voters,Donald Trump,54.3
+InsiderAdvantage,3.9,0.9,Mixed,4.9,ME,2024-02-21,Likely Voters,Donald Trump,50
+InsiderAdvantage,2.7,-0.3,Phone,2.4,TX,2024-09-19,Registered Voters,Kamala Harris,46.2
+YouGov,2.6,-0.1,Phone,0.6,IA,2024-10-27,Registered Voters,Donald Trump,53
+Ipsos,2.1,2.3,Mixed,2.2,WA,2024-04-27,Likely Voters,Donald Trump,50.6
+Gallup,1.3,2.4,Phone,7.2,AL,2024-02-18,Registered Voters,Donald Trump,51.2

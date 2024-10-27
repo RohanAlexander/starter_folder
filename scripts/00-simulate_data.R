@@ -1,52 +1,40 @@
 #### Preamble ####
-# Purpose: Simulates a dataset of Australian electoral divisions, including the 
-  #state and party that won each division.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Cleans the raw data from 538 by removing missing values
+# Author: Yun Chu, Felix Li, and Wen Han Zhao 
+# Date: 22 October 2024
+# Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: The `tidyverse` package must be installed
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Pre-requisites: raw data has been downloaded from the website
+# Any other information needed? None
 
 
 #### Workspace setup ####
 library(tidyverse)
+library(dplyr)
 set.seed(853)
 
-
 #### Simulate data ####
-# State names
-states <- c(
-  "New South Wales",
-  "Victoria",
-  "Queensland",
-  "South Australia",
-  "Western Australia",
-  "Tasmania",
-  "Northern Territory",
-  "Australian Capital Territory"
+
+# Define the sample size as an adjustable parameter
+sample_size <- 100  # Change this to any desired number of rows
+
+# Simulate data
+simulated_data <- tibble(
+  pollster = sample(c("InsiderAdvantage", "TIPP", "YouGov", "Ipsos", "Gallup"), sample_size, replace = TRUE),
+  numeric_grade = round(runif(sample_size, 1, 5), 1),
+  pollscore = round(rnorm(sample_size, mean = 0, sd = 1), 1),
+  methodology = sample(c("Online", "Phone", "Mixed"), sample_size, replace = TRUE),
+  transparency_score = round(runif(sample_size, 0, 10), 1),
+  state = sample(state.abb, sample_size, replace = TRUE),
+  start_date = sample(seq(as.Date('2024-01-01'), as.Date('2024-11-01'), by="day"), sample_size, replace = TRUE),
+  population_full = sample(c("Registered Voters", "Likely Voters"), sample_size, replace = TRUE),
+  candidate_name = sample(c("Kamala Harris", "Donald Trump"), sample_size, replace = TRUE),
+  pct = round(runif(sample_size, 45, 55), 1)
 )
 
-# Political parties
-parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-# Create a dataset by randomly assigning states and parties to divisions
-analysis_data <- tibble(
-  division = paste("Division", 1:151),  # Add "Division" to make it a character
-  state = sample(
-    states,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.25, 0.25, 0.15, 0.1, 0.1, 0.1, 0.025, 0.025) # Rough state population distribution
-  ),
-  party = sample(
-    parties,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.40, 0.40, 0.05, 0.1, 0.05) # Rough party distribution
-  )
-)
+# View the simulated data
+print(simulated_data)
 
 
 #### Save data ####
-write_csv(analysis_data, "data/00-simulated_data/simulated_data.csv")
+write_csv(simulated_data, "data/00-simulated_data/simulated_data.csv")
