@@ -17,6 +17,8 @@ library(readr)
 
 simulated_data <- read.csv('data/00-simulated_data/simulated_data.csv')
 
+sample_size <- 100
+
 # Define the test cases
 test_that("Simulated data has correct structure and values", {
   # Check that the data frame has the expected number of rows and columns

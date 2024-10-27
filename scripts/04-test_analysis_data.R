@@ -1,69 +1,78 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Tests for cleaned data
+# Author: Yun Chu, Felix Li, and Wen Han Zhao 
+# Date: 22 October 2024
+# Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: raw data has been downloaded from the website
+# Any other information needed? None
 
 
 #### Workspace setup ####
-library(tidyverse)
+# Load libraries
 library(testthat)
+library(tibble)
+library(readr)
 
-data <- read_csv("data/02-analysis_data/analysis_data.csv")
 
+simulated_data <- read.csv('data/02-analysis_data/analysis_data.csv')
 
-#### Test data ####
-# Test that the dataset has 151 rows - there are 151 divisions in Australia
-test_that("dataset has 151 rows", {
-  expect_equal(nrow(analysis_data), 151)
+# Define the test cases
+test_that("Simulated data has correct structure and values", {
+  # Check that the data frame has the expected number of rows and columns
+  expect_equal(nrow(simulated_data), sample_size)
+  expect_equal(ncol(simulated_data), 10)
+  
+  # Check column names
+  expect_equal(
+    colnames(simulated_data),
+    c("pollster", "numeric_grade", "pollscore", "methodology", 
+      "transparency_score", "state", "start_date", 
+      "population_full", "candidate_name", "pct")
+  )
 })
 
-# Test that the dataset has 3 columns
-test_that("dataset has 3 columns", {
-  expect_equal(ncol(analysis_data), 3)
+test_that("Pollster values are from expected categories", {
+  expect_true(all(simulated_data$pollster %in% c("InsiderAdvantage", "TIPP", "YouGov", "Ipsos", "Gallup")))
 })
 
-# Test that the 'division' column is character type
-test_that("'division' is character", {
-  expect_type(analysis_data$division, "character")
+test_that("Numeric grade is within the range 1 to 5", {
+  expect_true(all(simulated_data$numeric_grade >= 1 & simulated_data$numeric_grade <= 5))
 })
 
-# Test that the 'party' column is character type
-test_that("'party' is character", {
-  expect_type(analysis_data$party, "character")
+test_that("Transparency score is within the range 0 to 10", {
+  expect_true(all(simulated_data$transparency_score >= 0 & simulated_data$transparency_score <= 10))
 })
 
-# Test that the 'state' column is character type
-test_that("'state' is character", {
-  expect_type(analysis_data$state, "character")
+test_that("Percentage (pct) is within the range 45 to 55", {
+  expect_true(all(simulated_data$pct >= 45 & simulated_data$pct <= 55))
 })
 
-# Test that there are no missing values in the dataset
-test_that("no missing values in dataset", {
-  expect_true(all(!is.na(analysis_data)))
+test_that("Pollscore column is numeric", {
+  expect_true(is.numeric(simulated_data$pollscore))
 })
 
-# Test that 'division' contains unique values (no duplicates)
-test_that("'division' column contains unique values", {
-  expect_equal(length(unique(analysis_data$division)), 151)
+test_that("Methodology values are from expected categories", {
+  expect_true(all(simulated_data$methodology %in% c("Online", "Phone", "Mixed")))
 })
 
-# Test that 'state' contains only valid Australian state or territory names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", "Western Australia", 
-                  "Tasmania", "Northern Territory", "Australian Capital Territory")
-test_that("'state' contains valid Australian state names", {
-  expect_true(all(analysis_data$state %in% valid_states))
+test_that("State values are valid US state abbreviations", {
+  expect_true(all(simulated_data$state %in% state.abb))
 })
 
-# Test that there are no empty strings in 'division', 'party', or 'state' columns
-test_that("no empty strings in 'division', 'party', or 'state' columns", {
-  expect_false(any(analysis_data$division == "" | analysis_data$party == "" | analysis_data$state == ""))
+test_that("Start date is within the specified date range", {
+  expect_true(all(simulated_data$start_date >= as.Date('2024-01-01') & 
+                    simulated_data$start_date <= as.Date('2024-11-01')))
 })
 
-# Test that the 'party' column contains at least 2 unique values
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(analysis_data$party)) >= 2)
+test_that("Population full values are from expected categories", {
+  expect_true(all(simulated_data$population_full %in% c("Registered Voters", "Likely Voters")))
+})
+
+test_that("Candidate name values are from expected categories", {
+  expect_true(all(simulated_data$candidate_name %in% c("Kamala Harris", "Donald Trump")))
+})
+
+test_that("Pct column is numeric", {
+  expect_true(is.numeric(simulated_data$pct))
 })
