@@ -1,89 +1,78 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the simulated Australian 
-  #electoral divisions dataset.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Tests for simulated data
+# Author: Yun Chu, Felix Li, and Wen Han Zhao 
+# Date: 22 October 2024
+# Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: 
-  # - The `tidyverse` package must be installed and loaded
-  # - 00-simulate_data.R must have been run
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Pre-requisites: raw data has been downloaded from the website
+# Any other information needed? None
 
 
 #### Workspace setup ####
-library(tidyverse)
-
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
-
-# Test if the data was successfully loaded
-if (exists("analysis_data")) {
-  message("Test Passed: The dataset was successfully loaded.")
-} else {
-  stop("Test Failed: The dataset could not be loaded.")
-}
+# Load libraries
+library(testthat)
+library(tibble)
+library(readr)
 
 
-#### Test data ####
+simulated_data <- read.csv('data/00-simulated_data/simulated_data.csv')
 
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 151 rows.")
-}
+# Define the test cases
+test_that("Simulated data has correct structure and values", {
+  # Check that the data frame has the expected number of rows and columns
+  expect_equal(nrow(simulated_data), sample_size)
+  expect_equal(ncol(simulated_data), 10)
+  
+  # Check column names
+  expect_equal(
+    colnames(simulated_data),
+    c("pollster", "numeric_grade", "pollscore", "methodology", 
+      "transparency_score", "state", "start_date", 
+      "population_full", "candidate_name", "pct")
+  )
+})
 
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 3 columns.")
-}
+test_that("Pollster values are from expected categories", {
+  expect_true(all(simulated_data$pollster %in% c("InsiderAdvantage", "TIPP", "YouGov", "Ipsos", "Gallup")))
+})
 
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
-} else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
-}
+test_that("Numeric grade is within the range 1 to 5", {
+  expect_true(all(simulated_data$numeric_grade >= 1 & simulated_data$numeric_grade <= 5))
+})
 
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
+test_that("Transparency score is within the range 0 to 10", {
+  expect_true(all(simulated_data$transparency_score >= 0 & simulated_data$transparency_score <= 10))
+})
 
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
-} else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
+test_that("Percentage (pct) is within the range 45 to 55", {
+  expect_true(all(simulated_data$pct >= 45 & simulated_data$pct <= 55))
+})
 
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
+test_that("Pollscore column is numeric", {
+  expect_true(is.numeric(simulated_data$pollscore))
+})
 
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
-}
+test_that("Methodology values are from expected categories", {
+  expect_true(all(simulated_data$methodology %in% c("Online", "Phone", "Mixed")))
+})
 
-# Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
+test_that("State values are valid US state abbreviations", {
+  expect_true(all(simulated_data$state %in% state.abb))
+})
 
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
+test_that("Start date is within the specified date range", {
+  expect_true(all(simulated_data$start_date >= as.Date('2024-01-01') & 
+                    simulated_data$start_date <= as.Date('2024-11-01')))
+})
 
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}
+test_that("Population full values are from expected categories", {
+  expect_true(all(simulated_data$population_full %in% c("Registered Voters", "Likely Voters")))
+})
+
+test_that("Candidate name values are from expected categories", {
+  expect_true(all(simulated_data$candidate_name %in% c("Kamala Harris", "Donald Trump")))
+})
+
+test_that("Pct column is numeric", {
+  expect_true(is.numeric(simulated_data$pct))
+})
