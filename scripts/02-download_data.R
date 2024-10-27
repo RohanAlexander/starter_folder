@@ -15,10 +15,9 @@ library(readr)
 
 #### Download data ####
 
-president_polls <- read_csv("~/Downloads/president_polls.csv")
-data <- president_polls
+#### Download data ####
+raw_data <- read_csv("https://projects.fivethirtyeight.com/polls/data/president_polls.csv")
 
 
 #### Save data ####
-
-write_csv(data, "data/01-raw_data/raw_data.csv") 
+write_csv(raw_data, "data/01-raw_data/poll_raw_data.csv") 
