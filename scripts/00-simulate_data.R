@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Cleans the raw data from 538 by removing missing values
+# Purpose: Simulate data of Interest
 # Author: Yun Chu, Felix Li, and Wen Han Zhao 
 # Date: 22 October 2024
 # Contact: youna.zhao@mail.utoronto.ca
