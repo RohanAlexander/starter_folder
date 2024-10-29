@@ -288,11 +288,11 @@ All respondents are rewarded with a $5 deposit to their bank account or a gift c
 To improve accuracy of the prediction results, the following data validation approaches will be done.
 
 * Postal Code Validation
- - All the postal codes got from respondents are going to be validated to check if it is one of the randomly selected postal codes. If not, the response would not be considered when the prediction is done.
+    + All the postal codes got from respondents are going to be validated to check if it is one of the randomly selected postal codes. If not, the response would not be considered when the prediction is done.
 * Just-for-Rewards Prevention
- - To identify the responses that are not seriously answered, the last question of the survey is set test if the respondents are serious and careful when answering the questions.
+    + To identify the responses that are not seriously answered, the last question of the survey is set test if the respondents are serious and careful when answering the questions.
 * Age Validity
- - Responses with age under 18 but answered "Yes" to "Are you registered to Vote" are discarded.
+    + Responses with age under 18 but answered "Yes" to "Are you registered to Vote" are discarded.
 
 
 ### Poll Aggregation
