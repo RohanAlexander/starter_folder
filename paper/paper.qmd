@@ -265,7 +265,109 @@ Overall, Redfield & Wilton has been considered as a competent, reputable and rel
 
 \newpage
 
+# Appendix 2 - Idealized Methodology and Survey
+
+## Overview
+
+This section introduces an idealized methodology and survey with $100K budget to predict the 2024 US presidential election. The goal is to maximize the accuracy of the prediction under the budget. The subsections that describe the details of the idealized methodology and survey include sampling approach, respondents recruiting method, data validation, poll aggregation and the survey questions.
+
+### Sampling Approach
+
+Cluster sampling is the sampling approach used. Specifically clusters are the swing states as they are the states that would affect the election result, i.e. Arizona, Florida, Gegorgia, Iowa, Michigan, Nevada, North Carolina, Pennsylvania, and Wisconsin. In each swing state/clusters, units are selected based on postal code. Using simple random sampling, 100 distinct postal codes are randomly selected. People whose living address has the postal codes selected are the target respondents. For the postal codes that lie in the non-residential area, the postal codes would be ignored.
+
+### Recruitment Strategy
+
+The strategy to be implemented to recruit respondents is a combination of physical and online recruitment. 
+
+If the building corresponds to the postal code is a condo building, a paper with QR code to the survey is going to be put in the lobby or elevator, or sent to residents through the property management. If the building is a residential house, then a letter with the QR code would be put in the mailbox. 
+
+All respondents are rewarded with a $5 deposit to their bank account or a gift card of their choice. Each IP address is limited to answer the survey once.
+
+### Data Validation
+
+To improve accuracy of the prediction results, the following data validation approaches will be done.
+
+* Postal Code Validation
+ - All the postal codes got from respondents are going to be validated to check if it is one of the randomly selected postal codes. If not, the response would not be considered when the prediction is done.
+* Just-for-Rewards Prevention
+ - To identify the responses that are not seriously answered, the last question of the survey is set test if the respondents are serious and careful when answering the questions.
+* Age Validity
+ - Responses with age under 18 but answered "Yes" to "Are you registered to Vote" are discarded.
+
+
+### Poll Aggregation
+
+For each of the swing states, the result would be calculated based on the votes to Trump versus Harris because they are the candidates with the greatest chances of winning. Based on the decisiveness of the respondents and the likelihood of voting from the responses, the individual votes will be weighted when calculating the results for each swing states.
+
+To aggregate the polls for all states, the result of each states is multiplied by its electoral votes. After summing the electoral votes for Trump or Harris, the estimated electoral votes that Trump or Harris get is available. The candidate that has more than 270 electoral votes would be predicted to win the election {@nationalarchives2024electoral}.
+
+### Survey
+
+Google form of the survey is available here:  https://docs.google.com/forms/d/1obaebX3zqw7WJEd1lHrF-DVBXdZt5tbjHofjsWj9zf8/prefill 
+
+1. What is the postal code of where you live?
+
+2. Are you registered to vote?
+
+* Yes
+* No
+
+3. Who would you vote for?
+
+* Donald Trump - Republican
+* Kamala Harris - Democrat
+* Other Candidates
+* Not Decided Yet
+
+4. How decisive are you to vote for the option you chose in the last question?
+
+* Very Decisive
+* Pretty Decisive
+* A Bit Indecisive
+* Very Indecisive
+
+5. How likely are you to vote for the election?
+
+* Very Likely
+* A Bit Likely
+* Not Likely
+
+6. What age group are you in?
+
+* 0 - 18
+* 19 - 30
+* 31 - 50
+* 51 - 70
+* 71+
+
+7.
+
+8.
+
+9.
+
+10. How many characters are present in the word "President"?
+
+* 6
+* 8
+* 10
+* None of the Above
+
+### Budget Specification
+
+* Physical and Online Recruitment: $30,000
+* Rewards for Respondents: $50,000
+* Data Collection & Validation: $10,000
+* Other: $10,000
+
+Total: $100,000
+
+### Conclusion
+
+The survey uses cluster sampling to sample the swing states based on postal codes. After data collection and validation, weighting based on the likelihood of voting and decisiveness of the respondents, the total votes for Donald Trump and Kamala Harris are calulated. The candidate with more than 270 votes are predicted to win the election{@nationalarchives2024electoral}.
 
 # References
+
+
 
 
