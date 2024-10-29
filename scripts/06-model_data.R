@@ -91,11 +91,11 @@ ggplot(just_harris_high_quality_1, aes(x = end_date)) +
   geom_point(aes(y = pct), color = "black") +
   geom_line(aes(y = fitted_date_pollster), color = "blue", linetype = "dotted") +
   theme_classic() +
-  labs(y = "Harris percent", x = "Date", title = "Linear Model: pct ~ end_date + pollster")
+  labs(y = "Harris percent", x = "Date", title = "Linear Model: pct ~ end_date + pollster + state")
 
 # All of the above would be in scripts - data cleaning scripts and modelling scripts. 
 # This is an example of how you get a results table that you could put into your Quarto doc
-modelsummary(models = list("Model 1" = model_date, "Model 2" = model_date_pollster))
+modelsummary(models = list("Model 2" = model_date_pollster))
 
 #### Save model ####
 saveRDS(
