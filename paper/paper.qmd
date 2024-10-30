@@ -23,6 +23,10 @@ library(knitr)
 library(kableExtra)
 library(readr)
 library(dplyr)
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(ggpubr)
 ```
 
 
@@ -67,52 +71,109 @@ Use sub-sub-headings for each outcome variable and feel free to combine a few in
 
 
 
-# Model {#set-model}
+# Model {#sec-model}
 
-As indicated in the @sec-data, we do not have a confident belief of priors of parameters of our model since Harris replace the role of Biden by indecent and we do not have enough data about her previous polling outcomes as a president candidate compared to Biden. Therefore, we would not use the bayesian model but instead using a more simple multilinear regression model which predicts the support rate of Trump and Harris using time towards elections date and pollsters as they are beliveved to highly corelated to the response variable in @sec-data. We would bulid 8 models whihc represent national trend and that of seven swing states. 
-## Model set-up
+In this analysis, we aim to model the popularity trends for Kamala Harris and Donald Trump, based on high-quality polling data collected at the national level after Harris’s declaration on July 21, 2024. We used Bayesian linear regression models with Gaussian error structures to estimate changes in polling percentages over time for each candidate.
 
-Define $y_{i,\text{stateA}}$ as the percentage of support for a candicate in a poll in the specific state.
+## Data Filtering and Preparation
 
-$$
-y_{i,national} = \beta_{0,national} + \beta_{1,time,national} + \beta_{2,pollster,national} + \epsilon_{national}
-$$ 
-$$
-y_{i,\text{AZ}} = \beta_{0,\text{AZ}} + \beta_{1,\text{time,AZ}} + \beta_{2,\text{pollster,AZ}} + \epsilon_{\text{AZ}}
-$$
-$$
-y_{i,\text{FL}} = \beta_{0,\text{FL}} + \beta_{1,\text{time,FL}} + \beta_{2,\text{pollster,FL}} + \epsilon_{\text{FL}}
-$$
-$$
-y_{i,\text{GA}} = \beta_{0,\text{GA}} + \beta_{1,\text{time,GA}} + \beta_{2,\text{pollster,GA}} + \epsilon_{\text{GA}}
-$$
-$$
-y_{i,\text{MI}} = \beta_{0,\text{MI}} + \beta_{1,\text{time,MI}} + \beta_{2,\text{pollster,MI}} + \epsilon_{\text{MI}}
-$$
-$$
-y_{i,\text{NC}} = \beta_{0,\text{NC}} + \beta_{1,\text{time,NC}} + \beta_{2,\text{pollster,NC}} + \epsilon_{\text{NC}}
-$$
-$$
-y_{i,\text{PA}} = \beta_{0,\text{PA}} + \beta_{1,\text{time,PA}} + \beta_{2,\text{pollster,PA}} + \epsilon_{\text{PA}}
-$$
-$$
-y_{i,\text{WI}} = \beta_{0,\text{WI}} + \beta_{1,\text{time,WI}} + \beta_{2,\text{pollster,WI}} + \epsilon_{\text{WI}}
-$$
+The data were first filtered to retain only high-quality polls (with a numeric grade of 2.0 or above and a transparency score of 4 or above). We focused on polls where the `state` was either explicitly labeled as "National" or where the state information was missing (which we imputed as "National"). Additionally, we filtered polls collected after July 21, 2024, when Kamala Harris announced her candidacy.
 
-time:The date when the pollster starts polling
+- **Kamala Harris Data**: After filtering for high-quality polls and setting the timeframe, we calculated the number of Harris supporters per poll by taking the product of her polling percentage and the poll’s sample size.
+- **Donald Trump Data**: We applied the same filtering and calculation methods to Trump’s data, ensuring comparability between both candidates.
 
-pollster: The pollster which run the polling
+To avoid issues with missing values in our models, we excluded any rows where key variables (e.g., polling percentage or end date) were missing.
 
-We run the model in R [@citeR].
+## Model Specification
 
+Two separate Bayesian linear regression models were fitted using the `stan_glm` function. Both models specified the formula:
 
-### Model justification
+\[
+\text{pct} \sim \text{end\_date}
+\]
 
+indicating that we are modeling the polling percentage as a function of time (end date of the polls).
+
+### Model for Kamala Harris
+
+The model for Kamala Harris was fitted as follows:
+
+- **Response Variable**: `pct` (polling percentage)
+- **Predictor**: `end_date` (date of the poll)
+- **Family**: Gaussian (normal distribution)
+- **Priors**:
+  - Normal prior for the slope: \( \text{Normal}(0, 0.1) \)
+  - Normal prior for the intercept: \( \text{Normal}(50, 5) \)
+  - Exponential prior for auxiliary parameters: \( \text{Exponential}(1) \)
+
+### Model for Donald Trump
+The model for Donald Trump was fitted using the same specifications as for Kamala Harris
 
 
 # Results {#set-result}
+The results of the Bayesian linear regression models for Kamala Harris and Donald Trump are summarized in @tbl-model_summary_H and @tbl-model_summary_T.
 
+```{r}
+#| label: tbl-model_summary_H
+#| echo: false
+#| tbl-cap: "Summary statistics of the Bayesian model for Harris"
+# Load required packages
+library(broom.mixed)  # For tidy model summaries from mixed models
+library(dplyr)
+library(readr)
+library(knitr)  # For nicely formatted tables
+library(modelsummary)
 
+# Load the saved models
+model1 <- readRDS(file = here::here("models/models_harris.rds"))
+
+# Extract a tidy summary of the model
+model_summary <- broom.mixed::tidy(model1, effects = "fixed", conf.int = TRUE) %>%
+  select(term, estimate, std.error, conf.low, conf.high) %>%
+  rename(
+    Term = term,
+    Estimate = estimate,
+    `Std. Error` = std.error,
+    `2.5% CI` = conf.low,
+    `97.5% CI` = conf.high
+  )
+
+# Display the summary table
+kable(model_summary, caption = "Summary of Bayesian Model for Harris", digits = 2)
+
+```
+```{r}
+#| label: tbl-model_summary_T
+#| echo: false
+#| tbl-cap: "Summary statistics of the Bayesian model for Harris"
+# Load required packages
+library(broom.mixed)  # For tidy model summaries from mixed models
+library(dplyr)
+library(readr)
+library(knitr)  # For nicely formatted tables
+
+# Load the saved models
+model2 <- readRDS(file = here::here("models/models_trump.rds"))
+
+# Extract a tidy summary of the model
+model_summary <- broom.mixed::tidy(model2, effects = "fixed", conf.int = TRUE) %>%
+  select(term, estimate, std.error, conf.low, conf.high) %>%
+  rename(
+    Term = term,
+    Estimate = estimate,
+    `Std. Error` = std.error,
+    `2.5% CI` = conf.low,
+    `97.5% CI` = conf.high
+  )
+
+# Display the summary table
+kable(model_summary, caption = "Summary of Bayesian Model for Harris", digits = 2)
+```
+## Overall trend
+The intercepts for both models are significantly negative, indicating a downward trend in polling percentages over time for both candidates. The positive coefficients for end_date suggest a slight increase in polling percentages as the election date approaches. However, the magnitude of these increases is relatively small.
+
+## Model Diagnostics
+The posterior predictive checks (Figures 1 and 2) and the credible intervals for predictors (Figures 3 and 4) indicate that the models fit the data well. The diagnostics for both Harris and Trump models show that the models are stable and the predictions are reliable.Further diagnostics (Figures 5 to 8) confirm the robustness of the models. The R-hat values are all below 1.1, indicating good convergence of the MCMC chains.
 
 \newpage
 
@@ -123,6 +184,101 @@ We run the model in R [@citeR].
 
 # Additional data details
 
+## Model check
+
+```{r}
+#| label: fig-pos_check_H
+#| echo: false
+#| fig-cap: "Posterior Predictive Check for All Models"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+pp_check(model1) +  
+    theme_classic() +
+    theme(legend.position = "bottom")
+
+```
+```{r}
+#| label: fig-pos_check_T
+#| echo: false
+#| fig-cap: "Posterior Predictive Check for All Models"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+pp_check(model2) +  
+    theme_classic() +
+    theme(legend.position = "bottom")
+
+```
+```{r}
+#| label: fig-CI_H
+#| echo: false
+#| fig-cap: "CI for predictors for Harris"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(
+  model1,
+  "areas")
+```
+```{r}
+#| label: fig-CI_T
+#| echo: false
+#| fig-cap: "CI for predictors for Trump"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(
+  model2,
+  "areas")
+```
+
+```{r}
+#| label: fig-DI_H
+#| echo: false
+#| fig-cap: "Model diagonostic for Harris"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(model1, "trace")
+plot(model1, "rhat")
+
+```
+```{r}
+#| label: fig-DI_T
+#| echo: false
+#| fig-cap: "Model diagonostic for Trump"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(model2, "trace")
+plot(model2, "rhat")
+
+```
 ## pollster methodology analysis
 
 This survey was conducted by Redfield & Wilton Strategies to assess the voting intentions of eligible voters in key U.S. swing states ahead of the 2024 Presidential Election. The primary goal of this poll is to provide an accurate and timely snapshot of public opinion in states where electoral outcomes are uncertain and could have a decisive impact on the overall result of the election. Swing states, due to their political volatility and diverse voter bases, are critical in determining the balance of power in the U.S. electoral system. Understanding voter preferences in these states is essential for political analysts, campaigns, and the general public.

@@ -7,92 +7,94 @@
 # Pre-requisites: [...UPDATE THIS...]
 # Any other information needed? [...UPDATE THIS...]
 
-#### Set-up ####
-# Load libraries
-library(tidyverse)
-library(janitor)
+
+library(readr)
+library(dplyr)
 library(lubridate)
-library(broom)
-library(modelsummary)
 library(rstanarm)
-library(splines)
+library(janitor) # Load the janitor package for clean_names()
 
-
-#### Prepare dataset ####
-# Read in the data and clean variable names
+# Load and clean data
 data <- read_csv("data/01-raw_data/poll_raw_data.csv") |>
   clean_names()
 
 # Filter data to Harris estimates based on high-quality polls after she declared
+# Load required packages
+library(readr)
+library(dplyr)
+library(lubridate)
+library(rstanarm)
+library(janitor)
+
+# Load and clean data
+data <- read_csv("data/01-raw_data/poll_raw_data.csv") |>
+  clean_names()
+
+# Filter and prepare data for Harris model
 just_harris_high_quality <- data |>
   filter(
     candidate_name == "Kamala Harris",
-    numeric_grade >= 2.8,
-    transparency_score >= 5,
-    pollscore <= 0 # Need to investigate this choice - come back and fix. 
-    # Also need to look at whether the pollster has multiple polls or just one or two - filter out later
+    numeric_grade >= 2.0,
+    transparency_score >= 4,
+    pollscore <= 0
   ) |>
   mutate(
-    state = if_else(is.na(state), "National", state), # Hacky fix for national polls - come back and check
+    state = if_else(is.na(state), "National", state),
     end_date = mdy(end_date)
   ) |>
-  filter(end_date >= as.Date("2024-07-21")) |> # When Harris declared
+  filter(end_date >= as.Date("2024-07-21"),
+         state == "National") |>
   mutate(
-    num_harris = round((pct / 100) * sample_size, 0) # Need number not percent for some models
-  )
+    num_harris = round((pct / 100) * sample_size, 0)
+  ) |>
+  drop_na(pct, end_date)  # Drop rows with NA in pct or end_date
 
-swing_states <- c("Arizona", "Florida", "Georgia", "Michigan", "Nevada", "North Carolina", "Pennsylvania")
-
-harris_models <- list()
-states <- c("National", swing_states)
-for (state in states) {
-  # Filter data for each state
-  state_data <- just_harris_high_quality %>%
-    filter(state == state)
-  
-  # Fit linear model
-  model <- lm(pct ~ end_date + pollster, data = state_data)
-  
-  # Store model in list with state name
-  harris_models[[state]] <- model
-}
-
-just_trump_high_quality <- data %>%
+# Filter and prepare data for Trump model
+just_trump_high_quality <- data |>
   filter(
     candidate_name == "Donald Trump",
-    numeric_grade >= 2.8,
-    transparency_score >= 5,
-    pollscore <= 0  # Placeholder for pollscore filter, adjust as necessary
-  ) %>%
+    numeric_grade >= 2.0,
+    transparency_score >= 4,
+    pollscore <= 0
+  ) |>
   mutate(
-    state = if_else(is.na(state), "National", state), # Replace NA with "National" for national polls
+    state = if_else(is.na(state), "National", state),
     end_date = mdy(end_date)
-  ) %>%
-  filter(end_date >= as.Date("2024-07-21")) %>% # Date after Harris declared
+  ) |>
+  filter(end_date >= as.Date("2024-07-21"),
+         state == "National") |>
   mutate(
-    num_trump = round((pct / 100) * sample_size, 0) # Convert pct to actual number
-  )
+    num_trump = round((pct / 100) * sample_size, 0)
+  ) |>
+  drop_na(pct, end_date)  # Drop rows with NA in pct or end_date
 
-# Fit models for Donald Trump for national and swing states
-trump_models <- list()
-for (state in states) {
-  # Filter data for each state
-  state_data <- just_trump_high_quality %>%
-    filter(state == state)
-  
-  # Fit linear model
-  model <- lm(pct ~ end_date + pollster, data = state_data)
-  
-  # Store model in list with state name
-  trump_models[[state]] <- model
-}
+write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
+write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
+# Fit the model for Harris
+harris_model <- stan_glm(
+  formula = pct ~ end_date,
+  data = just_harris_high_quality,
+  family = gaussian(),
+  prior = normal(location = 0, scale = 0.1),
+  prior_intercept = normal(location = 50, scale = 5),
+  prior_aux = exponential(rate = 1),
+  seed = 853
+)
+
+# Fit the model for Trump
+trump_model <- stan_glm(
+  formula = pct ~ end_date,
+  data = just_trump_high_quality,
+  family = gaussian(),
+  prior = normal(location = 0, scale = 0.1),
+  prior_intercept = normal(location = 50, scale = 5),
+  prior_aux = exponential(rate = 1),
+  seed = 853
+)
+
+# Save models individually
+saveRDS(harris_model, file = "models/models_harris.rds")
+saveRDS(trump_model, file = "models/models_trump.rds")
 
 
-#### Save model ####
-# Save both lists of models in an .rds file
-saveRDS(list(harris_models = harris_models, trump_models = trump_models), file = "models/models_harris_trump.rds")
-
-# To load these models back later, use:
-# loaded_models <- readRDS("models_harris_trump.rds")
-
-
+                               
