@@ -69,151 +69,49 @@ Use sub-sub-headings for each outcome variable and feel free to combine a few in
 
 # Model {#set-model}
 
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix @sec-model-details].
-
+As indicated in the @sec-data, we do not have a confident belief of priors of parameters of our model since Harris replace the role of Biden by indecent and we do not have enough data about her previous polling outcomes as a president candidate compared to Biden. Therefore, we would not use the bayesian model but instead using a more simple multilinear regression model which predicts the support rate of Trump and Harris using time towards elections date and pollsters as they are beliveved to highly corelated to the response variable in @sec-data. We would bulid 8 models whihc represent national trend and that of seven swing states. 
 ## Model set-up
 
-Define $y_i$ as the percentage of support for a candicate in a poll.
+Define $y_{i,\text{stateA}}$ as the percentage of support for a candicate in a poll in the specific state.
 
-${y_i} = \beta_0 + \beta_1 pollscore + \beta_2 methodology + \beta_3transparency score + \beta_4 hypothetical + \epsilon$ 
+$$
+y_{i,national} = \beta_{0,national} + \beta_{1,time,national} + \beta_{2,pollster,national} + \epsilon_{national}
+$$ 
+$$
+y_{i,\text{AZ}} = \beta_{0,\text{AZ}} + \beta_{1,\text{time,AZ}} + \beta_{2,\text{pollster,AZ}} + \epsilon_{\text{AZ}}
+$$
+$$
+y_{i,\text{FL}} = \beta_{0,\text{FL}} + \beta_{1,\text{time,FL}} + \beta_{2,\text{pollster,FL}} + \epsilon_{\text{FL}}
+$$
+$$
+y_{i,\text{GA}} = \beta_{0,\text{GA}} + \beta_{1,\text{time,GA}} + \beta_{2,\text{pollster,GA}} + \epsilon_{\text{GA}}
+$$
+$$
+y_{i,\text{MI}} = \beta_{0,\text{MI}} + \beta_{1,\text{time,MI}} + \beta_{2,\text{pollster,MI}} + \epsilon_{\text{MI}}
+$$
+$$
+y_{i,\text{NC}} = \beta_{0,\text{NC}} + \beta_{1,\text{time,NC}} + \beta_{2,\text{pollster,NC}} + \epsilon_{\text{NC}}
+$$
+$$
+y_{i,\text{PA}} = \beta_{0,\text{PA}} + \beta_{1,\text{time,PA}} + \beta_{2,\text{pollster,PA}} + \epsilon_{\text{PA}}
+$$
+$$
+y_{i,\text{WI}} = \beta_{0,\text{WI}} + \beta_{1,\text{time,WI}} + \beta_{2,\text{pollster,WI}} + \epsilon_{\text{WI}}
+$$
 
-pollscore: A numeric value representing the score or reliability of the pollster in question (e.g., -1.1). "The error and bias we can attribute to a pollster. Negative numbers are better. Stands for "Predictive Optimization of Latent skill Level in Surveys, Considering Overall Record, Empirically.
+time:The date when the pollster starts polling
 
-methodology: The method used to conduct the poll (e.g., Online Panel).
-
-transparency_score: A score reflecting the pollster’s transparency about their methodology (e.g., 9.0). "A grade for how transparent a pollster is, calculated based on how much information it discloses about its polls and weighted by 
-by recency. The highest Transparency Score is 10."
- 
-hypothetical: Indicates whether the poll is about a hypothetical match-up.
+pollster: The pollster which run the polling
 
 We run the model in R [@citeR].
 
 
 ### Model justification
 
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-# Library setup
-#install.packages("glm")
-library(glmnet)
-library(ggplot2)
-```
-
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-model1
-#| tbl-cap: "model 1"
-#| warning: false
-# Get the analysis data
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
-
-# Model
-glm_model1 <- glm(pct ~ pollscore + methodology + transparency_score + hypothetical, data = analysis_data, family = gaussian()) 
-
-# Get the summary
-model_summary <- summary(glm_model1)
-
-# Convert the summary coefficients to a data frame
-summary_table <- as.data.frame(model_summary$coefficients)
-
-# Create a table with a caption and control the size
-kable(summary_table, caption = "Model 1 Summary Table", size = "small")
-```
-
-## Lasso Regularization {#sec-model-lassoregularization}
-Lasso Regularization is performed to see if the selected variable in our model would best predict the results of polls percentage of a candidate. If the variable do not align with our actual numbers, we should consider other variables or a interaction variable. 
-
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-lassoregularization
-#| tbl-cap: "lasso regularization"
-#| warning: false
-# Prepare the predictors
-x <- model.matrix(pct ~ pollscore + methodology + transparency_score + hypothetical, data = analysis_data)[, -1]
-
-# Prepare the response variable
-y <- analysis_data$pct
-
-# Lasso regression (alpha = 1)
-lasso_model <- glmnet(x, y, alpha = 1, family = "gaussian")
-
-# Cross-validation for Lasso
-cv_lasso <- cv.glmnet(x, y, alpha = 1, family = "gaussian")
-
-plot(cv_lasso)
-
-# Get the best lambda
-best_lambda_lasso <- cv_lasso$lambda.min
-
-# Refit Lasso with the optimal lambda
-lasso_final_model <- glmnet(x, y, alpha = 1, lambda = best_lambda_lasso, family = "gaussian")
-
-# View Lasso coefficients
-coef.lasso <- coef(lasso_final_model)
-
-# Predict using Lasso
-pred_lasso <- predict(lasso_final_model, s = best_lambda_lasso, newx = x)
-
-```
 
 
-Computing the Mean Square Error would give us a sense of our lasso model prediction. 
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-msr
-#| tbl-cap: "Mean Squared Error"
-#| warning: false
-# Calculate Mean Squared Error
-mse <- mean((y - pred_lasso)^2)
-cat("Mean Squared Error:", mse, "\n")
+# Results {#set-result}
 
-# Calculate R-squared
-sst <- sum((y - mean(y))^2)
-sse <- sum((y - pred_lasso)^2)
-r_squared <- 1 - (sse / sst)
-cat("R-squared:", r_squared, "\n")
-
-# Create a data frame for plotting
-results_df <- data.frame(
-  Metric = c("SST", "SSE", "R-squared"),
-  Value = c(sst, sse, r_squared)
-)
-
-kable(results_df, caption = "Mean Squared Error Table")
-```
-
-
-From this graph, we can see that the cluster points do not perfectly align on the line of the best fit so we should still investigate in other variables. 
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-actualvspredicted
-#| tbl-cap: "actual vs predicted"
-#| warning: false
-
-# Compare predicted vs actual values
-comparison <- data.frame(Actual = y, Predicted = as.vector(pred_lasso))
-
-kable(head(comparison), caption = "Actual vs Predicted")
-
-# Plot actual vs predicted values
-ggplot(comparison, aes(x = Actual, y = Predicted)) +
-  geom_point() +
-  geom_abline(slope = 1, intercept = 0, color = "red") +
-  labs(title = "Actual vs Predicted Values",
-       x = "Actual Values",
-       y = "Predicted Values") +
-  theme_minimal()
-```
 
 
 \newpage
