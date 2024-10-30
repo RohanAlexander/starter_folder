@@ -41,66 +41,58 @@ just_harris_high_quality <- data |>
     num_harris = round((pct / 100) * sample_size, 0) # Need number not percent for some models
   )
 
+swing_states <- c("Arizona", "Florida", "Georgia", "Michigan", "Nevada", "North Carolina", "Pennsylvania")
 
-#### Plot data ####
-base_plot <- ggplot(just_harris_high_quality, aes(x = end_date, y = pct)) +
-  theme_classic() +
-  labs(y = "Harris percent", x = "Date")
+harris_models <- list()
+states <- c("National", swing_states)
+for (state in states) {
+  # Filter data for each state
+  state_data <- just_harris_high_quality %>%
+    filter(state == state)
+  
+  # Fit linear model
+  model <- lm(pct ~ end_date + pollster, data = state_data)
+  
+  # Store model in list with state name
+  harris_models[[state]] <- model
+}
 
-# Plots poll estimates and overall smoothing
-base_plot +
-  geom_point() +
-  geom_smooth()
-
-# Color by pollster
-# This gets messy - need to add a filter - see line 21
-base_plot +
-  geom_point(aes(color = pollster)) +
-  geom_smooth() +
-  theme(legend.position = "bottom")
-
-# Facet by pollster
-# Make the line 21 issue obvious
-# Also - is there duplication???? Need to go back and check
-base_plot +
-  geom_point() +
-  geom_smooth() +
-  facet_wrap(vars(pollster))
-
-# Color by pollscore
-base_plot +
-  geom_point(aes(color = factor(pollscore))) +
-  geom_smooth() +
-  theme(legend.position = "bottom")
-
-
-#### Starter models ####
-
-# Model 2: pct as a function of end_date and pollster
-model_date_pollster <- lm(pct ~ end_date + pollster+ state, data = just_harris_high_quality)
-
-# Augment data with model predictions
-just_harris_high_quality_1 <- just_harris_high_quality |>
+just_trump_high_quality <- data %>%
+  filter(
+    candidate_name == "Donald Trump",
+    numeric_grade >= 2.8,
+    transparency_score >= 5,
+    pollscore <= 0  # Placeholder for pollscore filter, adjust as necessary
+  ) %>%
   mutate(
-    fitted_date_pollster = predict(model_date_pollster),
+    state = if_else(is.na(state), "National", state), # Replace NA with "National" for national polls
+    end_date = mdy(end_date)
+  ) %>%
+  filter(end_date >= as.Date("2024-07-21")) %>% # Date after Harris declared
+  mutate(
+    num_trump = round((pct / 100) * sample_size, 0) # Convert pct to actual number
   )
 
-# Plot model predictions
-# Model 2
-ggplot(just_harris_high_quality_1, aes(x = end_date)) +
-  geom_point(aes(y = pct), color = "black") +
-  geom_line(aes(y = fitted_date_pollster), color = "blue", linetype = "dotted") +
-  theme_classic() +
-  labs(y = "Harris percent", x = "Date", title = "Linear Model: pct ~ end_date + pollster + state")
+# Fit models for Donald Trump for national and swing states
+trump_models <- list()
+for (state in states) {
+  # Filter data for each state
+  state_data <- just_trump_high_quality %>%
+    filter(state == state)
+  
+  # Fit linear model
+  model <- lm(pct ~ end_date + pollster, data = state_data)
+  
+  # Store model in list with state name
+  trump_models[[state]] <- model
+}
 
-# All of the above would be in scripts - data cleaning scripts and modelling scripts. 
-# This is an example of how you get a results table that you could put into your Quarto doc
-modelsummary(models = list("Model 2" = model_date_pollster))
 
 #### Save model ####
-saveRDS(
-  model_date_pollster,
-  file = "models/first_model.rds"
-)
+# Save both lists of models in an .rds file
+saveRDS(list(harris_models = harris_models, trump_models = trump_models), file = "models/models_harris_trump.rds")
+
+# To load these models back later, use:
+# loaded_models <- readRDS("models_harris_trump.rds")
 
 
