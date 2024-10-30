@@ -26,10 +26,6 @@ library(lubridate)
 library(rstanarm)
 library(janitor)
 
-# Load and clean data
-data <- read_csv("data/01-raw_data/poll_raw_data.csv") |>
-  clean_names()
-
 # Filter and prepare data for Harris model
 just_harris_high_quality <- data |>
   filter(
@@ -42,12 +38,14 @@ just_harris_high_quality <- data |>
     state = if_else(is.na(state), "National", state),
     end_date = mdy(end_date)
   ) |>
-  filter(end_date >= as.Date("2024-07-21"),
-         state == "National") |>
+  filter(state == "National") |>  # Remove the filter on end_date here
+  drop_na(pct, end_date) |>  # Drop rows with NA in pct or end_date
   mutate(
-    num_harris = round((pct / 100) * sample_size, 0)
-  ) |>
-  drop_na(pct, end_date)  # Drop rows with NA in pct or end_date
+    # Get the earliest and latest end dates
+    earliest_date = min(end_date),
+    # Create a new column for days after the earliest date
+    days_after_earliest = as.numeric(end_date - earliest_date),
+  )
 
 # Filter and prepare data for Trump model
 just_trump_high_quality <- data |>
@@ -61,18 +59,20 @@ just_trump_high_quality <- data |>
     state = if_else(is.na(state), "National", state),
     end_date = mdy(end_date)
   ) |>
-  filter(end_date >= as.Date("2024-07-21"),
-         state == "National") |>
+  filter(state == "National") |>  # Remove the filter on end_date here
+  drop_na(pct, end_date) |>  # Drop rows with NA in pct or end_date
   mutate(
-    num_trump = round((pct / 100) * sample_size, 0)
-  ) |>
-  drop_na(pct, end_date)  # Drop rows with NA in pct or end_date
+    # Get the earliest and latest end dates
+    earliest_date = min(end_date),
+    # Create a new column for days after the earliest date
+    days_after_earliest = as.numeric(end_date - earliest_date),
+  )
 
 write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
 write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
 # Fit the model for Harris
 harris_model <- stan_glm(
-  formula = pct ~ end_date,
+  formula = pct ~ days_after_earliest,
   data = just_harris_high_quality,
   family = gaussian(),
   prior = normal(location = 0, scale = 0.1),
@@ -83,7 +83,7 @@ harris_model <- stan_glm(
 
 # Fit the model for Trump
 trump_model <- stan_glm(
-  formula = pct ~ end_date,
+  formula = pct ~ days_after_earliest,
   data = just_trump_high_quality,
   family = gaussian(),
   prior = normal(location = 0, scale = 0.1),
