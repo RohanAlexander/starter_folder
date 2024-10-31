@@ -73,41 +73,31 @@ Use sub-sub-headings for each outcome variable and feel free to combine a few in
 
 # Model {#sec-model}
 
-In this analysis, we aim to model the popularity trends for Kamala Harris and Donald Trump, based on high-quality polling data collected at the national level after Harris’s declaration on July 21, 2024. We used Bayesian linear regression models with Gaussian error structures to estimate changes in polling percentages over time for each candidate.
+In this analysis, we aim to model the popularity trends for the two 2024 president nominates, Kamala Harris and Donald Trump, based on high-quality polling data collected at the national level after Harris’s declaration on July 21, 2024. We used Bayesian linear regression models with Gaussian error structures to estimate changes in polling percentages over time for each candidate.
 
 ## Data Filtering and Preparation
 
-The data were first filtered to retain only high-quality polls (with a numeric grade of 2.0 or above and a transparency score of 4 or above). We focused on polls where the `state` was either explicitly labeled as "National" or where the state information was missing (which we imputed as "National"). Additionally, we filtered polls collected after July 21, 2024, when Kamala Harris announced her candidacy.
+The data were first filtered to retain only high-quality polls, defined as those with a numeric grade of 2.0 or above and a transparency score of 4 or higher. We focused exclusively on polls where the *state* variable indicates national coverage, ensuring the poll represents nationwide opinions rather than a single state, which could introduce bias. Additionally, we filtered for polls conducted after July 21, 2024, the date when Kamala Harris announced her candidacy.
 
-- **Kamala Harris Data**: After filtering for high-quality polls and setting the timeframe, we calculated the number of Harris supporters per poll by taking the product of her polling percentage and the poll’s sample size.
-- **Donald Trump Data**: We applied the same filtering and calculation methods to Trump’s data, ensuring comparability between both candidates.
-
-To avoid issues with missing values in our models, we excluded any rows where key variables (e.g., polling percentage or end date) were missing.
+To prevent issues with missing data in our models, we excluded any rows where key variables (such as polling percentage or end date) were missing.
 
 ## Model Specification
 
-Two separate Bayesian linear regression models were fitted using the `stan_glm` function. Both models specified the formula:
+Two separate Bayesian linear regression models were fitted using the @rs package. Both models specified the formula:
 
-\[
-\text{pct} \sim \text{end\_date}
-\]
+\begin{align}
+Y_i | \mu_i,\sigma  & \sim \text{Normal}(\mu_i,\sigma) \\
+\mu_i & = \beta_0 + \beta_1X_{i1}\\
+\beta_0 & \sim \text{Normal}(50, 5), \\ 
+\beta_1 & \sim \text{Normal}(0, 0.1)
+\end{align}
 
-indicating that we are modeling the polling percentage as a function of time (end date of the polls).
+Where $Y_i$ is the support rate for Harris or Trump, separately, and $X_{i1}$ is the number of days passed after the latest polling sample of Trump or Harris. 
 
-### Model for Kamala Harris
+## Model Justification and Limitations
+We opted to use two separate models for Trump and Harris, as their supporter demographics differ significantly in ways that are challenging to capture within a single or even a small set of variables @pew_harris_trump_2024. The polling dataset we obtained primarily reflects the characteristics and trends within individual polls rather than offering direct predictors of the presidential election outcome. To maximize the model’s reliability, we refined the dataset by selecting polls with high credibility rather than attempting to predict outcomes directly from the available data.
 
-The model for Kamala Harris was fitted as follows:
-
-- **Response Variable**: `pct` (polling percentage)
-- **Predictor**: `end_date` (date of the poll)
-- **Family**: Gaussian (normal distribution)
-- **Priors**:
-  - Normal prior for the slope: \( \text{Normal}(0, 0.1) \)
-  - Normal prior for the intercept: \( \text{Normal}(50, 5) \)
-  - Exponential prior for auxiliary parameters: \( \text{Exponential}(1) \)
-
-### Model for Donald Trump
-The model for Donald Trump was fitted using the same specifications as for Kamala Harris
+Our model uses a simple linear approach with time as the sole predictor variable. While this may introduce potential bias by making a simplifying assumption about the trend over time, it also has the advantage of being straightforward to fit and interpret. This trade-off allows us to capture general trends while minimizing the risk of overfitting to limited or potentially inconsistent data sources.
 
 
 # Results {#set-result}
@@ -117,6 +107,7 @@ The results of the Bayesian linear regression models for Kamala Harris and Donal
 #| label: tbl-model_summary_H
 #| echo: false
 #| tbl-cap: "Summary statistics of the Bayesian model for Harris"
+#| warning: false
 # Load required packages
 library(broom.mixed)  # For tidy model summaries from mixed models
 library(dplyr)
@@ -139,13 +130,13 @@ model_summary <- broom.mixed::tidy(model1, effects = "fixed", conf.int = TRUE) %
   )
 
 # Display the summary table
-kable(model_summary, caption = "Summary of Bayesian Model for Harris", digits = 2)
+kable(model_summary, digits = 3)
 
 ```
 ```{r}
 #| label: tbl-model_summary_T
 #| echo: false
-#| tbl-cap: "Summary statistics of the Bayesian model for Harris"
+#| tbl-cap: "Summary statistics of the Bayesian model for Trump"
 # Load required packages
 library(broom.mixed)  # For tidy model summaries from mixed models
 library(dplyr)
@@ -167,24 +158,28 @@ model_summary <- broom.mixed::tidy(model2, effects = "fixed", conf.int = TRUE) %
   )
 
 # Display the summary table
-kable(model_summary, caption = "Summary of Bayesian Model for Harris", digits = 2)
+kable(model_summary, digits = 3)
 ```
 ## Overall trend
-The intercepts for both models are significantly negative, indicating a downward trend in polling percentages over time for both candidates. The positive coefficients for end_date suggest a slight increase in polling percentages as the election date approaches. However, the magnitude of these increases is relatively small.
+The intercept of both model is positive, with Harris at 40.47 and Trump slightly lower than Harris at 40.36. The trend of support rate for both candidates with respect of time is positive but Harris's increment (0.10) is larger than Trump's (0.06). 
 
 ## Model Diagnostics
-The posterior predictive checks (Figures 1 and 2) and the credible intervals for predictors (Figures 3 and 4) indicate that the models fit the data well. The diagnostics for both Harris and Trump models show that the models are stable and the predictions are reliable.Further diagnostics (Figures 5 to 8) confirm the robustness of the models. The R-hat values are all below 1.1, indicating good convergence of the MCMC chains.
+The model diagnostics indicate a good fit and reliable predictions for both candidates detailed plots is displayed in Appendix @sec-model-details. The posterior predictive checks (Figures @fig-pos_check_H and @fig-pos_check_T) show that the predicted values align well with the observed data, suggesting the models capture key patterns accurately. Additionally, the credible intervals for predictors (Figures @fig-CI_H and @fig-CI_T) provide further evidence of a well-calibrated model, as they encompass observed support rates, indicating that the uncertainty is well-accounted for in the predictions.
+
+Further robustness checks (@fig-DI_H and @fig-DI_T) support the stability of these models. Specifically, the R-hat values are below 1.1 for all parameters, demonstrating good convergence of the MCMC chains and suggesting that the parameter estimates are reliable. This convergence implies that our sampling process reached a stable distribution, which strengthens the credibility of our inferences.
+
+Overall, these diagnostics confirm that the models are not only stable but also appropriately reflect the trends in the data, supporting their reliability for further analysis.
 
 \newpage
 
 \appendix
 
-# Appendix {-}
+# Appendix
 
 
 # Additional data details
 
-## Model check
+## Model check {#sec-model-details}
 
 ```{r}
 #| label: fig-pos_check_H
@@ -279,6 +274,8 @@ plot(model2, "trace")
 plot(model2, "rhat")
 
 ```
+
+\newpage
 ## pollster methodology analysis
 
 This survey was conducted by Redfield & Wilton Strategies to assess the voting intentions of eligible voters in key U.S. swing states ahead of the 2024 Presidential Election. The primary goal of this poll is to provide an accurate and timely snapshot of public opinion in states where electoral outcomes are uncertain and could have a decisive impact on the overall result of the election. Swing states, due to their political volatility and diverse voter bases, are critical in determining the balance of power in the U.S. electoral system. Understanding voter preferences in these states is essential for political analysts, campaigns, and the general public.
