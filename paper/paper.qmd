@@ -340,11 +340,11 @@ Google form of the survey is available here:  https://docs.google.com/forms/d/1o
 * 51 - 70
 * 71+
 
-7.
+7. sex
 
-8.
+8. race
 
-9.
+9. education
 
 10. How many characters are present in the word "President"?
 
