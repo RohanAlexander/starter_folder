@@ -71,8 +71,12 @@ just_trump_high_quality <- data |>
     days_after_earliest = as.numeric(end_date - earliest_date)
   )
 
+<<<<<<< HEAD
 # Write data to CSV
 write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
+=======
+write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")ci
+>>>>>>> b9975540bc2e8dfa19104ee1acd5935561b0b98f
 write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
 
 # Fit the model for Harris
