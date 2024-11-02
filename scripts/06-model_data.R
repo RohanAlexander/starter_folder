@@ -1,22 +1,11 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Models the relatioship between the supprt rate of Harris and Trump with respect to time
+# Author: Yun Chu, Felix Li, and Wen Han Zhao 
+# Date: 22 October 2024
+# Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
-
-library(readr)
-library(dplyr)
-library(lubridate)
-library(rstanarm)
-library(janitor) # Load the janitor package for clean_names()
-
-# Load and clean data
-data <- read_csv("data/01-raw_data/poll_raw_data.csv") |>
-  clean_names()
+# Pre-requisites: raw data has been downloaded from the website
+# Any other information needed? None
 
 # Filter data to Harris estimates based on high-quality polls after she declared
 # Load required packages
@@ -26,50 +15,9 @@ library(lubridate)
 library(rstanarm)
 library(janitor)
 
-# Filter and prepare data for Harris model
-just_harris_high_quality <- data |>
-  filter(
-    candidate_name == "Kamala Harris",
-    numeric_grade >= 2.0,
-    transparency_score >= 4,
-    pollscore <= 0
-  ) |>
-  mutate(
-    state = if_else(is.na(state), "National", state),
-    end_date = mdy(end_date)
-  ) |>
-  filter(state == "National") |>  # Remove the filter on end_date here
-  drop_na(pct, end_date) |>  # Drop rows with NA in pct or end_date
-  mutate(
-    # Get the earliest and latest end dates
-    earliest_date = min(end_date),
-    # Create a new column for days after the earliest date
-    days_after_earliest = as.numeric(end_date - earliest_date),
-  )
+just_harris_high_quality <- read.csv("data/02-analysis_data/Harris.csv")
+just_trump_high_quality <- read.csv("data/02-analysis_data/Trump.csv")
 
-# Filter and prepare data for Trump model
-just_trump_high_quality <- data |>
-  filter(
-    candidate_name == "Donald Trump",
-    numeric_grade >= 2.0,
-    transparency_score >= 4,
-    pollscore <= 0
-  ) |>
-  mutate(
-    state = if_else(is.na(state), "National", state),
-    end_date = mdy(end_date)
-  ) |>
-  filter(state == "National") |>  # Remove the filter on end_date here
-  drop_na(pct, end_date) |>  # Drop rows with NA in pct or end_date
-  mutate(
-    # Get the earliest and latest end dates
-    earliest_date = min(end_date),
-    # Create a new column for days after the earliest date
-    days_after_earliest = as.numeric(end_date - earliest_date),
-  )
-
-write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")ci
-write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
 # Fit the model for Harris
 harris_model <- stan_glm(
   formula = pct ~ days_after_earliest,
