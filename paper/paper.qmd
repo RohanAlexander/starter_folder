@@ -23,6 +23,10 @@ library(knitr)
 library(kableExtra)
 library(readr)
 library(dplyr)
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(ggpubr)
 ```
 
 
@@ -67,164 +71,211 @@ Use sub-sub-headings for each outcome variable and feel free to combine a few in
 
 
 
-# Model {#set-model}
+# Model {#sec-model}
 
-The goal of our modelling strategy is twofold. Firstly,...
+In this analysis, we aim to model the popularity trends for the two 2024 president nominates, Kamala Harris and Donald Trump, based on high-quality polling data collected at the national level after Harris’s declaration on July 21, 2024. We used Bayesian linear regression models with Gaussian error structures to estimate changes in polling percentages over time for each candidate.
 
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix @sec-model-details].
+## Data Filtering and Preparation
 
-## Model set-up
+The data were first filtered to retain only high-quality polls, defined as those with a numeric grade of 2.0 or above and a transparency score of 4 or higher. We focused exclusively on polls where the *state* variable indicates national coverage, ensuring the poll represents nationwide opinions rather than a single state, which could introduce bias. Additionally, we filtered for polls conducted after July 21, 2024, the date when Kamala Harris announced her candidacy.
 
-Define $y_i$ as the percentage of support for a candicate in a poll.
+To prevent issues with missing data in our models, we excluded any rows where key variables (such as polling percentage or end date) were missing.
 
-${y_i} = \beta_0 + \beta_1 pollscore + \beta_2 methodology + \beta_3transparency score + \beta_4 hypothetical + \epsilon$ 
+## Model Specification
 
-pollscore: A numeric value representing the score or reliability of the pollster in question (e.g., -1.1). "The error and bias we can attribute to a pollster. Negative numbers are better. Stands for "Predictive Optimization of Latent skill Level in Surveys, Considering Overall Record, Empirically.
+Two separate Bayesian linear regression models were fitted using the @rs package. Both models specified the formula:
 
-methodology: The method used to conduct the poll (e.g., Online Panel).
+\begin{align}
+Y_i | \mu_i,\sigma  & \sim \text{Normal}(\mu_i,\sigma) \\
+\mu_i & = \beta_0 + \beta_1X_{i1}\\
+\beta_0 & \sim \text{Normal}(50, 5), \\ 
+\beta_1 & \sim \text{Normal}(0, 0.1)
+\end{align}
 
-transparency_score: A score reflecting the pollster’s transparency about their methodology (e.g., 9.0). "A grade for how transparent a pollster is, calculated based on how much information it discloses about its polls and weighted by 
-by recency. The highest Transparency Score is 10."
- 
-hypothetical: Indicates whether the poll is about a hypothetical match-up.
+Where $Y_i$ is the support rate for Harris or Trump, separately, and $X_{i1}$ is the number of days passed after the latest polling sample of Trump or Harris. 
 
-We run the model in R [@citeR].
+## Model Justification and Limitations
+We opted to use two separate models for Trump and Harris, as their supporter demographics differ significantly in ways that are challenging to capture within a single or even a small set of variables @pew_harris_trump_2024. The polling dataset we obtained primarily reflects the characteristics and trends within individual polls rather than offering direct predictors of the presidential election outcome. To maximize the model’s reliability, we refined the dataset by selecting polls with high credibility rather than attempting to predict outcomes directly from the available data.
+
+Our model uses a simple linear approach with time as the sole predictor variable. While this may introduce potential bias by making a simplifying assumption about the trend over time, it also has the advantage of being straightforward to fit and interpret. This trade-off allows us to capture general trends while minimizing the risk of overfitting to limited or potentially inconsistent data sources.
 
 
-### Model justification
-
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-# Library setup
-#install.packages("glm")
-library(glmnet)
-library(ggplot2)
-```
+# Results {#set-result}
+The results of the Bayesian linear regression models for Kamala Harris and Donald Trump are summarized in @tbl-model_summary_H and @tbl-model_summary_T.
 
 ```{r}
+#| label: tbl-model_summary_H
 #| echo: false
-#| eval: true
-#| label: tbl-model1
-#| tbl-cap: "model 1"
+#| tbl-cap: "Summary statistics of the Bayesian model for Harris"
 #| warning: false
-# Get the analysis data
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
+# Load required packages
+library(broom.mixed)  # For tidy model summaries from mixed models
+library(dplyr)
+library(readr)
+library(knitr)  # For nicely formatted tables
+library(modelsummary)
 
-# Model
-glm_model1 <- glm(pct ~ pollscore + methodology + transparency_score + hypothetical, data = analysis_data, family = gaussian()) 
+# Load the saved models
+model1 <- readRDS(file = here::here("models/models_harris.rds"))
 
-# Get the summary
-model_summary <- summary(glm_model1)
+# Extract a tidy summary of the model
+model_summary <- broom.mixed::tidy(model1, effects = "fixed", conf.int = TRUE) %>%
+  select(term, estimate, std.error, conf.low, conf.high) %>%
+  rename(
+    Term = term,
+    Estimate = estimate,
+    `Std. Error` = std.error,
+    `2.5% CI` = conf.low,
+    `97.5% CI` = conf.high
+  )
 
-# Convert the summary coefficients to a data frame
-summary_table <- as.data.frame(model_summary$coefficients)
+# Display the summary table
+kable(model_summary, digits = 3)
 
-# Create a table with a caption and control the size
-kable(summary_table, caption = "Model 1 Summary Table", size = "small")
 ```
-
-## Lasso Regularization {#sec-model-lassoregularization}
-Lasso Regularization is performed to see if the selected variable in our model would best predict the results of polls percentage of a candidate. If the variable do not align with our actual numbers, we should consider other variables or a interaction variable. 
-
 ```{r}
+#| label: tbl-model_summary_T
 #| echo: false
-#| eval: true
-#| label: tbl-lassoregularization
-#| tbl-cap: "lasso regularization"
-#| warning: false
-# Prepare the predictors
-x <- model.matrix(pct ~ pollscore + methodology + transparency_score + hypothetical, data = analysis_data)[, -1]
+#| tbl-cap: "Summary statistics of the Bayesian model for Trump"
+# Load required packages
+library(broom.mixed)  # For tidy model summaries from mixed models
+library(dplyr)
+library(readr)
+library(knitr)  # For nicely formatted tables
 
-# Prepare the response variable
-y <- analysis_data$pct
+# Load the saved models
+model2 <- readRDS(file = here::here("models/models_trump.rds"))
 
-# Lasso regression (alpha = 1)
-lasso_model <- glmnet(x, y, alpha = 1, family = "gaussian")
+# Extract a tidy summary of the model
+model_summary <- broom.mixed::tidy(model2, effects = "fixed", conf.int = TRUE) %>%
+  select(term, estimate, std.error, conf.low, conf.high) %>%
+  rename(
+    Term = term,
+    Estimate = estimate,
+    `Std. Error` = std.error,
+    `2.5% CI` = conf.low,
+    `97.5% CI` = conf.high
+  )
 
-# Cross-validation for Lasso
-cv_lasso <- cv.glmnet(x, y, alpha = 1, family = "gaussian")
-
-plot(cv_lasso)
-
-# Get the best lambda
-best_lambda_lasso <- cv_lasso$lambda.min
-
-# Refit Lasso with the optimal lambda
-lasso_final_model <- glmnet(x, y, alpha = 1, lambda = best_lambda_lasso, family = "gaussian")
-
-# View Lasso coefficients
-coef.lasso <- coef(lasso_final_model)
-
-# Predict using Lasso
-pred_lasso <- predict(lasso_final_model, s = best_lambda_lasso, newx = x)
-
+# Display the summary table
+kable(model_summary, digits = 3)
 ```
+## Overall trend
+The intercept of both model is positive, with Harris at 40.47 and Trump slightly lower than Harris at 40.36. The trend of support rate for both candidates with respect of time is positive but Harris's increment (0.10) is larger than Trump's (0.06). 
 
+## Model Diagnostics
+The model diagnostics indicate a good fit and reliable predictions for both candidates detailed plots is displayed in Appendix @sec-model-details. The posterior predictive checks (Figures @fig-pos_check_H and @fig-pos_check_T) show that the predicted values align well with the observed data, suggesting the models capture key patterns accurately. Additionally, the credible intervals for predictors (Figures @fig-CI_H and @fig-CI_T) provide further evidence of a well-calibrated model, as they encompass observed support rates, indicating that the uncertainty is well-accounted for in the predictions.
 
-Computing the Mean Square Error would give us a sense of our lasso model prediction. 
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-msr
-#| tbl-cap: "Mean Squared Error"
-#| warning: false
-# Calculate Mean Squared Error
-mse <- mean((y - pred_lasso)^2)
-cat("Mean Squared Error:", mse, "\n")
+Further robustness checks (@fig-DI_H and @fig-DI_T) support the stability of these models. Specifically, the R-hat values are below 1.1 for all parameters, demonstrating good convergence of the MCMC chains and suggesting that the parameter estimates are reliable. This convergence implies that our sampling process reached a stable distribution, which strengthens the credibility of our inferences.
 
-# Calculate R-squared
-sst <- sum((y - mean(y))^2)
-sse <- sum((y - pred_lasso)^2)
-r_squared <- 1 - (sse / sst)
-cat("R-squared:", r_squared, "\n")
-
-# Create a data frame for plotting
-results_df <- data.frame(
-  Metric = c("SST", "SSE", "R-squared"),
-  Value = c(sst, sse, r_squared)
-)
-
-kable(results_df, caption = "Mean Squared Error Table")
-```
-
-
-From this graph, we can see that the cluster points do not perfectly align on the line of the best fit so we should still investigate in other variables. 
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-actualvspredicted
-#| tbl-cap: "actual vs predicted"
-#| warning: false
-
-# Compare predicted vs actual values
-comparison <- data.frame(Actual = y, Predicted = as.vector(pred_lasso))
-
-kable(head(comparison), caption = "Actual vs Predicted")
-
-# Plot actual vs predicted values
-ggplot(comparison, aes(x = Actual, y = Predicted)) +
-  geom_point() +
-  geom_abline(slope = 1, intercept = 0, color = "red") +
-  labs(title = "Actual vs Predicted Values",
-       x = "Actual Values",
-       y = "Predicted Values") +
-  theme_minimal()
-```
-
+Overall, these diagnostics confirm that the models are not only stable but also appropriately reflect the trends in the data, supporting their reliability for further analysis.
 
 \newpage
 
 \appendix
 
-# Appendix {-}
+# Appendix
 
 
 # Additional data details
 
+## Model check {#sec-model-details}
+
+```{r}
+#| label: fig-pos_check_H
+#| echo: false
+#| fig-cap: "Posterior Predictive Check for All Models"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+pp_check(model1) +  
+    theme_classic() +
+    theme(legend.position = "bottom")
+
+```
+```{r}
+#| label: fig-pos_check_T
+#| echo: false
+#| fig-cap: "Posterior Predictive Check for All Models"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+pp_check(model2) +  
+    theme_classic() +
+    theme(legend.position = "bottom")
+
+```
+```{r}
+#| label: fig-CI_H
+#| echo: false
+#| fig-cap: "CI for predictors for Harris"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(
+  model1,
+  "areas")
+```
+```{r}
+#| label: fig-CI_T
+#| echo: false
+#| fig-cap: "CI for predictors for Trump"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(
+  model2,
+  "areas")
+```
+
+```{r}
+#| label: fig-DI_H
+#| echo: false
+#| fig-cap: "Model diagonostic for Harris"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(model1, "trace")
+plot(model1, "rhat")
+
+```
+```{r}
+#| label: fig-DI_T
+#| echo: false
+#| fig-cap: "Model diagonostic for Trump"
+
+# Load necessary libraries
+library(rstanarm)
+library(bayesplot)
+library(ggplot2)
+library(patchwork)  # For combining plots
+
+plot(model2, "trace")
+plot(model2, "rhat")
+
+```
+
+\newpage
 ## pollster methodology analysis
 
 This survey was conducted by Redfield & Wilton Strategies to assess the voting intentions of eligible voters in key U.S. swing states ahead of the 2024 Presidential Election. The primary goal of this poll is to provide an accurate and timely snapshot of public opinion in states where electoral outcomes are uncertain and could have a decisive impact on the overall result of the election. Swing states, due to their political volatility and diverse voter bases, are critical in determining the balance of power in the U.S. electoral system. Understanding voter preferences in these states is essential for political analysts, campaigns, and the general public.
