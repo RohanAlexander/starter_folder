@@ -46,14 +46,16 @@ Telegraphing paragraph: The remainder of this paper is structured as follows. @s
 
 
 
-
 # Data {#sec-data}
 
 ## Overview
 
+cite R, packages, dataa
+The data used in this paper is source from FiveThirtyEight ("538presidentialpolls", 2024). T
 We use the statistical programming language R [@citeR].... Our data.... Following @tellingstories, we consider...
 
 Overview text
+
 
 ## Measurement
 	

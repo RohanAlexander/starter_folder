@@ -70,6 +70,7 @@ just_trump_high_quality <- data |>
 
 write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
 write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
+
 # Fit the model for Harris
 harris_model <- stan_glm(
   formula = pct ~ days_after_earliest,
@@ -91,6 +92,80 @@ trump_model <- stan_glm(
   prior_aux = exponential(rate = 1),
   seed = 853
 )
+
+# Define the target end date
+last_date <- as.Date("2024-11-05")
+
+# Calculate the number of days from earliest_date to last_date
+days_to_last_date <- as.numeric(last_date - earliest_date)
+
+# Generate prediction data frame with days_after_earliest up to days_to_last_date
+days_range <- data.frame(days_after_earliest = seq(0, days_to_last_date, by = 1))
+
+# Convert days_after_earliest to actual dates by adding them to earliest_date
+days_range$end_date <- earliest_date + days_range$days_after_earliest
+
+# Harris predictions
+harris_predictions <- predict(harris_model, newdata = days_range, se.fit = TRUE)
+days_range$harris_pct <- harris_predictions$fit
+days_range$harris_se <- harris_predictions$se.fit
+
+# Trump predictions
+trump_predictions <- predict(trump_model, newdata = days_range, se.fit = TRUE)
+days_range$trump_pct <- trump_predictions$fit
+days_range$trump_se <- trump_predictions$se.fit
+
+
+
+# Add actual poll data to plot
+just_harris_high_quality$Candidate <- "Harris"
+just_trump_high_quality$Candidate <- "Trump"
+poll_data <- rbind(just_harris_high_quality, just_trump_high_quality)
+
+# Plot
+
+library(ggplot2)
+
+ggplot(data = days_range, aes(x = end_date)) +
+  # Harris line and confidence interval
+  geom_line(aes(y = harris_pct, color = "Harris"), size = 1) +
+  geom_ribbon(aes(ymin = harris_pct - 1.96 * harris_se, ymax = harris_pct + 1.96 * harris_se, fill = "Harris"), alpha = 0.2) +
+  
+  # Trump line and confidence interval
+  geom_line(aes(y = trump_pct, color = "Trump"), size = 1) +
+  geom_ribbon(aes(ymin = trump_pct - 1.96 * trump_se, ymax = trump_pct + 1.96 * trump_se, fill = "Trump"), alpha = 0.2) +
+  
+  # Actual poll data points
+  geom_point(data = poll_data, aes(x = end_date, y = pct, color = Candidate), alpha = 0.5) +
+  
+  # Axis labels and title
+  labs(title = "Polling Trends for Harris and Trump",
+       x = "Date",
+       y = "Polling Percentage (%)",
+       color = "Candidate",
+       fill = "Candidate") +
+  
+  # Custom x-axis to show every 2 months
+  scale_x_date(
+    date_breaks = "2 months",
+    date_labels = "%b",  # Shows only the month (e.g., "Aug", "Oct")
+    limits = c(earliest_date, as.Date("2024-11-05"))
+  ) +
+  
+  # Highlight Nov 5th specifically with a dashed line
+  geom_vline(xintercept = as.numeric(as.Date("2024-11-05")), linetype = "dashed", color = "black") +
+  
+  # Color scheme
+  scale_color_manual(values = c("Harris" = "blue", "Trump" = "red")) +
+  scale_fill_manual(values = c("Harris" = "blue", "Trump" = "red")) +
+  
+  # Theme for cleaner look
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)  # Rotate labels slightly to 45 degrees
+  )
+
 
 # Save models individually
 saveRDS(harris_model, file = "models/models_harris.rds")
