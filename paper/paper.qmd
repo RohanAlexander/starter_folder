@@ -164,11 +164,11 @@ kable(model_summary, digits = 3)
 The intercept of both model is positive, with Harris at 40.47 and Trump slightly lower than Harris at 40.36. The trend of support rate for both candidates with respect of time is positive but Harris's increment (0.10) is larger than Trump's (0.06). 
 
 ## Model Diagnostics
-The model diagnostics indicate a good fit and reliable predictions for both candidates detailed plots is displayed in Appendix @sec-model-details. The posterior predictive checks (Figures @fig-pos_check_H and @fig-pos_check_T) show that the predicted values align well with the observed data, suggesting the models capture key patterns accurately. Additionally, the credible intervals for predictors (Figures @fig-CI_H and @fig-CI_T) provide further evidence of a well-calibrated model, as they encompass observed support rates, indicating that the uncertainty is well-accounted for in the predictions.
+The model diagnostics indicate a strong fit and reliable predictive performance for both candidates, as detailed in the plots in Appendix @sec-model-details. Posterior predictive checks (Figures @fig-pos_check_H and @fig-pos_check_T) show that the predicted values align well with the observed data, suggesting that the models effectively capture key data patterns. Furthermore, the comparison of posterior and prior variables indicates minimal deviation, affirming an appropriate choice of priors. The credible intervals for the predictors (Figures @fig-CI_H and @fig-CI_T) encompass the observed support rates, demonstrating that the models adequately account for uncertainty in their predictions.
 
-Further robustness checks (@fig-DI_H and @fig-DI_T) support the stability of these models. Specifically, the R-hat values are below 1.1 for all parameters, demonstrating good convergence of the MCMC chains and suggesting that the parameter estimates are reliable. This convergence implies that our sampling process reached a stable distribution, which strengthens the credibility of our inferences.
+Additional robustness checks (Figures @fig-DI_H and @fig-DI_T) confirm the stability of these models. The R-hat values for all parameters are below 1.1, indicating good convergence of the MCMC chains and reliable parameter estimates. This convergence supports the conclusion that the sampling process reached a stable distribution, reinforcing the credibility of our inferences.
 
-Overall, these diagnostics confirm that the models are not only stable but also appropriately reflect the trends in the data, supporting their reliability for further analysis.
+In conclusion, these diagnostics verify that the models are both stable and effective in reflecting trends in the data, confirming their reliability for further analysis.
 
 \newpage
 
@@ -196,6 +196,14 @@ pp_check(model1) +
     theme_classic() +
     theme(legend.position = "bottom")
 
+just_harris_high_quality <- read.csv(here::here("data/02-analysis_data/Harris.csv"))
+
+posterior_vs_prior(model1) +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom") +
+  coord_flip()
+
 ```
 ```{r}
 #| label: fig-pos_check_T
@@ -211,6 +219,14 @@ library(patchwork)  # For combining plots
 pp_check(model2) +  
     theme_classic() +
     theme(legend.position = "bottom")
+
+just_trump_high_quality <- read.csv(here::here("data/02-analysis_data/Trump.csv"))
+
+posterior_vs_prior(model2) +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom") +
+  coord_flip()
 
 ```
 ```{r}
