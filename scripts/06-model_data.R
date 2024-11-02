@@ -68,7 +68,7 @@ just_trump_high_quality <- data |>
     days_after_earliest = as.numeric(end_date - earliest_date),
   )
 
-write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
+write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")ci
 write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
 # Fit the model for Harris
 harris_model <- stan_glm(
