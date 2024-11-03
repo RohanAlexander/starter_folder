@@ -4,10 +4,8 @@
 # Date: 22 October 2024
 # Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-<<<<<<< HEAD
 # Pre-requisites: raw data has been downloaded from the website
 # Any other information needed? None
-=======
 # Pre-requisites: [...UPDATE THIS...]
 # Any other information needed? [...UPDATE THIS...]
 
@@ -22,7 +20,6 @@ library(ggplot2)
 # Load and clean data
 data <- read_csv("data/01-raw_data/poll_raw_data.csv") |>
   clean_names()
->>>>>>> 76f9252b4de65f603fe61dd23d9c68092b8ed6e3
 
 # Filter data to Harris estimates based on high-quality polls after she declared
 # Load required packages
@@ -34,12 +31,9 @@ library(rstanarm)
 library(janitor)
 library(ggplot2)
 
-
-<<<<<<< HEAD
 just_harris_high_quality <- read.csv("data/02-analysis_data/Harris.csv")
 just_trump_high_quality <- read.csv("data/02-analysis_data/Trump.csv")
 
-=======
 # Filter and prepare data for Harris model
 just_harris_high_quality <- data |>
   filter(
@@ -85,7 +79,6 @@ just_trump_high_quality <- data |>
 write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
 write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
 
->>>>>>> 76f9252b4de65f603fe61dd23d9c68092b8ed6e3
 # Fit the model for Harris
 harris_model <- stan_glm(
   formula = pct ~ days_after_earliest,
