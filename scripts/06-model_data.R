@@ -6,8 +6,8 @@
 # License: MIT
 # Pre-requisites: raw data has been downloaded from the website
 # Any other information needed? None
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: None
+# Any other information needed? None
 
 library(tidyr)
 library(readr)
