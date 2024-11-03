@@ -342,7 +342,7 @@ This section introduces an idealized methodology and survey with $100K budget to
 
 ### Sampling Approach
 
-Cluster sampling is the sampling approach used. Specifically clusters are the swing states as they are the states that would affect the election result, i.e. Arizona, Florida, Gegorgia, Iowa, Michigan, Nevada, North Carolina, Pennsylvania, and Wisconsin. In each swing state/clusters, units are selected based on postal code. Using simple random sampling, 100 distinct postal codes are randomly selected. People whose living address has the postal codes selected are the target respondents. For the postal codes that lie in the non-residential area, the postal codes would be ignored.
+Cluster sampling is the sampling approach used. Specifically clusters are states. In our case, the swing states as they are the states that would affect the election result, i.e. Arizona, Florida, Gegorgia, Iowa, Michigan, Nevada, North Carolina, Pennsylvania, and Wisconsin. In each swing state, units are selected based on postal code. Using simple random sampling, 100 distinct postal codes are randomly selected. People whose living address have the postal codes selected are the target respondents. For the postal codes that lie in the non-residential area, the postal codes would be ignored.
 
 ### Recruitment Strategy
 
