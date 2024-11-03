@@ -15,7 +15,8 @@ library(tibble)
 library(readr)
 
 
-simulated_data <- read.csv('data/02-analysis_data/analysis_data.csv')
+simulated_data <- read_parquet('data/02-analysis_data/Harris.parquet')
+# For Trump: simulated_data <- read_parquet('data/02-analysis_data/Trump.parquet')
 
 # Define the test cases
 test_that("Simulated data has correct structure and values", {

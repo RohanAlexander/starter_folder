@@ -14,6 +14,7 @@ library(lubridate)
 library(rstanarm)
 library(janitor)
 library(tidyr)
+library(arrow)
 
 #### Clean data ####
 data <- read_csv("data/01-raw_data/poll_raw_data.csv") |>
@@ -61,6 +62,5 @@ just_trump_high_quality <- data |>
     days_after_earliest = as.numeric(end_date - earliest_date),
   )
 
-
-write_csv(just_harris_high_quality, "data/02-analysis_data/Harris.csv")
-write_csv(just_trump_high_quality, "data/02-analysis_data/Trump.csv")
+write_parquet(just_harris_high_quality, "data/02-analysis_data/Harris.parquet")
+write_parquet(just_trump_high_quality, "data/02-analysis_data/Trump.parquet")

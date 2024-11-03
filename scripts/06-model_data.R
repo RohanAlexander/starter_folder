@@ -31,8 +31,8 @@ library(rstanarm)
 library(janitor)
 library(ggplot2)
 
-just_harris_high_quality <- read.csv("data/02-analysis_data/Harris.csv")
-just_trump_high_quality <- read.csv("data/02-analysis_data/Trump.csv")
+just_harris_high_quality <- read_parquet('data/02-analysis_data/Harris.parquet')
+just_trump_high_quality <- read_parquet('data/02-analysis_data/Trump.parquet')
 
 # Filter and prepare data for Harris model
 just_harris_high_quality <- data |>
