@@ -35,10 +35,11 @@ just_harris_high_quality <- data |>
   drop_na(pct, end_date) |>  # Drop rows with NA in pct or end_date
   mutate(
     # Get the earliest and latest end dates
-    earliest_date = min(end_date),
+    earliest_date = as.Date("July/21/2024", format = "%B/%d/%Y"),
     # Create a new column for days after the earliest date
     days_after_earliest = as.numeric(end_date - earliest_date),
-  )
+  ) |>
+  filter(days_after_earliest > 0)
 
 
 # Filter and prepare data for Trump model
@@ -57,10 +58,11 @@ just_trump_high_quality <- data |>
   drop_na(pct, end_date) |>  # Drop rows with NA in pct or end_date
   mutate(
     # Get the earliest and latest end dates
-    earliest_date = min(end_date),
+    earliest_date = as.Date("July/21/2024", format = "%B/%d/%Y"),
     # Create a new column for days after the earliest date
     days_after_earliest = as.numeric(end_date - earliest_date),
-  )
+  ) |>
+  filter(days_after_earliest > 0)
 
 write_parquet(just_harris_high_quality, "data/02-analysis_data/Harris.parquet")
 write_parquet(just_trump_high_quality, "data/02-analysis_data/Trump.parquet")
