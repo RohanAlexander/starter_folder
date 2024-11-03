@@ -342,7 +342,7 @@ This section introduces an idealized methodology and survey with $100K budget to
 
 ### Sampling Approach
 
-Cluster sampling is the sampling approach used. Specifically clusters are the swing states as they are the states that would affect the election result, i.e. Arizona, Florida, Gegorgia, Iowa, Michigan, Nevada, North Carolina, Pennsylvania, and Wisconsin. In each swing state/clusters, units are selected based on postal code. Using simple random sampling, 100 distinct postal codes are randomly selected. People whose living address has the postal codes selected are the target respondents. For the postal codes that lie in the non-residential area, the postal codes would be ignored.
+Cluster sampling is the sampling approach used. Specifically clusters are states. In our case, the swing states as they are the states that would affect the election result, i.e. Arizona, Florida, Gegorgia, Iowa, Michigan, Nevada, North Carolina, Pennsylvania, and Wisconsin. In each swing state, units are selected based on postal code. Using simple random sampling, 100 distinct postal codes are randomly selected. People whose living address have the postal codes selected are the target respondents. For the postal codes that lie in the non-residential area, the postal codes would be ignored.
 
 ### Recruitment Strategy
 
@@ -381,12 +381,13 @@ Google form of the survey is available here:  https://docs.google.com/forms/d/1o
 * Yes
 * No
 
-3. Who would you vote for?
+3. If the election were held today, who would you most likely vote for?
 
 * Donald Trump - Republican
 * Kamala Harris - Democrat
 * Other Candidates
 * Not Decided Yet
+* Prefer not to say
 
 4. How decisive are you to vote for the option you chose in the last question?
 
@@ -395,11 +396,12 @@ Google form of the survey is available here:  https://docs.google.com/forms/d/1o
 * A Bit Indecisive
 * Very Indecisive
 
-5. How likely are you to vote for the election?
+5. How many characters are present in the word "President"?
 
-* Very Likely
-* A Bit Likely
-* Not Likely
+* 6
+* 8
+* 10
+* None of the Above
 
 6. What age group are you in?
 
@@ -409,18 +411,46 @@ Google form of the survey is available here:  https://docs.google.com/forms/d/1o
 * 51 - 70
 * 71+
 
-7. sex
+7. What is your sex?
 
-8. race
+* Male
+* Female
+* Non-binary
+* Prefer not to say
 
-9. education
+8. What is your Ethnity/Race?
 
-10. How many characters are present in the word "President"?
+* White
+* Black or African American
+* Hispanic or Latino
+* Asian
+* Native American or Alaska Native
+* Native Hawaiian or Other Pacific Islander
+* Middle Eastern or North African
+* Prefer not to say
+* Other (please specify) [optional text box]
 
-* 6
-* 8
-* 10
-* None of the Above
+9. What is your Education Level?
+
+* Less than high school
+* High school diploma or equivalent
+* Some college, no degree
+* Associate’s degree
+* Bachelor’s degree
+* Master’s degree
+* Professional or doctoral degree (JD, MD, PhD, etc.)
+* Prefer not to say
+
+10.How do you plan to vote?
+
+* In-person on Election Day
+* In-person early voting
+* Mail-in/Absentee ballot
+* Undecided
+
+11. Is there anything else you’d like to share about your voting decision or concerns?
+
+
 
 ### Budget Specification
 
