@@ -415,129 +415,121 @@ The goal of our modelling strategy is to better understand how a respondents' re
 
 Transforming the regression with a logit function as the link function ensures that the predicted values stay between zero and one, respecting the boundaries of the data. 
 
-We briefly describe the model that we use, which follows @kurztotherescue. No students got zeroes, though some got full marks (100%) one the paper, so we adapt the regression to one-inflated beta model as described by @heisstotherescue to account for this.  
+We briefly describe the model that we use, which follows @kurztotherescue, which was adapted from @ospina. No students got zeroes, though some got full marks (100%) on the paper, so we adapt the regression to one-inflated beta model as described by @heisstotherescue to account for this.  
 
 Model diagnostics are included in [Appendix -@sec-model-details].
 
-OLD: 
+The model uses a one-inflated beta regression approach to analyze the relationship between student LLM usage, GPA, and final paper marks. Let $Y_i$ represent the mark for student $i$, modeled as:
 
-Define $y_i$ as the percentage received on the final paper. Then $\beta_1$ and $\beta_2$ are the effect of self-reported LLM usage and self-reported GPA on the final paper grade, respectively. \begin{align}
-y_i &\sim \mbox{Beta}(\mu_i, \phi) \\
-logit(\mu_i) &= \beta_0 + \beta_1 \times \mbox{LLM usage}_i + \beta_2 \times \mbox{GPA}_i\\
-\beta_0, \beta_1, \beta_2  &\sim \mbox{Normal}(0, 1) \\
-\phi &\sim \mbox{Gamma}(4, 0.1)
-\end{align}
+$$Y_i \sim \text{Zero-One-Inflated Beta}(\mu_i, \phi_i, \pi_{zoi_i}, \pi_{coi_i})$$
 
-NEW:
+where:
 
-Let $Y_i$ represent the dependent variable "mark" for observation $i$. The model assumes a zero-one inflated beta distribution for $Y_i$, which can be represented as:
+- $\mu_i$ is the mean of the beta distribution (location parameter)
+- $\phi_i$ is the precision parameter (controlling dispersion)
+- $\pi_{zoi_i}$ is the probability of $Y_i$ being exactly 0 or 1
+- $\pi_{coi_i}$ is the probability of $Y_i$ being in the continuous part of the distribution
 
-$Y_i \sim \text{Zero-One Inflated Beta}(\mu_i, \phi_i, \pi_{zoi_i}, \pi_{coi_i})$
+The model components are specified as:
 
-Where:
+1. Mean component:
+   $logit(\mu_i) = \beta_{0,\mu} + \beta_{1,\mu} \cdot \text{llm\_usage}_i + \beta_{2,\mu} \cdot \text{GPA}_i$
 
-- $\mu_i$ is the mean of the beta distribution (related to the location parameter).
-- $\phi_i$ is the precision parameter (related to the dispersion of the beta distribution).
-- $\pi_{zoi_i}$ is the probability of $Y_i$ being exactly 0 or 1 (zero-one inflation component).
-- $\pi_{coi_i}$ is the probability of $Y_i$ being in the continuous part of the beta distribution (continuous component inflation).
+2. Precision component:
+   $\log(\phi_i) = \beta_{0,\phi} + \beta_{1,\phi} \cdot \text{llm\_usage}_i + \beta_{2,\phi} \cdot \text{GPA}_i$
 
-The specific linear models for each parameter are given by:
+3. Zero-one inflation component:
+   $logit(\pi_{zoi_i}) = \beta_{0,zoi} + \beta_{1,zoi} \cdot \text{llm\_usage}_i + \beta_{2,zoi} \cdot \text{GPA}_i$
 
-1. **Mean (Location) Component:**
-   $logit(\mu_i) = \beta_{0,\mu} + \beta_{1,\mu} \cdot \text{llm\_usage}_i + \beta_{2,\mu} \cdot \text{what\_is\_your\_gpa}_i$
-   
-2. **Precision Component:**
-   $\log(\phi_i) = \beta_{0,\phi} + \beta_{1,\phi} \cdot \text{llm\_usage}_i + \beta_{2,\phi} \cdot \text{what\_is\_your\_gpa}_i$
-   
-3. **Zero-One Inflation Component:**
-   $logit(\pi_{zoi_i}) = \beta_{0,zoi} + \beta_{1,zoi} \cdot \text{llm\_usage}_i + \beta_{2,zoi} \cdot \text{what\_is\_your\_gpa}_i$
-   
-4. **Continuous Outcome Inflation (coi) Component:**
+4. Continuous outcome inflation component:
    $logit(\pi_{coi_i}) = \beta_{0,coi}$
 
-In this model:
+The "llm_usage" predictor is categorical, with students' self-reported LLM usage classified as "Extensive" (reference level), "Somewhat", or "None or minimal". GPA is a continuous variable representing students' self-reported grade point averages. The model is implemented using the brms package in R, which provides a Bayesian framework for fitting these regression models.
 
-- $\beta_{0,\mu}, \beta_{0,\phi}, \beta_{0,zoi},$ and $\beta_{0,coi}$ are the intercepts for the respective components.
-- $\beta_{1,\mu}, \beta_{1,\phi}, \beta_{1,zoi}$ represent the coefficients for the effect of "llm\_usage" on the respective components.
-- $\beta_{2,\mu}, \beta_{2,\phi}, \beta_{2,zoi}$ represent the coefficients for the effect of "what\_is\_your\_gpa" on the respective components. 
-- The term $logit(\cdot)$ denotes the logit link function, commonly used for modeling probabilities.
+The expected relationship between LLM usage and final mark is unclear, given the modelling strategy and variables collected. It could be that stronger students used LLMs in a more sophisticated way or that they did not need to use them. However, we can expect the relationship between GPA and final mark to be positive.
 
-This notation captures the model's structure as defined in the `brms` code, with each parameter modeled as a function of the predictors "llm\_usage" and "what\_is\_your\_gpa", except for the continuous outcome inflation (coi) component, which is modeled with just an intercept.
-
-We estimate the model in `R` [@citeR] as well, using `brms` [@brms].
-
-The expected relationship between LLM usage and final mark is unclear. It could be that stronger students used LLMs in a more sophisticated way or that they did not need to use them. However, the relationship between GPA and final mark is expected to be positive.
-
-*NM Comments (I'm not familiar with 0-1 inflated beta regression so I'll leave these as comments to be considered)*
-
-- The text refers to a zero-one inflated beta, but the code chunk below is for a one-inflated model (linked to the zero-or-one inflated beta referenced, if I understand correctly).  I think the text should be updated
-- Is the Kurz (2023) reference correct? It looks like this is for standard beta regression, so perhaps an additional reference to one-inflated beta regression would be helpful (e.g. Ospina 2012)
-- Regarding $\pi_{zoi}$ and $\pi_{coi}$ - based on the descriptions it seems like these should sum to 1, but if that's the case it's not clear to me why we would model both.  I suspect I'm missing something here, but tweaking the descriptions could help
-- llm_usage is in the model as a categorical variable, do we want to make that explicit in the model descriptions?
-- Related to the above, perhaps it makes more sense to have "None" as the reference level for llm_usage instead of "Extensive"
-- I typically prefer not to have raw variable names in the body of a paper, so if there's a way to do that without being to cumbersome that could be good (perhaps a personal preference though)
-- Similarly, in Table 5 is it possible to use the mathematical notation instead of the variable names?
-- In Figure 5 is it possible to have different symbols for the two models to make it more readable in grayscale?
-- [Related to section 5.1]: There are references to how students used LLMs (e.g. to write code/text, as an alternative search engine), and I'm just curious where this information comes from. Were the LLM usage statements submitted and analysed, or is this more annecdotal? Either way, I think a bit more context about where it came from would help give the reader context.
+\newpage
 
 # Results {#sec-results}
 
-Our results are summarized in @tbl-model-results and @fig-model-results. We especially draw on `modelsummary` [@modelsummary].
+Our key results are summarized in @tbl-model-results and @fig-model-results, with full output available in the Appendix. We draw on the `modelsummary` [@modelsummary] package to summarize the results. 
+
+@tbl-model-results and @fig-model-results present the key results from two models estimating the association between LLM usage, GPA and final paper mark. The first model includes only LLM usage, while the second model also includes self-reported GPA as a predictor.
 
 ```{r tbl-model-results}
 #| message: false
 #| echo: false
 #| warning: false
-#| tbl-cap: Coefficient estimates and mean absolute deviation (MAD)
+#| tbl-cap: Selected Coefficient estimates and mean absolute deviation (MAD)
 
 fit1 <-
   readRDS(file = here("models/fit_one_inflated.rds"))
+
 fit2 <-
   readRDS(file = here("models/fit_one_inflated_gpa.rds"))
 
 modelsummary(
   list(
     "Base model" = fit1,
-    "Including self-reported GPA" = fit2
+    "Self-reported GPA Included" = fit2
   ),
   statistic = "mad",
-  fmt = 2
+  fmt = 2,
+  output = "kableExtra",
+  kable_options = list(
+    booktabs = TRUE,
+    linesep = ""
+  ),
+  coef_map = c(
+    "b_llm_usageSomewhat" = "LLM usage: Somewhat",
+    "b_llm_usageNoneorminimal" = "LLM usage: None or minimal",
+    "b_what_is_your_gpa" = "GPA", 
+    "b_zoi_Intercept" = "Zero-one inflation intercept"
+  )
 )
 ```
+
+\newpage
 
 ```{r fig-model-results}
 #| message: false
 #| echo: false
 #| warning: false
 #| fig-cap: Selected coefficient estimates and 90 per cent credibility intervals
-
 modelplot(
   list(
     "Base model" = fit1,
     "Including self-reported GPA" = fit2
   ),
   conf_level = 0.9,
-  drop = c("phi", "b_zoi_Intercept")) +
-  labs(x= "") +
+  coef_map = c(
+    "b_llm_usageSomewhat" = "LLM usage: Somewhat",
+    "b_llm_usageNoneorminimal" = "LLM usage: None or minimal",
+    "b_what_is_your_gpa" = "GPA"
+  ),
+  coef_omit = NULL
+) +
+  labs(x = "") +
   scale_color_brewer(palette = "Set1") +
   theme(legend.position = "bottom")
 
-# Can you change the symbol for one of the models in the above plot?
-
-
 ```
 
-@tbl-model-results and @fig-model-results present the results from two models estimating the association between LLM usage, GPA and final paper mark. The first model includes only LLM usage, while the second model also includes self-reported GPA.
+LLM usage estimates are in relation to "Extensive" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this association, but with slightly smaller coefficients. For instance, the negative impact of “LLM usage: Somewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model could be explained by the GPA variable.
 
-LLM usage estimates are in relation to "Extensive" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this association, but with slightly smaller coefficients. For instance, the negative impact of “b_llm_usageSomewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model might be explained by the GPA variable.
+Including self-reported GPA in the second model considerably changes the  changes the interpretation of some coefficients. For example, the intercept value (in Zero-one inflation intercept) becomes much more negative in the GPA-included model, suggesting that the GPA significantly affects the zero-one inflation part of the model. At the same time, though, the essential relationship between LLM usage and final mark is retained.
 
-Including self-reported GPA in the second model does considerably change the  changes the interpretation of some coefficients. For instance, intercept for "b_zoi_Intercept" becomes much more negative in the GPA-included model, suggesting that the GPA significantly affects the zero-one inflation part of the model. However, the essential relationship between LLM usage and final mark is retained.
-
-The overall fit of the model improves when GPA is included. There is an increase in R-squared from 0.095 to 0.478 and improvements in the ELPD and LOOIC metrics. This is also suggested by the LOO comparison between the two models (@tbl-loo in [Appendix -@sec-model-details]).
+The overall fit of the model improves when GPA is included. There is an solid increase in R-squared from 0.095 to 0.478 and improvements in the ELPD and LOOIC metrics. This is also suggested by the LOO comparison between the two models (@tbl-loo in [Appendix -@sec-model-details]).
 
 # Discussion {#sec-discussion}
 
-There is some very mild evidence from this observational study that LLM usage may be associated with better scores. However, this work should mostly be treated as a direction for future research in this area. More broadly, our work has three major take-aways: 1) LLMs could help enhance the trustworthiness of data science, but not without considerable futher development. 2) Making general purpose chatbots more opinionated and knowledgeable about data science would considerably help. 3) Alternative interaction approaches, beyond a chatbot interface, could be especially useful.
+There is some very mild evidence from this observational study that LLM usage may be associated with better scores. However, this work should mostly be treated as a direction for future research in this area. More broadly, our work has three major take-aways: 
+
+1. LLMs could help enhance the trustworthiness of data science, but not without considerable further development, testing and integration in the data science process.
+
+2. Making general purpose chatbots more opinionated and knowledgeable about data science would considerably help, and 
+
+3. Alternative interaction approaches, beyond a chatbot interface, could be especially useful for students learning data science in particular.
 
 ## Impact of LLMs on trustworthy data science
 
@@ -572,7 +564,7 @@ Finally, one exciting area of current development in LLMs is tool use. One early
 
 ## Weaknesses and next steps
 
-There are several substantial weaknesses of this study. The foundational one is that we used observational data, much of which was self-reported. There may be selection bias present in terms of who used LLMs, who reported their LLM usage truthfully, and even who remained in the class. A different design, specifically a randomized controlled trial (RCT) would deal with many of these issues, although likely at some cost.
+There are several, substantial weaknesses of this study. The foundational one is that we used observational data, much of which was self-reported. There may be selection bias present in terms of who used LLMs, who reported their LLM usage truthfully, and even who remained in the class. A different design, specifically a randomized controlled trial (RCT) would deal with many of these issues, although likely at some cost.
 
 Regression reports average estimates over the full dataset. However, many earlier studies found distributional effects, with low-performing individuals benefiting more than high-performing individuals. Again, a change in design toward an RCT could enable the exploration of this question. Stratification of our dataset would result in small sample size, but nonetheless our data does provide some limited suggestive evidence that this effect may be present in data science. For instance, looking at the 28 students who received an A+ for the final paper, 13 of them had extensive LLM usage, whereas looking at the same number of worst performing students finds that only six of them had extensive LLM usage.
 
@@ -580,7 +572,7 @@ Along these lines, we have considered LLM usage for code and writing as equivale
 
 Finally, we only considered one outcome measure, namely grade on the final paper. Each paper required a considerable amount of time for the student to produce. If an LLM was found to reduce the time taken to produce a paper, without any reduction in quality, then that would be a similarly useful outcome.
 
-Despite these shortcomings, our work clearly identifies a need for further research examining how LLMs can be used to develop a more trustworthy data science.
+Despite these shortcomings, our work clearly identifies a need for further research examining how LLMs can be used to develop a more trustworthy data science workflow, both in and outside of the classroom.
 
 \newpage
 
@@ -659,7 +651,56 @@ Despite these shortcomings, our work clearly identifies a need for further resea
 
 # Model details {#sec-model-details}
 
-We use `bayesplot` [@bayesplot] and `loo` [@loo] conduct posterior predictive checks and evaluate model diagnostics.
+We use `modelsummary` to compute the full regression output. 
+
+## Full Model Output
+
+```{r tbl-model-results-app}
+#| message: false
+#| echo: false
+#| warning: false
+#| tbl-cap: Coefficient estimates and mean absolute deviation (MAD)
+
+fit1 <-
+  readRDS(file = here("models/fit_one_inflated.rds"))
+fit2 <-
+  readRDS(file = here("models/fit_one_inflated_gpa.rds"))
+
+modelsummary(
+  list(
+    "Base model" = fit1,
+    "Self-reported GPA Included" = fit2
+  ),
+  statistic = "mad",
+  fmt = 2
+)
+```
+
+\newpage
+
+## Full Coefficient Estimates
+
+```{r fig-model-results-app}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Selected coefficient estimates and 90 per cent credibility intervals
+
+modelplot(
+  list(
+    "Base model" = fit1,
+    "Including self-reported GPA" = fit2
+  ),
+  conf_level = 0.9,
+  drop = c("phi", "b_zoi_Intercept")) +
+  labs(x= "") +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
+```
+
+\newpage
+
+Next, we use `bayesplot` [@bayesplot] and `loo` [@loo] conduct posterior predictive checks and evaluate model diagnostics.
 
 ## Posterior predictive check
 

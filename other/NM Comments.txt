@@ -1,0 +1,28 @@
+NM Comments (I’m not familiar with 0-1 inflated beta regression so I’ll leave these as comments
+to be considered)
+• The text refers to a zero-one inflated beta, but the code chunk below is for a one-inflated
+model (linked to the zero-or-one inflated beta referenced, if I understand correctly). I
+think the text should be updated
+• Is the Kurz (2023) reference correct? It looks like this is for standard beta regression, so
+perhaps an additional reference to one-inflated beta regression would be helpful (e.g. Os-
+pina 2012)
+14
+• Regarding 𝜋𝑧𝑜𝑖 and 𝜋𝑐𝑜𝑖 - based on the descriptions it seems like these should sum to
+1, but if that’s the case it’s not clear to me why we would model both. I suspect I’m
+missing something here, but tweaking the descriptions could help
+• llm_usage is in the model as a categorical variable, do we want to make that explicit in
+the model descriptions?
+• Related to the above, perhaps it makes more sense to have “None” as the reference level
+for llm_usage instead of “Extensive”
+• I typically prefer not to have raw variable names in the body of a paper, so if there’s a
+way to do that without being to cumbersome that could be good (perhaps a personal
+preference though)
+• Similarly, in Table 5 is it possible to use the mathematical notation instead of the variable
+names?
+• In Figure 5 is it possible to have different symbols for the two models to make it more
+readable in grayscale?
+• [Related to section 5.1]: There are references to how students used LLMs (e.g. to write
+code/text, as an alternative search engine), and I’m just curious where this information
+comes from. Were the LLM usage statements submitted and analysed, or is this more
+annecdotal? Either way, I think a bit more context about where it came from would
+help give the reader context.
