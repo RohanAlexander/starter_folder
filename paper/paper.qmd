@@ -421,9 +421,9 @@ all_data |>
 
 The goal of our modelling strategy is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage. Students received their result on the final paper as a percentage between 0% and 100%. There were no students who got 0%, but 9 students got 100%. As such, we use one-inflated beta regression [@Ospina2012]. Beta regression is commonly used when data are between 0 and 1 and is focused on estimating the mean and variance of the beta distribution. One approach is to consider a one-inflated distribution which is a mixture of focusing on those responses that were 1, and the usual Beta distribution aspect.
 
-The main variable of interest, `llm_usage` is a categorical variable with three possible values: "Extensive", "Somewhat", "None or minimal". We use "None or minimal" as the reference level and so the results are in relation to that level of self-reported LLM usage. Self-reported GPA, `what_is_your_gpa`, is a number between 1.9 and 4 with one decimal place.
+The main variable of interest, `llm_usage` is a categorical variable with three possible values: "Extensive", "Somewhat", "None or minimal". We use "None or minimal" as the reference level, so the results are in relation to that level of self-reported LLM usage. Self-reported GPA, `what_is_your_gpa`, is a number between 1.9 and 4.0, measured with one decimal place.
 
-Define $y_i$ as the percentage that student $i$ received on the final paper:
+Define $y_i$ as the percentage (0-100%) that student $i$ received on the final paper:
 
 $$y_i \sim \mbox{Zero-One-Inflated Beta}\left(\mu_i, \phi_i, \mbox{zoi}_i, \mbox{coi}\right)$$
 
@@ -448,10 +448,9 @@ The model components are:
 4. Continuous outcome inflation component:
    $logit(\pi_{coi_i}) = \beta_{0,coi}$
 
-We estimate the model and explore the results using the statistical programming language `R` [@citeR], and the 
-`brms` [@brms], and 
-`modelsummary` [@modelsummary] 
-packages. Our code to adjust for the fact that there were no students who got 0% follows @buerkner and @Heiss2021. Model diagnostics are included in [Appendix -@sec-model-details]. Finally, the piecewise approach is a common one for when there may be something different about the 0s or 1s, compared with the other responses. Another approach for dealing with a situation in which there are exact 0s or 1s is to slightly perturb the data. In our case, there is not much difference between getting 99% on a paper and getting 100%. When we estimated that perturbed data model using Beta regression the results were similar.
+We estimate the model and explore the results using the statistical programming language `R` [@citeR],`brms` [@brms], and`modelsummary` [@modelsummary]  packages. Our code to adjust for the fact that there were no students who got 0% follows @buerkner and @Heiss2021. Model diagnostics are included in [Appendix -@sec-model-details]. 
+
+In estimating models of this type, a piecewise approach is a common one for when there may be something different about the 0s or 1s, compared with the other responses. Another approach for dealing with a situation in which there are exact 0s or 1s is to slightly perturb the data. In our case,however, there is little difference between getting 99% on a paper and getting 100%. When we estimated that perturbed data model using Beta regression the results were similar.  
 
 # Results {#sec-results}
 
@@ -515,7 +514,7 @@ modelplot(
 
 @tbl-model-results and @fig-model-results present the results from two models estimating the association between LLM usage, GPA and final paper mark. The first model includes only LLM usage, while the second model also includes self-reported GPA.
 
-LLM usage estimates are in relation to "Extensive" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this association, but with slightly smaller coefficients. For instance, the negative impact of “LLM usage: Somewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model could be explained by the GPA variable.
+LLM usage estimates are in relation to "None or Minimal" LLM usage. In the base model, the coefficients suggest that less usage of LLMs was associated with lower scores. The second model retains this association, but with slightly smaller coefficients. For instance, the negative impact of “LLM usage: Somewhat” is slightly reduced from -0.35 to -0.29, indicating that part of the effect observed in the base model could be explained by the GPA variable.
 
 Including self-reported GPA in the second model considerably changes the  changes the interpretation of some coefficients. For example, the intercept value (in Zero-one inflation intercept) becomes much more negative in the GPA-included model, suggesting that the GPA significantly affects the zero-one inflation part of the model. At the same time, though, the essential relationship between LLM usage and final mark is retained.
 
