@@ -20,6 +20,12 @@ all_data <-
   read_parquet(here::here("data/analysis_data.parquet"))
 
 
+# Change the reference level so it's in terms of none
+all_data <- 
+  all_data |> 
+  mutate(llm_usage = relevel(llm_usage, ref = "None or minimal"))
+
+
 #### Model data ####
 #### Simplified data ####
 # Change the 1s to 0.99 so we can just use Beta initially

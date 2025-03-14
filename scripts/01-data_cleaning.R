@@ -6,10 +6,9 @@
 
 
 #### Workspace setup ####
-library(here)
 library(tidyverse)
+library(here)
 library(janitor)
-library(stringr)
 library(readxl)
 library(arrow)
 
