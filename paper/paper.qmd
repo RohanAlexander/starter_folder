@@ -1,13 +1,13 @@
 ---
 title: "Self-reported LLM usage and outcomes on a data science project: Evidence from two undergraduate data science courses"
 author: 
-  - Rohan Alexander
-  - Luca Carnegie
-  - Nathalie Moon
+  - REDACTED
+  - REDACTED
+  - REDACTED
 thanks: "Code and data are available at: REDACTED. We thank attendees at JSM 2024 for helpful suggestions. This research was approved by the University of REDACTED's Research Ethics Board (Protocol 47725). Comments: REDACTED."
 date: today
 date-format: long
-abstract: "To help understand the effect of Large Language Models (LLMs) on data science practice we examine the extent to which self-reported LLM usage is correlated with the mark that a student gets on a final paper in a classroom data science setting. We find some very mild evidence from this observational study that LLM usage may be associated with better scores, but our main conclusion is that there is no clear relationship between more extensive LLM usage and the student's mark. Despite the classroom setting used for evaluation, the task of interest is similar to the work done by professional data scientists. Comparing self-reported usage, there was a considerable increase between the class in January-April 2024 where 41 per cent of students self-reported extensive LLM usage and the class in September-December 2024 where 69 per cent reported extensive LLM usage. Our finding suggests the need for more extensive work evaluating how LLMs can be integrated into the data science workflow in a way that provides value."
+abstract: "To help understand the effect of Large Language Models (LLMs) on data science practice we examine the extent to which self-reported LLM usage is correlated with the mark that a student received on a final paper in a classroom data science setting. We find some mild evidence from this observational study that LLM usage may be associated with better scores, especially for students who do not natively speak English. Comparing self-reported usage, there was a considerable increase between the class that occurred in January-April 2024 where 41 per cent of students self-reported extensive LLM usage and the class that occurred in September-December 2024 where 69 per cent reported extensive LLM usage. Despite the classroom setting used for evaluation, the task of interest is similar to the work done by professional data scientists. Our finding suggests the need for more extensive work evaluating how LLMs can be integrated into the data science workflow in a way that provides value in both the classroom and the workplace."
 format: pdf
 number-sections: true
 table-of-contents: false
@@ -52,7 +52,7 @@ fit6 <-
 
 # Introduction
 
-Trustworthy data science is the practice of conducting data analysis in a transparent, ethical, and reliable manner. These principles are upheld in various ways, through ongoing education, adherence to professional norms and implementation of reproducible workflows. To stay current, data scientists must continually update their knowledge of best practices for transparency and reproducibility, foster a culture which values different perspectives and accountability, and critically consider the broader impact of data-driven decisions. Recent advances, such as the wide release of user-friendly Large Language Models (LLMs), particularly OpenAI's ChatGPT, have transformed the data science toolkit. These powerful tools for natural language processing and generation influence various aspects of data analysis and automation, further emphasizing the need for trustworthy practices.
+Trustworthy data science is the practice of conducting data analysis in a transparent, ethical, and reliable manner. These principles are upheld in various ways including ongoing education, adherence to professional norms and implementation of reproducible workflows. To stay current, data scientists must continually update their knowledge of best practices for transparency and reproducibility, foster a culture which values different perspectives and accountability, and critically consider the broader impact of data-driven decisions. Recent advances, such as the wide release of user-friendly Large Language Models (LLMs), particularly OpenAI's ChatGPT, have transformed the data science toolkit. These powerful tools for natural language processing and generation influence various aspects of data analysis and automation, further emphasizing the need for trustworthy practices.
 
 Like all new tools LLMs have created both excitement and apprehension. ChatGPT's public release on November 30, 2022, brought LLMs into the mainstream conversation. LLMs have quickly been used in both industry and academia. By now many people, especially educators and students, have some experience with LLMs in both personal and professional contexts.
 
@@ -62,13 +62,13 @@ The tasks involved in a trustworthy data science workflow can be generally broke
 
 In terms of computer programming, @Peng_2023 found a positive impact of GitHub Copilot (an LLM-powered programming assistant) on productivity. Specifically, in an experiment involving 95 freelance programmers, they found that a treatment group of programmers with access to GitHub Copilot completed a standardized programming task 56 per cent faster than the control group. Programmers with less experience saw the greatest improvements in productivity. @DellAcqua_2023, focusing on management consulting tasks, provide evidence that LLMs can improve writing productivity. In a field experiment involving consultants from Boston Consulting Group they found that the use of OpenAI's GPT-4 led to a 25 per cent increase in delivery speed of business tasks, most of which involved some writing, as well as a 40 per cent increase in human-rated performance on those tasks. Like computer programming, these productivity increases were most pronounced for those with below average performance, with their output increasing by 43 per cent.
 
-On the other hand, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity which may lead to less original work, and potentially de-skilling primarily with respect to programming ability, among other consequences. These outcomes could negatively affect students' effective learning of data science. @Ellis_Slade_2023 take a more optimistic perspective and argue that LLMs are just another technology that will impact statistics and data science education. Similarly, @Tu_2024 acknowledge that LLMs can streamline many parts of a data science workflow. With that in mind, they suggest that data-scientists-in-training should shift their self-perspectives from primarily being an "analyst" to primarily being a "product manager" responsible for strategic oversight of the analysis carried out by LLMs. @lehmann2025aimeetsclassroomlarge found the effect of LLMs on learning was nuanced and depended on the way the LLM was used and the level of prior knowledge. At the high school level @Lazar_2023 conducted an informal survey of secondary school teachers and students on their opinions of ChatGPT, and found that LLMs could help creativity, provide academic support when teachers were unavailable, and model certain types of writing well. But teachers were concerned about the potential of LLMs to limit students' learning in certain ways through over-reliance. Beyond academic integrity concerns, @Lazar_2023 found that teachers had similar concerns to @Valenzuela_2024 about de-skilling and an overall loss of agency in writing and critical thinking.
+On the other hand, @Valenzuela_2024 argue that LLMs lead to a loss of serendipity which may lead to less original work, and potentially de-skilling primarily with respect to programming ability, among other consequences. These outcomes could negatively affect students' effective learning of data science. @Ellis_Slade_2023 take a more optimistic perspective and argue that LLMs are just another technology that will impact statistics and data science education. Similarly, @Tu_2024 acknowledge that LLMs can streamline many parts of a data science workflow. With that in mind, they suggest that data-scientists-in-training should shift their self-perspectives from primarily being an "analyst" to primarily being a "product manager" responsible for strategic oversight of the analysis carried out by LLMs. @lehmann2025aimeetsclassroomlarge found the effect of LLMs on learning was nuanced and depended on the way the LLM was used and the level of prior knowledge. At the high school level @Lazar_2023 found that LLMs could help creativity, provide academic support when teachers were unavailable, and model certain types of writing well. But teachers were found to have concerns about over-reliance, academic integrity, de-skilling, and an overall loss of agency in writing and critical thinking.
 
 @Cahill_2024 surveyed undergraduate political science students on their attitudes toward, and usage of, AI tools. They found that the use of ChatGPT was widespread. However, they also found that many students lacked confidence in using AI for academic purposes. Only 11 per cent "strongly agreed" that they know how to use AI to improve their writing. Students had nuanced views on appropriate AI use. Many respondents felt that using it to write whole papers was inappropriate, but using it for basic tasks like general assistance, writing feedback and basic data visualization appropriate.
 
 In this paper we are interested in better understanding LLMs as a tool for producing trustworthy data science. We study how they were used by students in two upper-year undergraduate data science courses -- one in Winter 2024 (January to April) and another in Fall 2024 (September to December) -- and whether students who used LLMs tended to have higher scores than those who did not. We focus on the association between student academic performance and their LLM usage. Specifically, we examine the relationship between the mark a student got on a final paper and self-reported measures of student LLM usage, as well as student attitudes toward LLMs in general. This is based on students' final papers and a survey, conducted in third-year undergraduate data science courses at the University of REDACTED. By examining how students interact with and perceive LLMs as tools, and how these variables translate into student outcomes, current practice with regard to LLM integration in data science can be better understood, leading to better recommendations for their future development.
 
-We find some mild association between the mark that a respondent received and their self-reported LLM usage. And this is especially the case for respondents that were not native English speakers. More concretely, there was a considerable increase in the number of respondents who self-reported extensive LLM usage and also those who considered LLM usage to be appropriate and ethical for school, when we compared the results in the class at the start of 2024 with the class at the end of 2024. Taken together it is clear that considerable additional work is needed understanding the appropriate use of generative AI in statistics and data science pedagogy.
+We find some mild association between the mark that a respondent received and their self-reported LLM usage. And this is especially the case for respondents that were not native English speakers. More concretely, there was a considerable increase in the number of respondents who self-reported extensive LLM usage and also those who considered LLM usage to be appropriate and ethical for university, when we compared the results in the class at the start of 2024 with the class at the end of 2024. Taken together it is clear that considerable additional work is needed understanding the appropriate use of generative AI in statistics and data science pedagogy.
 
 The remainder of this paper is structured as follows: @sec-data visualizes and analyzes survey data, self-reported LLM usage, and final marks. @sec-model specifies a model used to investigate the relationship. @sec-results describes and analyzes the model's results. @sec-discussion discusses the implications of the findings for data science education and future research and practice at the intersection of LLMs and trustworthy data science.
 
@@ -82,7 +82,7 @@ To investigate students' usage and attitudes towards LLMs and how they related t
 2. self-reported LLM usage; and
 3. student marks on their final paper.
 
-All data are from students taking STA302 "Methods of Data Analysis I" in the Winter 2024 semester (January to April 2024), or students taking STA304 "Surveys, Sampling, and Observational Data" in the Fall 2024 semester (September to December 2024), at the University of REDACTED. STA302 had 275 students initially enrolled which reduced to 154 students by the end of the semester. Similarly, STA304 had 275 students initially, reduced to 196 students by the end of the semester. These reductions reflect a normal rate of attrition for undergraduate statistics courses at the University of REDACTED. Assessment in both courses was heavily based on three papers submitted over the course of the 12 week semester.
+All data are from students taking STA302 "Methods of Data Analysis I" in the Winter 2024 semester (January to April 2024), or students taking STA304 "Surveys, Sampling, and Observational Data" in the Fall 2024 semester (September to December 2024), at the University of REDACTED. STA302 had 275 students initially enrolled which reduced to 154 students by the end of the semester. Similarly, STA304 had 275 students initially, reduced to 196 students by the end of the semester. These reductions reflect a normal rate of attrition for undergraduate statistics courses at the University of REDACTED. Assessment in both courses was heavily based on three papers submitted over the course of the 12-week semester.
 
 The student marks that we analyze are based only on the final paper, which was done individually. By this stage, uninterested students have typically dropped the course, and students are familiar with course expectations. A typical paper submission was 10-20 pages, and required students to conduct original research to answer a research question of interest to them. It reflects the skills typically used by a professional data scientist. Students are expected to develop a research question of interest to them, identify or collect data to answer the question, conduct statistical analysis, and write a short paper. Examples of final papers (shared with consent) include: REDACTED; REDACTED; and REDACTED.
 
@@ -369,7 +369,7 @@ coding_perceptions_long |>
   theme(axis.text.x = element_blank(), legend.position = "bottom")
 ```
 
-Though STA302 respondents' self-perceptions around writing and coding were varied, there was strong consensus (79 per cent) that the use of generative AI tools was appropriate within an academic setting (@tbl-ai-familiarity-usage-1). Most respondents who selected "It depends" (12 per cent) generally found in comments that artificial intelligence tools to be appropriate, though with certain guidelines and rules governing their use. However, in STA304, almost all students (87 per cent) felt that it was ethical and appropriate to use generative AI for school and only 4 per cent felt that it was inappropriate. STA302 ran from January to April 2024, while STA304 ran from September to December 2024. 
+Though STA302 respondents' self-perceptions around writing and coding were varied, there was strong consensus (79 per cent) that the use of generative AI tools was appropriate within an academic setting (@tbl-ai-familiarity-usage-1). Most respondents who selected "It depends" (12 per cent) generally found in comments that artificial intelligence tools were appropriate, though with certain guidelines and rules governing their use. However, in STA304, almost all students (87 per cent) felt that it was ethical and appropriate to use generative AI for school and only 4 per cent felt that it was inappropriate. STA302 ran from January to April 2024, while STA304 ran from September to December 2024. 
 
 ```{r tbl-ai-familiarity-usage}
 #| message: false
@@ -679,17 +679,17 @@ sta304_data |>
 
 # Model {#sec-model}
 
-The goal of our modelling is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage. Students received their result on the final paper as a percentage between 0 per cent and 100 per cent. There were no students who got 0 per cent, but some students got 100 per cent. As such, after converting the percentage to a proportion, we use one-inflated beta regression [@Ospina2012]. Beta regression is commonly used when data are between 0 and 1 and is focused on estimating the two shape parameters that govern the beta distribution. When there are some values that are 1, a variant -- one-inflated beta regression -- can be used, which is a mixture of focusing on whether a value was 1 or not, and then the usual Beta distribution aspect.
+The goal of our modelling is to better understand how a respondents' result on their final paper associates with their self-reported LLM usage in our dataset. Students received their result on the final paper as a percentage between 0 per cent and 100 per cent. There were no students who got 0 per cent, but some students got 100 per cent. As such, after converting the percentage to a proportion, we use one-inflated beta regression [@Ospina2012]. Beta regression is commonly used when data are between 0 and 1 and is focused on estimating the two shape parameters that govern the beta distribution. When there are some values that are 1, a variant -- one-inflated beta regression -- can be used, which is a mixture of focusing on whether a value was 1 or not, and then the usual beta distribution aspect.
 
-The main predictor of interest, `llm_usage`, is a categorical variable with three possible values: "Extensive", "Somewhat", "None or minimal". We use "None or minimal" as the reference level and so the results are in relation to that level of self-reported LLM usage. Self-reported GPA, `what_is_your_gpa`, is a number between 1.9 and 4 with one decimal place.
+The main predictor of interest, `llm_usage`, is a categorical variable with three possible values: "Extensive", "Somewhat", "None or minimal". We use "None or minimal" as the reference level and so the results are in relation to that level of self-reported LLM usage. Self-reported GPA, `what_is_your_gpa`, is a number between 1.5 and 4.0, with one decimal place.
 
-If $y_i$ is the percentage that student $i$ received on the final paper (adjusted to a proportion), then our model is:
+If $y_i$ is the proportion that student $i$ received on the final paper, then our model is:
 $$y_i \sim \mbox{One-Inflated Beta}\left(\mu_i, \phi_i, \pi_{\mbox{zoi}_i}, \pi_{\mbox{coi}_i}\right)$$
 where: 
 
 - $\mu_i$ (mean component) is the mean of the beta distribution, which accounts for marks between zero and one,
 - $\phi_i$ (precision component) is the precision of the beta distribution, which, again, accounts for marks between zero and one,
-- $\pi_{\mbox{zoi}_i}$ (zero-one inflation component) is a logistic regression model that looks at which of two groups a student is in: a) the group of students getting full or zero marks, or b) the group of students getting a mark between zero and one, and
+- $\pi_{\mbox{zoi}_i}$ (zero-one inflation component) is a logistic regression model that looks at which of two groups a student is in: 1) the group of students getting full or zero marks, or 2) the group of students getting a mark between zero and one, and
 - $\pi_{\mbox{coi}_i}$ (continuous outcome inflation component) is used to distinguish between students that got full or zero marks (but in our case as there were no students that got zero we force this to be one).
 
 The main model specification is:
@@ -778,7 +778,7 @@ modelplot(
   scale_y_discrete(limits=rev)
 ```
 
-The initial model in @tbl-model-results is for STA302 and focuses on the association between final paper mark and LLM usage. The next model adds in self-reported GPA. Both of these have 92 observations. This same pattern is then repeated for STA304 and both those models have 131 observations. And the final model in @tbl-model-results additionally considers whether the respondent is a native English speaker.
+The initial model in @tbl-model-results is for STA302 and focuses on the association between final paper mark and LLM usage. The next model adds in self-reported GPA. Both of these have 92 observations. This same pattern is then repeated for STA304 and both those models have 131 observations. The final model in @tbl-model-results additionally considers whether the respondent is a native English speaker.
 
 ```{r}
 #| echo: false
@@ -788,18 +788,18 @@ plogis(-2.1)
 plogis(-2.93)
 ```
 
-To begin with, we can take advantage of the simple initial models for STA302 and STA304 to look at the ZOI intercept. For instance, for the STA302 model it is -2.10. Following @andrewagain, after undoing the logit transformation this is approximately 11%, which corresponds to the number of students in STA302 who got full marks on the final paper. The same holds for the STA304 model.
+To begin with, we can take advantage of the simple initial models for STA302 and STA304 to look at the ZOI intercept. For instance, for the STA302 model it is -2.10. After undoing the logit transformation this is approximately 11 per cent, which corresponds to the number of students in STA302 who got full marks on the final paper [@andrewagain]. The same holds for the STA304 model.
 
 LLM usage estimates are in relation to "None or minimal" LLM usage. In both the base STA302 and STA304 models, "Extensive" LLM usage was associated with slightly higher mean and precision estimates (@fig-model-results). But when GPA was added to the models the precision component became negative. That said, with 90 per cent credibility intervals there is considerable overlap with zero for many estimates.
 
-Holding all other variables constant, we can vary LLM usage from none or minimal to somewhat and then extensive (@fig-model-results-llms). There is an expected increase in the mark on the final paper as LLM usage increases in STA302 (@fig-model-results-llms-1), but it is less clear in STA304 (@fig-model-results-llms-2). It may have been that the overwhelming usage of LLMs at "extensive" levels in STA304, which occurred six months after STA302, was the reason for this seemingly different association in our data.
+To understand the implication of the coefficient estimates we can hold all other variables constant and then vary LLM usage from "None or minimal" to "Somewhat" and then "Extensive" (@fig-model-results-llms). There is an expected increase in the mark on the final paper as LLM usage increases in STA302 (@fig-model-results-llms-1), but it is less clear in STA304 (@fig-model-results-llms-2). It may have been that the overwhelming usage of LLMs at "Extensive" levels in STA304, which occurred six months after STA302, was the reason for this seemingly different association in our data.
 
 ```{r fig-model-results-llms}
 #| message: false
 #| echo: false
 #| warning: false
 #| fig-height: 5
-#| fig-cap: Comparing the effect of a hypothetical student with different LLM usage levels, all other variables constant
+#| fig-cap: Comparing the effect of a hypothetical student with different LLM usage levels, all other variables constant, between STA302 and STA304
 #| fig-subcap: ["Based on responses from STA302 (Winter 2024)", "Based on responses from STA304 (Fall 2024)"]
 #| layout-ncol: 2
 
@@ -830,13 +830,13 @@ fit4 |>
   theme_minimal()
 ```
 
-The different effect of LLM usage, by whether the students was a native English speaker, holding all other variables constant, can only be examined for STA304 (September-December 2024) as the question was not asked in the earlier STA302 (@fig-model-results-english). For the hypothetical student who does not speak English natively, where we changed nothing other than their LLM usage, going from none or minimal (@fig-model-results-english-1) to extensive (@fig-model-results-english-2) does appear to have been associated with considerably different marks based on our dataset. The distribution is smaller and the average is higher.
+The different effect of LLM usage, by whether the student was a native English speaker, holding all other variables constant, can only be examined for STA304 (September-December 2024) as the question was not asked in the earlier STA302 (@fig-model-results-english). For the hypothetical student who does not speak English natively, where we changed nothing other than their LLM usage, going from "None or minimal" (@fig-model-results-english-1) to "Extensive" (@fig-model-results-english-2) appears to have been associated with higher marks in our dataset. The distribution is smaller and the average is higher.
 
 ```{r fig-model-results-english}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Comparing the effect of a hypothetical student changing whether they were a native English speaker, all other variables constant
+#| fig-cap: Comparing the effect of a hypothetical student changing whether they were a native English speaker, all other variables constant, for STA304 only
 #| fig-subcap: ["Holding GPA at 3.0 and LLM usage is none or minimal", "Holding GPA at 3.0 and LLM usage is extensive"]
 #| layout-ncol: 2
 
@@ -881,11 +881,11 @@ There may be some mild evidence from this observational study that LLM usage may
 
 ## Impact of LLMs on trustworthy data science
 
-We found that many students did use LLMs to help them complete a data science project closely related to what professional data scientists do. A common use case to ask the LLM to write code to make a graph. Another was to ask for some example paragraphs.
+We found that many students did use LLMs to help them complete a data science project closely related to what professional data scientists do.  For instance, looking at the logs, a common use case was to ask the LLM to write code to make a graph, and another was to ask for some example paragraphs of text.
 
-Data science code tends to be written differently than software engineering code. Functions and loops are used less, as there is often less reuse of code. The training data of these LLMs is dominated by software engineering code, and so when an LLM is asked to write code for a data science project it tends to produce code with some of those features. This is neither good nor bad in and of itself, however it can clash with the style of the code that surrounds it.
+Data science code tends to be written differently than software engineering code. Functions and loops are used less, as there is often less reuse of code. The training data of these LLMs is dominated by software engineering code, and so when an LLM is asked to write code for a data science project it tends to produce code with some of those features. This is *prima facie* neither good nor bad in and of itself, however it can clash with the style of the code that surrounds it which could lead to maintainability difficulties.
 
-LLMs are also being used as an alternative search engine. Students often asked, for instance, how to modify a graph to add a vertical line, or similar. Here LLMs tended to be especially useful and able to answer questions. In the past students may have used StackOverflow or similar to find their answers, but the nature of the chat response likely provided a faster answer.
+Again, looking at the logs, LLMs are also being used as an alternative search engine. Students often asked, for instance, how to modify a graph to add a vertical line, or similar. Here LLMs tended to be especially useful and able to answer questions. In the past students may have used Stack Overflow or similar to find their answers, but the nature of the chat response likely provided a faster answer.
 
 Finally, there is the question of whether the nature of the data science has fundamentally changed or improved. For now, there is no evidence of that. It was clear when a student had just used LLM-generated text without modification, and it was often clear when large amounts of code had been written by an LLM. But it was not obvious when small amounts of either had been used, or when LLM-generated content had just been used as an initial draft.
 
@@ -893,7 +893,7 @@ Many of these issues were alluded to by @bommasani2021opportunities, in the cont
 
 ## General purpose compared with opinionated specific chatbots
 
-ChatGPT and equivalents are general-purpose chatbots. One can ask them a technical data science question and then in the same session ask for a brownie recipe! However this general-purpose nature means that they are not necessarily optimized toward one particular task [@thoppilan2022lamda]. When used for data science, this means that sometimes the functions or libraries recommended may not exist, code may not run, or out-dated approaches may be used. Frontier models make things up and are unnervingly confident, even when wrong [@openai2023gpt4, p. 59], which can create special issues for learners.
+ChatGPT and equivalents are general-purpose chatbots. One can ask them a technical data science question and then in the same session ask for a brownie recipe! However, this general-purpose nature means that they are not necessarily optimized toward one particular task [@thoppilan2022lamda]. When used for data science, this means that sometimes the functions or libraries recommended may not exist, code may not run, or outdated approaches may be used. Frontier models make things up and are unnervingly confident, even when wrong [@openai2023gpt4, p. 59], which can create special issues for learners.
 
 General-purpose chatbots being used for data science are fine for experienced data scientists who have an established sense of when something might be not ideal or even wrong. But it is problematic for novices who may not know, can lack the confidence to push back, and possibly, may learn the wrong approach.
 
@@ -907,17 +907,17 @@ Search-based LLM tools like Elicit and Perplexity.ai differ to ChatGPT in that t
 
 Students in this class were required to use GitHub to host their papers, as well as supporting code and data. GitHub Issues and Pull Requests were used for peer review and submission occurred based on links to GitHub repositories. Trustworthy data science could be considerably enhanced by establishing something analogous to continuous integration and a suite of tests, but for data science. The one-off nature of much data science code would mean that LLMs could be especially useful in this proposed infrastructure stack; for instance, when a data scientist commits their code or writing, a suite of static tests could run, for instance to check that the data are being read in, that classes are appropriate, etc. But additionally LLMs could be used to check for possible improvements in writing, and propose context-specific improvements in code. For instance, to make sure that what is being described in the paper is actually what is happening in the code.
 
-Finally, one exciting area of current development in LLMs is tool use. One early example of this was enabling LLMs to use search engines such as Google. As LLMs can produce writing, and writing is the input to a Google Search, enabling this tool broadened the types of queries that LLMs could respond effectively to. Tool use, focused on data science, exists. For instance, LLMs can use R and Python to respond to queries about a dataset. However, further development could be useful. For instance, when a user wrote code in an IDE to import some data, a tool-enhanced LLM could notice and automatically write code that establishes a Pydantic-based validation model for that data. Similarly, consider an LLM in an IDE context where a data scientist wrote out the model, in statistical notation, that they were interested in estimating, and the LLM was able write the model in Stan, run it, save the estimates, and add a summary table to the paper, all automatically and in the background. Similar work has occured in other contexts and found to bring substantial benefits [@chen2022evaluating].
+Finally, one exciting area of current development in LLMs is tool use. One early example of this was enabling LLMs to use search engines such as Google. As LLMs can produce writing, and writing is the input to a Google Search, enabling this tool broadened the types of queries that LLMs could respond effectively to. Tool use, focused on data science, exists. For instance, LLMs can use R and Python to respond to queries about a dataset. However, further development could be useful. For instance, when a user wrote code in an IDE to import some data, a tool-enhanced LLM could notice and automatically write code that establishes a Pydantic-based validation model for that data. Similarly, consider an LLM in an IDE context where a data scientist wrote out the model, in statistical notation, that they were interested in estimating, and the LLM was able write the model in Stan, run it, save the estimates, and add a summary table to the paper, all automatically and in the background. Similar work has occurred in other contexts and found to bring substantial benefits [@chen2022evaluating].
 
 ## Weaknesses and next steps
 
-There are several substantial weaknesses of this study. The foundational one is that we used observational data, much of which was self-reported. There may be selection bias present in terms of who used LLMs, who reported their LLM usage truthfully, and even who remained in the class. A different design, specifically a randomized controlled trial (RCT) would deal with many of these issues, although likely at some cost.
+There are several substantial weaknesses of this study. The foundational one is that we used observational data, much of which was self-reported. There may be selection bias present in terms of who used LLMs, who reported their LLM usage truthfully, and even who remained in the class. A different design, specifically a randomized controlled trial (RCT) would deal with many of these issues, although would likely require financial support.
 
-Regression reports average estimates over the full dataset. However, many earlier studies found distributional effects, with low-performing individuals benefiting more than high-performing individuals. Again, a change in design toward an RCT could enable the exploration of this question. Stratification of our dataset would result in small sample size, but nonetheless our data does provide some limited suggestive evidence that this effect may be present in data science. For instance, considering STA302, looking at the 28 students who received an A+ for the final paper, 13 of them had extensive LLM usage, whereas looking at the same number of worst performing students finds that only six of them had extensive LLM usage.
+Regression provides average estimates over the full dataset. However, many earlier studies found distributional effects, with low-performing individuals benefiting more than high-performing individuals. Again, a change in design toward an RCT could enable the exploration of this question. Stratification of our dataset would result in small sample size, but nonetheless our data does provide some limited suggestive evidence that this effect may be present in data science. For instance, considering STA302, looking at the 28 students who received an A+ for the final paper, 13 of them had extensive LLM usage, whereas looking at the same number of worst performing students finds that only six of them had extensive LLM usage.
 
-Along these lines, we have considered LLM usage for code and writing as equivalent, but they should actually have different impacts depending on student backgrounds. We were only able to distinguishing between native and second-language English speakers at a high level and a more detailed focus on differential LLM usage would add a great deal of nuance to the analysis.
+Along these lines, we have considered LLM usage for code and writing as equivalent, but they should actually have different impacts depending on student backgrounds. We were only able to distinguish between native and second-language English speakers at a high level and a more detailed focus on differential LLM usage would add a great deal of nuance to the analysis.
 
-Finally, we only considered one outcome measure, namely grade on the final paper. Each paper required a considerable amount of time for the student to produce. If an LLM was found to reduce the time taken to produce a paper, without any reduction in quality, then that would be a similarly useful outcome.
+Finally, we only considered one outcome measure, namely a student's mark on their final paper. Each paper required a considerable amount of time for the student to produce. If an LLM was found to reduce the time taken to produce a paper, without any reduction in quality, then that would be a similarly useful outcome.
 
 Despite these shortcomings, our work clearly identifies a need for further research examining how LLMs can be used to develop a more trustworthy data science workflow, both in and outside of the classroom.
 
@@ -1001,54 +1001,82 @@ In STA304, students were additionally asked about whether they were an internati
 
 # Model details {#sec-model-details}
 
-We use `modelsummary` to compute the full regression output. 
- 
 ## Full model output  {#sec-model-output}
- 
-```{r tbl-model-results-app}
+
+```{r tbl-model-results-full}
 #| message: false
 #| echo: false
 #| warning: false
 #| tbl-cap: Coefficient estimates and mean absolute deviation (MAD)
- 
-fit1 <-
-  readRDS(file = here("models/fit_one_inflated.rds"))
-fit2 <-
-  readRDS(file = here("models/fit_one_inflated_gpa.rds"))
 
 modelsummary(
   list(
-    "Base model" = fit1,
-    "Self-reported GPA Included" = fit2
-    ),
+    "STA302" = fit1,
+    "STA302: GPA" = fit2,
+    "STA304" = fit3,
+    "STA304: GPA" = fit4,
+    "STA304: GPA & ESL" = fit5
+  ),
   statistic = "mad",
-  fmt = 2
-  )
+  fmt = 2,
+  output = "kableExtra",
+  kable_options = list(booktabs = TRUE, linesep = ""),
+  # coef_map = c(
+  #   "b_Intercept" = "Intercept",
+  #   "b_phi_Intercept" = "Intercept (Phi)",
+  #   "b_zoi_Intercept" = "Intercept (ZOI)",
+  #   "b_llm_usageSomewhat" = "LLM usage: Somewhat",
+  #   "b_llm_usageExtensive" = "LLM usage: Extensive",
+  #   "b_phi_llm_usageSomewhat" = "LLM usage: Somewhat (Phi)",
+  #   "b_phi_llm_usageExtensive" = "LLM usage: Extensive (Phi)",
+  #   "b_what_is_your_gpa" = "GPA",
+  #   "b_phi_what_is_your_gpa" = "GPA (Phi)",
+  #   "b_native_englishYes" = "English native: Yes",
+  #   "b_phi_native_englishYes" = "English native: Yes (Phi)"
+  # )
+) |>
+  kableExtra::kable_styling(font_size = 7)
 ```
- 
+
+
+
 \newpage
  
-## Full Coefficient Estimates
- 
-```{r fig-model-results-app}
+## Full coefficient estimates
+
+```{r fig-model-results-full}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Selected coefficient estimates and 90 per cent credibility intervals
- 
+#| fig-height: 7
+#| fig-cap: Coefficient estimates and 90 per cent credibility intervals
+
 modelplot(
   list(
-    "Base model" = fit1,
-    "Including self-reported GPA" = fit2
+    "STA302" = fit1,
+    "STA302: GPA" = fit2,
+    "STA304" = fit3,
+    "STA304: GPA" = fit4,
+    "STA304: GPA & ESL" = fit5
   ),
   conf_level = 0.9,
-  drop = c("phi", "b_zoi_Intercept")
+  # coef_map = c(
+  #   "b_llm_usageSomewhat" = "LLM usage: Somewhat",
+  #   "b_llm_usageExtensive" = "LLM usage: Extensive",
+  #   "b_phi_llm_usageSomewhat" = "LLM usage: Somewhat (phi)",
+  #   "b_phi_llm_usageExtensive" = "LLM usage: Extensive (phi)",
+  #   "b_what_is_your_gpa" = "GPA",
+  #   "b_phi_what_is_your_gpa" = "GPA (phi)",
+  #   "b_native_englishYes" = "English native: Yes",
+  #   "b_phi_native_englishYes" = "English native: Yes (phi)"
+  # )
 ) +
   labs(x = "") +
   scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom")
+  #theme(legend.position = "bottom") +
+  scale_y_discrete(limits=rev)
 ```
- 
+
 \newpage
 
 ## Posterior predictive check
@@ -1104,6 +1132,36 @@ plot(fit1)
 #| fig-cap: Model including self-reported GPA diagnostics 
 
 plot(fit2)
+```
+
+```{r fig-basemodel304diagnostics}
+#| fig-height: 7
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Base model diagnostics (STA304)
+
+plot(fit3)
+```
+
+```{r fig-gpamodel304diagnostics}
+#| fig-height: 6
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Model including self-reported GPA diagnostics (STA304)
+
+plot(fit4)
+```
+
+```{r fig-gpamodel304ESLdiagnostics}
+#| fig-height: 6
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Model including self-reported GPA and ESL diagnostics (STA304)
+
+plot(fit5)
 ```
 
 \newpage
