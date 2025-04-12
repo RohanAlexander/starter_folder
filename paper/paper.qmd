@@ -713,7 +713,7 @@ Our central results are summarized in @tbl-model-results and @fig-model-results,
 #| message: false
 #| echo: false
 #| warning: false
-#| tbl-cap: Selected coefficient estimates and mean absolute deviation (MAD)
+#| tbl-cap: Selected coefficient estimates and mean absolute deviation (MAD) for five fitted models
 
 modelsummary(
   list(
@@ -723,7 +723,9 @@ modelsummary(
     "STA304: GPA" = fit4,
     "STA304: GPA & ESL" = fit5
   ),
-  statistic = "mad",
+  #statistic = "mad",
+  statistic = NULL,
+  estimate = "{estimate} ({mad})",
   fmt = 2,
   output = "kableExtra",
   kable_options = list(booktabs = TRUE, linesep = ""),
