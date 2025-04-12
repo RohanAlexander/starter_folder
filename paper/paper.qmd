@@ -162,7 +162,7 @@ Students from a range of years took both courses, but most respondents were in t
 #| echo: false
 #| warning: false
 #| tbl-cap: \"What year are you?\"
-#| tbl-subcap: ["STA302 responses (Winter 2024)","STA304 responses (Fall 2024)"]
+#| tbl-subcap: ["STA302 responses (Winter 2024); n=92", "STA304 responses (Fall 2024); n=131"]
 
 all_data |>
   count(what_year_are_you) |>
