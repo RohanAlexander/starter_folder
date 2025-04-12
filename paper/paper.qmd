@@ -919,7 +919,7 @@ Along these lines, we have considered LLM usage for code and writing as equivale
 
 Finally, we only considered one outcome measure, namely a student's mark on their final paper. Each paper required a considerable amount of time for the student to produce. If an LLM was found to reduce the time taken to produce a paper, without any reduction in quality, then that would be a similarly useful outcome.
 
-Despite these shortcomings, our work clearly identifies a need for further research examining how LLMs can be used to develop a more trustworthy data science workflow, both in and outside of the classroom.
+Despite these shortcomings, our work clearly identifies a need for further research examining how LLMs can be used to develop a more trustworthy data science workflow, both in and out of the classroom.
 
 \newpage
 
