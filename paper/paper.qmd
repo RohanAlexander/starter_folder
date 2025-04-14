@@ -76,7 +76,7 @@ The remainder of this paper is structured as follows: @sec-data visualizes and a
 
 ## Background
 
-To investigate the relationship between students' LLM usage and attitudes and their academic performance, a dataset containing self-reported LLM usage, attitudes towards LLMs, final paper grades, and overall academic performance was constructed. This was based on three components:
+To investigate the relationship between students' LLM usage and attitudes and their academic performance, a dataset containing self-reported LLM usage, personal attitudes towards LLMs, final paper grades, and overall academic performance was constructed. This was based on three components:
 
 1. an optional survey administered at the end of the course;
 2. self-reported LLM usage on the final paper; and
@@ -155,7 +155,7 @@ In STA304 three students took longer than one hour to complete the survey and we
 
 In STA302 there was a wide distribution of self-reported GPAs (@fig-response-time-and-gpa-2). Most responses clustered around a B (3.0 out of 4.0), and the average was 3.06 with a standard deviation of 0.55. One factor that may have affected the range is that the course is required for programs in the Statistics, Mathematics and Computer Science Departments. While there was no reason for the respondents to not report the truth, self-reported GPAs also introduce the possibility of reporting bias. For instance, respondents may have provided their cumulative GPA, their most recent term's GPA, or could have misreported it entirely. The mean and standard deviation of self-reported GPA was the same in STA304 (@fig-response-time-and-gpa-4).
 
-Students from a range of years took both courses, but most respondents were in their 3rd or 4th year of study (@tbl-year-dist). The prerequisite two-course sequence is typically completed by students in their second year, which would make it difficult to take either course earlier than their 3rd year.
+Students from a range of years took both courses, but most respondents were in their 3rd or 4th year of study (@tbl-year-dist). A prerequisite two-course sequence in mathematical statistics is typically completed by students in their second year, which would make it difficult to take either course earlier than their 3rd year.
 
 ```{r tbl-year-dist}
 #| message: false
